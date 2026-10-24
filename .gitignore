@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 .vscode/
+
+# Datos originales de Kaggle (no se versionan)
+data/raw/
