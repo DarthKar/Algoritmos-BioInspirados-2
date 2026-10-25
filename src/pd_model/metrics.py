@@ -27,6 +27,12 @@ def calibration_table(y_true, y_prob, n_bins: int = 10, strategy: str = "quantil
     return pd.DataFrame({"prob_predicha": predicted, "tasa_observada": observed})
 
 
+def calibration_in_the_large(y_true, y_prob) -> dict[str, float]:
+    """PD media predicha vs. tasa observada de malos en todo el conjunto."""
+    observed, predicted = float(np.mean(y_true)), float(np.mean(y_prob))
+    return {"pd_media": predicted, "tasa_observada": observed, "diferencia": predicted - observed}
+
+
 def summarize_seeds(results: list[dict[str, float]]) -> pd.DataFrame:
     """Media, desviación estándar, mejor y peor de cada métrica entre semillas.
 

@@ -24,6 +24,18 @@ def temporal_split(
     return train, val, test
 
 
+def assign_split(df: pd.DataFrame, val_start: str, test_start: str, date_col: str = "issue_d") -> pd.Series:
+    """Etiqueta cada fila como 'train', 'val' o 'test' con las mismas reglas de temporal_split."""
+    val_start, test_start = pd.Timestamp(val_start), pd.Timestamp(test_start)
+    if val_start >= test_start:
+        raise ValueError("val_start debe ser anterior a test_start")
+    dates = df[date_col]
+    split = pd.Series("train", index=df.index, dtype="string")
+    split[dates >= val_start] = "val"
+    split[dates >= test_start] = "test"
+    return split
+
+
 def split_summary(splits: dict[str, pd.DataFrame], target: str = "target", date_col: str = "issue_d") -> pd.DataFrame:
     """Tabla con tamaño, tasa de incumplimiento y rango de fechas de cada partición."""
     rows = []

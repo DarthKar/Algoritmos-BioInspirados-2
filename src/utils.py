@@ -10,6 +10,7 @@ DATA_RAW = ROOT / "data" / "raw"
 DATA_PROCESSED = ROOT / "data" / "processed"
 MODELS_DIR = ROOT / "models"
 FIGURES_DIR = ROOT / "figures"
+RESULTS_DIR = ROOT / "results"
 
 RAW_LOANS_CSV = DATA_RAW / "loan.csv"
 DATA_DICTIONARY = DATA_RAW / "LCDataDictionary.xlsx"

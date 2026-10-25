@@ -1,0 +1,43 @@
+{
+  "modo": "resolved",
+  "snapshot": "2016-01-01",
+  "val_start": "2014-01-01",
+  "test_start": "2015-01-01",
+  "filas_originales": 887379,
+  "columnas_originales": 74,
+  "filas_con_desenlace": 268530,
+  "filas_muestra": 268530,
+  "plazos": [
+    36,
+    60
+  ],
+  "limpieza": {
+    "filas_entrada": 268530,
+    "filas_sin_buro_eliminadas": 29,
+    "filas_salida": 268501
+  },
+  "particiones": [
+    {
+      "particion": "train",
+      "n": 163512,
+      "tasa_malos": 0.1927931895,
+      "desde": "2007-06-01T00:00:00.000",
+      "hasta": "2013-12-01T00:00:00.000"
+    },
+    {
+      "particion": "val",
+      "n": 74154,
+      "tasa_malos": 0.2621706179,
+      "desde": "2014-01-01T00:00:00.000",
+      "hasta": "2014-12-01T00:00:00.000"
+    },
+    {
+      "particion": "test",
+      "n": 30835,
+      "tasa_malos": 0.2546132641,
+      "desde": "2015-01-01T00:00:00.000",
+      "hasta": "2015-12-01T00:00:00.000"
+    }
+  ],
+  "columnas_guardadas": 57
+}
