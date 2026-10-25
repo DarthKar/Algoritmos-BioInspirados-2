@@ -51,6 +51,7 @@ SPARSE_RECENT = [
 REPLACED = [
     "earliest_cr_line",          # -> credit_history_months
     "mths_since_last_record",    # 95 % vacío; la información está en pub_rec
+    "revol_bal",                 # colineal exacta: revol_limit = revol_bal / (revol_util/100)
 ]
 
 # Evaluación de riesgo de la propia Lending Club. Para el inversionista es
@@ -66,7 +67,7 @@ GEOGRAPHIC = ["addr_state"]
 TARGET_SOURCE = ["loan_status", "target", "split"]
 DATE_FEATURES = ["issue_d"]  # se usa para particionar, no como predictor
 
-LOG_FEATURES = ["annual_inc", "revol_bal", "revol_limit"]
+LOG_FEATURES = ["annual_inc", "revol_limit"]
 
 STATIC_EXCLUDED = POST_ORIGINATION + NON_PREDICTIVE + ERA_DEPENDENT + SPARSE_RECENT + REPLACED + TARGET_SOURCE + DATE_FEATURES
 
