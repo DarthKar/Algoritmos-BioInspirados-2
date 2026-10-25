@@ -1,11 +1,13 @@
 """Selección de variables y preprocesamiento.
 
-Caso de uso (Parte 1): el modelo se usa al momento de la SOLICITUD del crédito,
-así que solo pueden entrar variables conocidas antes de desembolsar. Todo lo que
-describe el comportamiento de pago posterior es fuga de información (leakage).
+Caso de uso (Parte 1): un inversionista decide si fondear un crédito publicado en
+la plataforma. Solo pueden entrar variables conocidas en ese momento, incluida la
+calificación que asigna Lending Club. Todo lo que describe el comportamiento de
+pago posterior es fuga de información (leakage).
 
 OJO: esta clasificación hay que verificarla contra LCDataDictionary.xlsx y
-citarla desde ahí en el reporte.
+citarla desde ahí en el reporte. En el diccionario, verification_status aparece
+como is_inc_v.
 """
 import numpy as np
 import pandas as pd
@@ -22,19 +24,51 @@ POST_ORIGINATION = [
     "last_credit_pull_d", "pymnt_plan",
 ]
 
-# Identificadores, texto libre y columnas sin variación o de cardinalidad muy alta
+# Identificadores, texto libre, columnas constantes o redundantes
 NON_PREDICTIVE = [
     "id", "member_id", "url", "desc", "title", "emp_title", "zip_code", "policy_code",
+    "funded_amnt",  # igual a loan_amnt en el 99,3 % de los casos
 ]
 
-# Evaluación de riesgo de la propia Lending Club. Usarlas es casi "copiar" su modelo;
-# se dejan como opción para el caso de uso que se defina.
-LC_RISK_ASSESSMENT = ["grade", "sub_grade", "int_rate", "installment"]
+# Variables que existen solo desde cierta fecha: en una partición temporal estarían
+# vacías en entrenamiento y llenas en prueba (o su faltante delataría la época).
+ERA_DEPENDENT = [
+    "tot_cur_bal", "tot_coll_amt",       # desde sep-2012
+    "total_rev_hi_lim",                  # desde sep-2012; se reemplaza por revol_limit
+    "mths_since_last_major_derog",       # desde ago-2012
+    "initial_list_status",               # "w" solo aparece desde 2012
+]
 
-TARGET_SOURCE = ["loan_status"]
-DATE_FEATURES = ["issue_d", "earliest_cr_line"]  # issue_d se usa para particionar, no como predictor
+# Campos nuevos de dic-2015 y de solicitudes conjuntas (oct-2015): >97 % vacíos
+SPARSE_RECENT = [
+    "annual_inc_joint", "dti_joint", "verification_status_joint", "application_type",
+    "open_acc_6m", "open_il_6m", "open_il_12m", "open_il_24m", "mths_since_rcnt_il",
+    "total_bal_il", "il_util", "open_rv_12m", "open_rv_24m", "max_bal_bc", "all_util",
+    "inq_fi", "total_cu_tl", "inq_last_12m",
+]
 
-LOG_FEATURES = ["annual_inc", "revol_bal", "tot_cur_bal", "total_rev_hi_lim", "tot_coll_amt"]
+# Reemplazadas por una versión derivada en src/cleaning.py o redundantes con otra
+REPLACED = [
+    "earliest_cr_line",          # -> credit_history_months
+    "mths_since_last_record",    # 95 % vacío; la información está en pub_rec
+]
+
+# Evaluación de riesgo de la propia Lending Club. Para el inversionista es
+# información legítima, pero son redundantes entre sí: corr(int_rate, sub_grade)
+# = 0,97, installment es función de monto, tasa y plazo, e int_rate además cambia
+# con la política de precios de cada año. Por defecto entra solo sub_grade_num.
+LC_RISK_ASSESSMENT = ["grade", "sub_grade", "sub_grade_num", "int_rate", "installment"]
+DEFAULT_LC_FEATURES = ("sub_grade_num",)
+
+# Geografía: proxy de características protegidas y muchas categorías pequeñas
+GEOGRAPHIC = ["addr_state"]
+
+TARGET_SOURCE = ["loan_status", "target", "split"]
+DATE_FEATURES = ["issue_d"]  # se usa para particionar, no como predictor
+
+LOG_FEATURES = ["annual_inc", "revol_bal", "revol_limit"]
+
+STATIC_EXCLUDED = POST_ORIGINATION + NON_PREDICTIVE + ERA_DEPENDENT + SPARSE_RECENT + REPLACED + TARGET_SOURCE + DATE_FEATURES
 
 
 def _safe_log1p(x):
@@ -44,24 +78,32 @@ def _safe_log1p(x):
 
 def select_features(
     df: pd.DataFrame,
-    use_lc_grade: bool = False,
+    lc_features: tuple[str, ...] = DEFAULT_LC_FEATURES,
+    use_geography: bool = False,
     max_missing: float = 0.5,
+    max_dominant_share: float = 0.995,
 ) -> tuple[list[str], list[str]]:
-    """Devuelve (numéricas, categóricas) disponibles al momento de la solicitud.
+    """Devuelve (numéricas, categóricas) disponibles al momento de fondear.
 
-    Se descartan columnas con más de `max_missing` de faltantes, calculado sobre
-    `df` (pasar solo el conjunto de entrenamiento para no mirar validación/prueba).
+    Además de las listas fijas, descarta columnas con más de `max_missing` de
+    faltantes o cuyo valor más frecuente supera `max_dominant_share` (casi
+    constantes, p. ej. term en la muestra B). Ambos filtros se calculan sobre `df`:
+    pasar solo el conjunto de entrenamiento.
     """
-    excluded = set(POST_ORIGINATION + NON_PREDICTIVE + TARGET_SOURCE + DATE_FEATURES + ["target"])
-    if not use_lc_grade:
-        excluded |= set(LC_RISK_ASSESSMENT)
+    unknown = set(lc_features) - set(LC_RISK_ASSESSMENT)
+    if unknown:
+        raise ValueError(f"lc_features no reconocidas: {sorted(unknown)}")
+    excluded = set(STATIC_EXCLUDED) | (set(LC_RISK_ASSESSMENT) - set(lc_features))
+    if not use_geography:
+        excluded |= set(GEOGRAPHIC)
 
-    candidates = [c for c in df.columns if c not in excluded]
+    candidates = [c for c in df.columns if c not in excluded and not pd.api.types.is_datetime64_any_dtype(df[c])]
     missing = df[candidates].isna().mean()
-    candidates = [c for c in candidates if missing[c] <= max_missing]
+    dominant = {c: df[c].value_counts(normalize=True, dropna=False).iloc[0] for c in candidates}
+    candidates = [c for c in candidates if missing[c] <= max_missing and dominant[c] <= max_dominant_share]
 
     numeric = [c for c in candidates if pd.api.types.is_numeric_dtype(df[c])]
-    categorical = [c for c in candidates if c not in numeric and not pd.api.types.is_datetime64_any_dtype(df[c])]
+    categorical = [c for c in candidates if c not in numeric]
     return numeric, categorical
 
 
