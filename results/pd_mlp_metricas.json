@@ -1,0 +1,182 @@
+{
+  "config": {
+    "mode": "matured",
+    "lc_features": [
+      "sub_grade_num"
+    ],
+    "use_geography": false,
+    "n_trials": 25,
+    "n_seeds": 30,
+    "max_epochs": 100,
+    "patience": 8,
+    "seed": 42,
+    "name": "pd_mlp"
+  },
+  "variables_numericas": [
+    "loan_amnt",
+    "emp_length",
+    "annual_inc",
+    "dti",
+    "delinq_2yrs",
+    "inq_last_6mths",
+    "mths_since_last_delinq",
+    "open_acc",
+    "pub_rec",
+    "revol_bal",
+    "revol_util",
+    "total_acc",
+    "credit_history_months",
+    "never_delinquent",
+    "revol_limit",
+    "sub_grade_num"
+  ],
+  "variables_categoricas": [
+    "home_ownership",
+    "verification_status",
+    "purpose"
+  ],
+  "n_columnas_X": 40,
+  "mejor_config": {
+    "hidden": [
+      128,
+      64
+    ],
+    "activation": "elu",
+    "dropout": 0.1,
+    "l2": 1.328e-07,
+    "optimizer": "rmsprop",
+    "lr": 0.0008925903,
+    "momentum": 0.9,
+    "batch_size": 512,
+    "max_epochs": 100,
+    "patience": 8,
+    "seed": 4
+  },
+  "n_parametros": 13569,
+  "busqueda": {
+    "metodo": "búsqueda aleatoria",
+    "n_configuraciones": 25,
+    "criterio": "log-loss en validación",
+    "segundos": 227.5043005999978
+  },
+  "semillas": {
+    "n": 30,
+    "resumen_test": [
+      {
+        "metrica": "auc",
+        "mean": 0.6403645371061378,
+        "std": 0.0015216743080002423,
+        "mejor": 0.6425280088817638,
+        "peor": 0.6365728776054863
+      },
+      {
+        "metrica": "gini",
+        "mean": 0.2807290742122758,
+        "std": 0.0030433486160004845,
+        "mejor": 0.2850560177635275,
+        "peor": 0.2731457552109726
+      },
+      {
+        "metrica": "ks",
+        "mean": 0.2114780469128295,
+        "std": 0.0047016729229467265,
+        "mejor": 0.22096888618627747,
+        "peor": 0.2025066720718895
+      },
+      {
+        "metrica": "brier",
+        "mean": 0.11110369637608528,
+        "std": 0.00020698293158256256,
+        "mejor": 0.11070238798856735,
+        "peor": 0.11156576871871948
+      },
+      {
+        "metrica": "log_loss",
+        "mean": 0.3754163881142934,
+        "std": 0.0005686041127817218,
+        "mejor": 0.37683388590812683,
+        "peor": 0.37441161274909973
+      }
+    ],
+    "semilla_guardada": 4,
+    "segundos": 228.29405850001785
+  },
+  "segundos_totales": 457.13496830000076,
+  "metricas_modelo_guardado": {
+    "train": {
+      "auc": 0.7037321480769547,
+      "gini": 0.40746429615390944,
+      "ks": 0.2846346158245015,
+      "brier": 0.1038890853524208,
+      "log_loss": 0.35078099370002747,
+      "pd_media": 0.13524915277957916,
+      "tasa_observada": 0.12773282836977104,
+      "diferencia": 0.007516324409808123,
+      "n": 46472
+    },
+    "val": {
+      "auc": 0.6717889682762913,
+      "gini": 0.3435779365525826,
+      "ks": 0.25729206206878447,
+      "brier": 0.11670327931642532,
+      "log_loss": 0.38615143299102783,
+      "pd_media": 0.1372021585702896,
+      "tasa_observada": 0.14217084521843568,
+      "diferencia": -0.0049686866481460645,
+      "n": 13322
+    },
+    "test": {
+      "auc": 0.6403277991222656,
+      "gini": 0.2806555982445311,
+      "ks": 0.21264484307962572,
+      "brier": 0.11139015853404999,
+      "log_loss": 0.3758790194988251,
+      "pd_media": 0.13758133351802826,
+      "tasa_observada": 0.1308139534883721,
+      "diferencia": 0.006767380029656156,
+      "n": 15136
+    }
+  },
+  "calibracion_test": [
+    {
+      "prob_predicha": 0.03672598988430444,
+      "tasa_observada": 0.04491413474240423
+    },
+    {
+      "prob_predicha": 0.061855699091933204,
+      "tasa_observada": 0.07331571994715984
+    },
+    {
+      "prob_predicha": 0.0804670059466236,
+      "tasa_observada": 0.08790482485128882
+    },
+    {
+      "prob_predicha": 0.09794304108977948,
+      "tasa_observada": 0.09247027741083223
+    },
+    {
+      "prob_predicha": 0.1156552428747752,
+      "tasa_observada": 0.11698612029081296
+    },
+    {
+      "prob_predicha": 0.13444915452241268,
+      "tasa_observada": 0.13738441215323646
+    },
+    {
+      "prob_predicha": 0.15674933488803908,
+      "tasa_observada": 0.15730337078651685
+    },
+    {
+      "prob_predicha": 0.18350894771801748,
+      "tasa_observada": 0.18428005284015853
+    },
+    {
+      "prob_predicha": 0.21698697523927343,
+      "tasa_observada": 0.18836748182419036
+    },
+    {
+      "prob_predicha": 0.2914849657422643,
+      "tasa_observada": 0.22523117569352707
+    }
+  ]
+}
