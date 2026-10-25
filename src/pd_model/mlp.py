@@ -70,6 +70,42 @@ def _metrics(y, p) -> dict:
     return {**evaluate(y, p), "log_loss": float(log_loss(y, p))}
 
 
+def train_seeds(mcfg: MLPConfig, X: dict, y: dict, n_seeds: int, verbose: bool = True):
+    """Entrena `mcfg` con las semillas 0..n_seeds-1.
+
+    Devuelve (métricas en prueba por semilla, pérdidas por época de cada semilla,
+    corrida con menor log-loss en validación).
+    """
+    runs, histories, best_run = [], [], None
+    for seed in range(n_seeds):
+        mcfg.seed = seed
+        model, hist = train_mlp(X["train"], y["train"], X["val"], y["val"], mcfg, X_test=X["test"], y_test=y["test"])
+        p = {s: predict_proba(model, X[s]) for s in X}
+        val_loss = float(log_loss(y["val"], p["val"]))
+        runs.append({"semilla": seed, "mejor_epoca": hist["best_epoch"], "segundos": hist["seconds"],
+                     "val_log_loss": val_loss, **_metrics(y["test"], p["test"])})
+        histories.append(pd.DataFrame({"semilla": seed, "epoca": range(1, len(hist["train_loss"]) + 1),
+                                       "train_loss": hist["train_loss"], "val_loss": hist["val_loss"],
+                                       "test_loss": hist["test_loss"]}))
+        if best_run is None or val_loss < best_run["val_loss"]:
+            best_run = {"val_loss": val_loss, "seed": seed, "model": model, "probs": p}
+        if verbose:
+            print(f"semilla {seed:2d}: test auc={runs[-1]['auc']:.4f} brier={runs[-1]['brier']:.4f}", flush=True)
+    return pd.DataFrame(runs), pd.concat(histories, ignore_index=True), best_run
+
+
+def regenerate_histories(name: str = "pd_mlp") -> pd.DataFrame:
+    """Reentrena la configuración guardada con sus semillas para obtener las pérdidas
+    por época, sin repetir la búsqueda. El entrenamiento es determinista en CPU."""
+    results = json.loads((RESULTS_DIR / f"{name}_metricas.json").read_text(encoding="utf-8"))
+    c = results["config"]
+    data = make_design_matrices(load_pd_dataset(c["mode"]), tuple(c["lc_features"]), c["use_geography"])
+    mcfg = MLPConfig(**results["mejor_config"])
+    _, histories, _ = train_seeds(mcfg, data["X"], data["y"], c["n_seeds"])
+    histories.to_csv(RESULTS_DIR / f"{name}_historial.csv", index=False)
+    return histories
+
+
 def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: bool = True, verbose: bool = True) -> dict:
     set_seed(cfg.seed)
     start = time.perf_counter()
@@ -95,19 +131,7 @@ def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: b
     best_cfg = MLPConfig(**{k: best[k] for k in asdict(MLPConfig()).keys()})
 
     # 2. Configuración final con varias semillas
-    runs, best_run = [], None
-    for seed in range(cfg.n_seeds):
-        best_cfg.seed = seed
-        model, hist = train_mlp(X["train"], y["train"], X["val"], y["val"], best_cfg)
-        p = {s: predict_proba(model, X[s]) for s in X}
-        val_loss = float(log_loss(y["val"], p["val"]))
-        runs.append({"semilla": seed, "mejor_epoca": hist["best_epoch"], "segundos": hist["seconds"],
-                     "val_log_loss": val_loss, **_metrics(y["test"], p["test"])})
-        if best_run is None or val_loss < best_run["val_loss"]:
-            best_run = {"val_loss": val_loss, "seed": seed, "model": model, "probs": p}
-        if verbose:
-            print(f"semilla {seed:2d}: test auc={runs[-1]['auc']:.4f} brier={runs[-1]['brier']:.4f}", flush=True)
-    runs_df = pd.DataFrame(runs)
+    runs_df, histories_df, best_run = train_seeds(best_cfg, X, y, cfg.n_seeds, verbose)
     seed_summary = summarize_seeds(runs_df[["auc", "gini", "ks", "brier", "log_loss"]].to_dict("records"))
 
     probs = best_run["probs"]
@@ -128,11 +152,11 @@ def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: b
         "calibracion_test": calibration_table(y["test"], probs["test"]).to_dict("records"),
     }
     if save:
-        _save(cfg, data, best_run, trials_df, runs_df, results)
+        _save(cfg, data, best_run, trials_df, runs_df, histories_df, results)
     return results
 
 
-def _save(cfg, data, best_run, trials_df, runs_df, results) -> None:
+def _save(cfg, data, best_run, trials_df, runs_df, histories_df, results) -> None:
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     model = best_run["model"]
@@ -146,6 +170,7 @@ def _save(cfg, data, best_run, trials_df, runs_df, results) -> None:
     preds.to_parquet(RESULTS_DIR / f"{cfg.name}_predicciones.parquet", index=False)
     trials_df.to_csv(RESULTS_DIR / f"{cfg.name}_busqueda.csv", index=False)
     runs_df.to_csv(RESULTS_DIR / f"{cfg.name}_semillas.csv", index=False)
+    histories_df.to_csv(RESULTS_DIR / f"{cfg.name}_historial.csv", index=False)
     (RESULTS_DIR / f"{cfg.name}_metricas.json").write_text(json.dumps(results, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
 
 

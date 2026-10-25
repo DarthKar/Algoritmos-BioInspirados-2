@@ -62,6 +62,57 @@ def plot_calibration(preds: pd.DataFrame, title: str, splits=("val", "test"), n_
     return fig
 
 
+LOSS_LABELS = {"train_loss": "Entrenamiento", "val_loss": "Validación (2012 T3)", "test_loss": "Prueba (2012 T4)"}
+
+
+def plot_loss_curves(histories: pd.DataFrame, highlight_seed: int, title: str) -> plt.Figure:
+    """Entropía cruzada por época en train, val y test.
+
+    Líneas tenues: cada una de las semillas; línea gruesa: la semilla guardada.
+    La pérdida de entrenamiento se mide en modo evaluación (sin dropout) y sin la
+    penalización L2, para que sea comparable con val y test.
+    """
+    apply_style()
+    fig, ax = plt.subplots(figsize=(7, 4.6))
+    for color, (col, label) in zip(SERIES, LOSS_LABELS.items()):
+        for seed, h in histories.groupby("semilla"):
+            if seed != highlight_seed:
+                ax.plot(h["epoca"], h[col], color=color, alpha=0.15, linewidth=1)
+        h = histories[histories["semilla"] == highlight_seed]
+        ax.plot(h["epoca"], h[col], color=color, label=label)
+
+    h = histories[histories["semilla"] == highlight_seed]
+    best_epoch = int(h.loc[h["val_loss"].idxmin(), "epoca"])
+    ax.axvline(best_epoch, color=MUTED, linewidth=1, linestyle="--")
+    values = histories[list(LOSS_LABELS)].to_numpy().ravel()
+    low, high = values.min(), pd.Series(values).quantile(0.98)
+    pad = (high - low) * 0.08
+    ax.set_ylim(low - pad, high + pad)
+    ax.text(best_epoch, 0.42, f"pesos guardados (época {best_epoch})  ", color=TEXT_SECONDARY, fontsize=8.5,
+            ha="right", va="center", transform=ax.get_xaxis_transform())
+    n_seeds = histories["semilla"].nunique()
+    ax.set(xlabel="Época", ylabel="Entropía cruzada binaria (log-loss)",
+           title=f"{title}\nLínea gruesa: semilla {highlight_seed}; líneas tenues: las otras {n_seeds - 1} semillas")
+    ax.title.set_fontsize(11)
+    ax.legend(loc="center left", bbox_to_anchor=(0.01, 0.42), fontsize=8.5)
+    fig.tight_layout()
+    return fig
+
+
+def save_loss_figure(name: str, model_label: str) -> Path:
+    """Guarda la figura de pérdidas a partir de results/{name}_historial.csv."""
+    import json
+
+    histories = pd.read_csv(RESULTS_DIR / f"{name}_historial.csv")
+    seed = json.loads((RESULTS_DIR / f"{name}_metricas.json").read_text(encoding="utf-8"))["semillas"]["semilla_guardada"]
+    fig = plot_loss_curves(histories, seed, f"Pérdida por época: {model_label}")
+    path = FIGURES_DIR / f"{name}_perdidas.png"
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path)
+    plt.close(fig)
+    return path
+
+
 def save_figures(name: str, model_label: str) -> list[Path]:
     """Genera y guarda las figuras de ROC y calibración de `name`."""
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)

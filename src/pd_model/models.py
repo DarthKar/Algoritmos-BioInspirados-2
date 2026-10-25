@@ -100,9 +100,11 @@ def _mean_bce(model: nn.Module, X: torch.Tensor, y: torch.Tensor, batch_size: in
     return total / len(X)
 
 
-def train_mlp(X_train, y_train, X_val, y_val, cfg: MLPConfig, verbose: bool = False):
+def train_mlp(X_train, y_train, X_val, y_val, cfg: MLPConfig, verbose: bool = False, X_test=None, y_test=None):
     """Entrena con entropía cruzada binaria (+ L2) y parada temprana.
 
+    Si se pasa X_test/y_test, registra también su pérdida por época, solo para
+    graficarla: la parada temprana y la selección usan únicamente validación.
     Devuelve (modelo con los mejores pesos de validación, historial).
     """
     torch.manual_seed(cfg.seed)
@@ -118,6 +120,9 @@ def train_mlp(X_train, y_train, X_val, y_val, cfg: MLPConfig, verbose: bool = Fa
 
     best_loss, best_state, best_epoch, wait = float("inf"), None, 0, 0
     history = {"train_loss": [], "val_loss": []}
+    if X_test is not None:
+        Xte, yte = _to_tensor(X_test), _to_tensor(y_test)
+        history["test_loss"] = []
     start = time.perf_counter()
 
     for epoch in range(1, cfg.max_epochs + 1):
@@ -136,6 +141,8 @@ def train_mlp(X_train, y_train, X_val, y_val, cfg: MLPConfig, verbose: bool = Fa
         val_loss = _mean_bce(model, Xv, yv, cfg.batch_size)
         history["train_loss"].append(train_loss)
         history["val_loss"].append(val_loss)
+        if X_test is not None:
+            history["test_loss"].append(_mean_bce(model, Xte, yte, cfg.batch_size))
         if verbose:
             print(f"época {epoch:3d}  train={train_loss:.4f}  val={val_loss:.4f}")
 
