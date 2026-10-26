@@ -6,21 +6,44 @@
       "data_path": "data/processed/pd_matured.parquet",
       "predictions_path": "results/pd_logistic_predicciones.parquet",
       "reference_split": "train"
+    },
+    {
+      "name": "Red neuronal MLP (primera versión)",
+      "type": "pytorch_mlp",
+      "path": "models/pd_mlp.pt",
+      "preprocessor_path": "models/pd_mlp_preprocessor.joblib",
+      "data_path": "data/processed/pd_matured.parquet",
+      "predictions_path": "results/pd_mlp_predicciones.parquet",
+      "reference_split": "train"
     }
   ],
-  "scorecard": {"base_score": 600, "base_odds": 50, "pdo": 20},
+  "scorecard": {
+    "base_score": 600,
+    "base_odds": 7,
+    "pdo": 20
+  },
   "report_url": "",
   "video_url": "",
   "labels": {
-    "loan_amnt": "Monto del préstamo (USD)", "annual_inc": "Ingresos anuales (USD)",
-    "emp_length": "Antigüedad laboral (años)", "dti": "Relación deuda/ingresos (%)",
-    "delinq_2yrs": "Moras en los últimos 2 años", "inq_last_6mths": "Consultas crediticias (6 meses)",
-    "mths_since_last_delinq": "Meses desde última mora", "open_acc": "Cuentas abiertas",
-    "pub_rec": "Registros públicos negativos", "revol_bal": "Saldo de crédito rotativo (USD)",
-    "revol_util": "Utilización de crédito rotativo (%)", "total_acc": "Total de cuentas crediticias",
-    "credit_history_months": "Historial crediticio (meses)", "never_delinquent": "Sin antecedentes de mora (1 = sí)",
-    "revol_limit": "Límite de crédito rotativo (USD)", "sub_grade_num": "Subcalificación numérica de Lending Club",
-    "home_ownership": "Tipo de vivienda", "verification_status": "Verificación de ingresos", "purpose": "Propósito del crédito"
+    "loan_amnt": "Monto del préstamo (USD)",
+    "annual_inc": "Ingresos anuales (USD)",
+    "emp_length": "Antigüedad laboral (años)",
+    "dti": "Relación deuda/ingresos (%)",
+    "delinq_2yrs": "Moras en los últimos 2 años",
+    "inq_last_6mths": "Consultas crediticias (6 meses)",
+    "mths_since_last_delinq": "Meses desde última mora",
+    "open_acc": "Cuentas abiertas",
+    "pub_rec": "Registros públicos negativos",
+    "revol_bal": "Saldo de crédito rotativo (USD)",
+    "revol_util": "Utilización de crédito rotativo (%)",
+    "total_acc": "Total de cuentas crediticias",
+    "credit_history_months": "Historial crediticio (meses)",
+    "never_delinquent": "Sin antecedentes de mora (1 = sí)",
+    "revol_limit": "Límite de crédito rotativo (USD)",
+    "sub_grade_num": "Subcalificación numérica de Lending Club",
+    "home_ownership": "Tipo de vivienda",
+    "verification_status": "Verificación de ingresos",
+    "purpose": "Propósito del crédito"
   },
   "fallback_fields": {}
 }
