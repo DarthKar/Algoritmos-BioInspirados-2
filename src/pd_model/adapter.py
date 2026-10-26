@@ -5,7 +5,9 @@ import numpy as np
 import pandas as pd
 
 
+# Envuelve preprocesador + red para que la app la use como un modelo de sklearn.
 class MLPAdapter:
+    # Guarda el preprocesador, la red y las columnas de entrada esperadas.
     def __init__(self, preprocessor, network):
         self.preprocessor = preprocessor
         self.network = network
@@ -14,6 +16,7 @@ class MLPAdapter:
             if name not in ("remainder", "drop") for c in cols
         ))
 
+    # Devuelve [P(bueno), P(malo)] por fila, como sklearn.
     def predict_proba(self, X):
         from src.pd_model.models import predict_proba
         frame = pd.DataFrame(X).reindex(columns=self.input_columns)
@@ -22,6 +25,7 @@ class MLPAdapter:
         return np.column_stack((1.0 - p, p))
 
 
+# Carga un modelo registrado en app_config.json (sklearn o MLP de PyTorch).
 @lru_cache(maxsize=8)
 def load_registered_model(path, kind="sklearn", preprocessor_path=None):
     if kind == "sklearn":

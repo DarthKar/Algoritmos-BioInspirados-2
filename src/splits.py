@@ -2,6 +2,7 @@
 import pandas as pd
 
 
+# Parte el dataset en train/val/test por fecha de originación.
 def temporal_split(
     df: pd.DataFrame,
     val_start: str,
@@ -24,6 +25,7 @@ def temporal_split(
     return train, val, test
 
 
+# Etiqueta cada fila como train, val o test según su fecha.
 def assign_split(df: pd.DataFrame, val_start: str, test_start: str, date_col: str = "issue_d") -> pd.Series:
     """Etiqueta cada fila como 'train', 'val' o 'test' con las mismas reglas de temporal_split."""
     val_start, test_start = pd.Timestamp(val_start), pd.Timestamp(test_start)
@@ -36,6 +38,7 @@ def assign_split(df: pd.DataFrame, val_start: str, test_start: str, date_col: st
     return split
 
 
+# Tabla con tamaño, tasa de malos y fechas de cada partición.
 def split_summary(splits: dict[str, pd.DataFrame], target: str = "target", date_col: str = "issue_d") -> pd.DataFrame:
     """Tabla con tamaño, tasa de incumplimiento y rango de fechas de cada partición."""
     rows = []

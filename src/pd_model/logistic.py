@@ -21,6 +21,7 @@ from src.pd_model.models import fit_logistic, logistic_n_params
 from src.utils import MODELS_DIR, RESULTS_DIR, SEED, set_seed
 
 
+# Parámetros del experimento de la logística (rejilla de C, variables, semilla).
 @dataclass
 class LogisticConfig:
     mode: str = "matured"
@@ -33,6 +34,7 @@ class LogisticConfig:
     name: str = "pd_logistic"
 
 
+# Busca C en la rejilla, elige por log-loss de validación, evalúa y guarda todo.
 def run_logistic_baseline(cfg: LogisticConfig = LogisticConfig(), save: bool = True) -> dict:
     set_seed(cfg.seed)
     start = time.perf_counter()
@@ -70,6 +72,7 @@ def run_logistic_baseline(cfg: LogisticConfig = LogisticConfig(), save: bool = T
     return results
 
 
+# Tabla de coeficientes estandarizados y odds ratios, ordenada por magnitud.
 def coefficient_table(model, feature_names: list[str]) -> pd.DataFrame:
     """Coeficientes sobre variables estandarizadas: comparables entre sí en magnitud."""
     coef = pd.DataFrame({"variable": feature_names, "coeficiente": model.coef_.ravel()})
@@ -79,6 +82,7 @@ def coefficient_table(model, feature_names: list[str]) -> pd.DataFrame:
     return pd.concat([intercept, coef], ignore_index=True)
 
 
+# Guarda modelo, predicciones, coeficientes y métricas en disco.
 def _save(cfg: LogisticConfig, data: dict, model, probs: dict, results: dict) -> None:
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)

@@ -15,31 +15,37 @@ import numpy as np
 import pandas as pd
 
 
+# Parámetros de la escala: puntaje base, odds de referencia y PDO.
 @dataclass
 class ScorecardParams:
     base_score: float = 600.0
     base_odds: float = 7.0    # ~ odds promedio del portafolio en train (12,8 % de malos)
     pdo: float = 20.0
 
+    # Puntos que suma duplicar las odds: PDO / ln(2).
     @property
     def factor(self) -> float:
         return self.pdo / np.log(2)
 
+    # Constante que hace que las odds de referencia reciban el puntaje base.
     @property
     def offset(self) -> float:
         return self.base_score - self.factor * np.log(self.base_odds)
 
 
+# PD -> puntaje (más alto = menos riesgo).
 def prob_to_score(pd_bad, params: ScorecardParams, eps: float = 1e-9) -> np.ndarray:
     p = np.clip(np.asarray(pd_bad, dtype=float), eps, 1 - eps)
     return params.offset + params.factor * np.log((1 - p) / p)
 
 
+# Puntaje -> PD (inversa de prob_to_score).
 def score_to_prob(score, params: ScorecardParams) -> np.ndarray:
     log_odds = (np.asarray(score, dtype=float) - params.offset) / params.factor
     return 1 / (1 + np.exp(log_odds))
 
 
+# Puntos por variable de cada cliente en la escala estandarizada.
 def logistic_points(coef: np.ndarray, intercept: float, x: np.ndarray, feature_names: list[str],
                     params: ScorecardParams) -> pd.DataFrame:
     """Puntos por variable para una regresión logística con variables continuas.
@@ -58,6 +64,7 @@ def logistic_points(coef: np.ndarray, intercept: float, x: np.ndarray, feature_n
     df["score"] = df.sum(axis=1)
     return df
 
+# Puntos por unidad de cada variable en unidades originales (antes de estandarizar).
 def scorecard_table(coef, intercept, preprocessor, params: ScorecardParams):
     """Puntos por variable en unidades originales (después de log1p/topes, antes de estandarizar).
 

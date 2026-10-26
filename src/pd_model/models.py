@@ -26,6 +26,7 @@ def fit_logistic(X, y, C: float = 1.0, max_iter: int = 2000, seed: int = 42) -> 
     return model.fit(X, y)
 
 
+# Número de parámetros de la logística: coeficientes + intercepto.
 def logistic_n_params(model: LogisticRegression) -> int:
     return int(model.coef_.size + model.intercept_.size)
 
@@ -36,6 +37,7 @@ def logistic_n_params(model: LogisticRegression) -> int:
 class MLP(nn.Module):
     """Capas densas -> activación -> dropout, con una salida (logit de la PD)."""
 
+    # Construye las capas a partir de la lista de neuronas por capa.
     def __init__(self, n_inputs: int, hidden: list[int], activation: str = "relu", dropout: float = 0.0):
         super().__init__()
         if activation not in ACTIVATIONS:
@@ -49,14 +51,17 @@ class MLP(nn.Module):
         layers.append(nn.Linear(width, 1))
         self.net = nn.Sequential(*layers)
 
+    # Devuelve el logit; la PD se obtiene después con la sigmoide.
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x).squeeze(-1)
 
 
+# Cuenta los pesos y sesgos entrenables de la red.
 def n_trainable_params(model: nn.Module) -> int:
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
+# Hiperparámetros de un entrenamiento del MLP.
 @dataclass
 class MLPConfig:
     hidden: list[int] = field(default_factory=lambda: [64, 32])
@@ -72,6 +77,7 @@ class MLPConfig:
     seed: int = 42
 
 
+# Crea el optimizador (Adam, SGD con momento o RMSprop).
 def _make_optimizer(params, cfg: MLPConfig) -> torch.optim.Optimizer:
     # La regularización L2 se suma explícitamente a la pérdida (ver _l2_penalty), así que
     # no se usa el weight_decay del optimizador.
@@ -84,14 +90,17 @@ def _make_optimizer(params, cfg: MLPConfig) -> torch.optim.Optimizer:
     raise ValueError(f"Optimizador no soportado: {cfg.optimizer}")
 
 
+# Suma de pesos al cuadrado (sin sesgos) para la regularización L2.
 def _l2_penalty(model: nn.Module) -> torch.Tensor:
     return sum((m.weight ** 2).sum() for m in model.modules() if isinstance(m, nn.Linear))
 
 
+# Convierte arreglos de NumPy a tensores float32.
 def _to_tensor(a) -> torch.Tensor:
     return torch.as_tensor(np.asarray(a, dtype=np.float32))
 
 
+# Entropía cruzada media sobre un conjunto, en modo evaluación (sin dropout).
 @torch.no_grad()
 def _mean_bce(model: nn.Module, X: torch.Tensor, y: torch.Tensor, batch_size: int) -> float:
     model.eval()
@@ -100,6 +109,7 @@ def _mean_bce(model: nn.Module, X: torch.Tensor, y: torch.Tensor, batch_size: in
     return total / len(X)
 
 
+# Entrena por mini-lotes con parada temprana y guarda la mejor época según validación.
 def train_mlp(X_train, y_train, X_val, y_val, cfg: MLPConfig, verbose: bool = False, X_test=None, y_test=None):
     """Entrena con entropía cruzada binaria (+ L2) y parada temprana.
 
@@ -159,6 +169,7 @@ def train_mlp(X_train, y_train, X_val, y_val, cfg: MLPConfig, verbose: bool = Fa
     return model, history
 
 
+# Devuelve la PD (sigmoide del logit) por lotes.
 @torch.no_grad()
 def predict_proba(model: nn.Module, X, batch_size: int = 8192) -> np.ndarray:
     """PD estimada = sigmoide(logit)."""

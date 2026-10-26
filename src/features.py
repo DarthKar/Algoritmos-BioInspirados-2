@@ -75,28 +75,35 @@ WINSOR_FEATURES = ["revol_util"]   # las de LOG_FEATURES también se topan
 STATIC_EXCLUDED = POST_ORIGINATION + NON_PREDICTIVE + ERA_DEPENDENT + SPARSE_RECENT + REPLACED + TARGET_SOURCE + DATE_FEATURES
 
 
+# log(1 + x) que nunca falla con negativos (los recorta a 0).
 def _safe_log1p(x):
     # Función de módulo (no lambda) para que el preprocesador se pueda guardar con joblib
     return np.log1p(np.clip(x, 0, None))
 
+# Topa valores extremos en los percentiles 1 y 99 aprendidos solo en train.
 class Winsorizer(BaseEstimator, TransformerMixin):
     """Topa en los percentiles de entrenamiento (se ajusta solo con train)."""
 
+    # Guarda los percentiles inferior y superior a usar.
     def __init__(self, lower=0.01, upper=0.99):
         self.lower, self.upper = lower, upper
 
+    # Aprende los topes (percentiles) de cada columna con los datos de entrenamiento.
     def fit(self, X, y=None):
         X = np.asarray(X, dtype=float)
         self.lo_ = np.nanquantile(X, self.lower, axis=0)
         self.hi_ = np.nanquantile(X, self.upper, axis=0)
         return self
 
+    # Recorta cada columna a los topes aprendidos.
     def transform(self, X):
         return np.clip(np.asarray(X, dtype=float), self.lo_, self.hi_)
 
+    # Mantiene los nombres de columna (necesario dentro de ColumnTransformer).
     def get_feature_names_out(self, input_features=None):
         return np.asarray(input_features, dtype=object)
 
+# Decide qué columnas entran al modelo (sin fuga, sin casi vacías ni casi constantes).
 def select_features(
     df: pd.DataFrame,
     lc_features: tuple[str, ...] = DEFAULT_LC_FEATURES,
@@ -128,6 +135,7 @@ def select_features(
     return numeric, categorical
 
 
+# Arma el preprocesamiento: log/topes, imputación, escalado y one-hot.
 def build_preprocessor(
     numeric: list[str],
     categorical: list[str],
@@ -144,6 +152,7 @@ def build_preprocessor(
     winsor = [c for c in numeric if c in winsor_features and c not in logged]
     plain = [c for c in numeric if c not in logged and c not in winsor]
 
+    # Pasos para un grupo de numéricas: log y/o topes, imputar con indicador, estandarizar.
     def numeric_pipeline(log: bool, clip: bool) -> Pipeline:
         steps = []
         if log:

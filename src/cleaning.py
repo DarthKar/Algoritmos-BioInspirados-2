@@ -17,10 +17,12 @@ MONTHS_SINCE = ["mths_since_last_delinq", "mths_since_last_record", "mths_since_
 SUB_GRADES = [f"{g}{n}" for g in "ABCDEFG" for n in range(1, 6)]
 
 
+# Elimina filas sin datos básicos de buró (29 filas de 2007).
 def drop_incomplete_rows(df: pd.DataFrame) -> pd.DataFrame:
     return df.dropna(subset=[c for c in CORE_FIELDS if c in df])
 
 
+# Corrige el 0 que en 2007-2008 significaba 'nunca' y lo deja como NaN.
 def fix_months_since_zero(df: pd.DataFrame) -> pd.DataFrame:
     """Convierte el 0 usado como 'nunca' en 2007-2008 a NaN, igual que el resto de años."""
     df = df.copy()
@@ -30,6 +32,7 @@ def fix_months_since_zero(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Crea el indicador 'nunca moroso' y llena el vacío de meses desde la última mora.
 def add_never_delinquent(df: pd.DataFrame) -> pd.DataFrame:
     """Indicador de 'nunca moroso' y meses desde la última mora sin faltantes.
 
@@ -43,6 +46,7 @@ def add_never_delinquent(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Agrupa las categorías raras de vivienda (NONE, ANY) en OTHER.
 def consolidate_home_ownership(df: pd.DataFrame) -> pd.DataFrame:
     """NONE y ANY (unas decenas de filas) se unen con OTHER."""
     df = df.copy()
@@ -50,6 +54,7 @@ def consolidate_home_ownership(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Reconstruye el límite de crédito rotativo a partir de saldo y utilización.
 def add_revol_limit(df: pd.DataFrame) -> pd.DataFrame:
     """Límite de crédito rotativo = revol_bal / (revol_util / 100).
 
@@ -63,6 +68,7 @@ def add_revol_limit(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Convierte la subcalificación A1..G5 en un número 1..35.
 def add_sub_grade_num(df: pd.DataFrame) -> pd.DataFrame:
     """sub_grade ordinal: A1 = 1, ..., G5 = 35 (más alto = más riesgoso según LC)."""
     df = df.copy()
@@ -70,6 +76,7 @@ def add_sub_grade_num(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Aplica todas las reglas de limpieza fija en orden y cuenta las filas.
 def apply_fixed_cleaning(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     """Aplica todas las reglas fijas. Devuelve (df limpio, resumen de filas)."""
     report = {"filas_entrada": len(df)}

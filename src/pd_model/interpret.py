@@ -11,6 +11,7 @@ from src.pd_model.mlp import load_mlp
 from src.utils import FIGURES_DIR, MODELS_DIR, RESULTS_DIR, SEED
 
 
+# Nombre de la variable original a la que pertenece una columna one-hot o indicador.
 def _group(name: str, categorical: list[str]) -> str:
     """Variable original a la que pertenece una columna preprocesada."""
     if name.startswith("missingindicator_"):
@@ -21,13 +22,16 @@ def _group(name: str, categorical: list[str]) -> str:
     return name
 
 
+# Envuelve la red para que SHAP reciba el logit desde un arreglo NumPy.
 def _logit_fn(model):
+    # Logit del MLP para un lote de filas ya preprocesadas.
     def f(X):
         with torch.no_grad():
             return model(torch.as_tensor(np.asarray(X, dtype=np.float32))).numpy()
     return f
 
 
+# SHAP sobre el MLP y SHAP exacto de la logística; compara importancias.
 def run_interpretability(n_background: int = 100, n_explain: int = 300, nsamples: int = 1000,
                          mode: str = "matured", save: bool = True) -> pd.DataFrame:
     rng = np.random.default_rng(SEED)
@@ -57,6 +61,7 @@ def run_interpretability(n_background: int = 100, n_explain: int = 300, nsamples
 
     groups = [_group(n, categorical) for n in names]
 
+    # Importancia media |SHAP| sumando las columnas de una misma variable.
     def importance(sv):
         grouped = pd.DataFrame(sv, columns=names).T.groupby(groups).sum().T
         return grouped.abs().mean()

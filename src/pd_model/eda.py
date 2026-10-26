@@ -16,6 +16,7 @@ MIN_DIFF_BIN = 0.01   # indicadores sí/no: diferencia absoluta de tasas de malo
 FECHA_DESCARGA = "AAAA-MM-DD"   # COMPLETAR: fecha en que se descargó loan.csv de Kaggle
 
 
+# Lista de hipótesis: variable, dirección esperada del riesgo y tipo (numérica o sí/no).
 def hypotheses(df: pd.DataFrame) -> list[tuple]:
     """(id, enunciado, serie, dirección esperada del riesgo: +1 sube / -1 baja, tipo)."""
     derog = ((df["delinq_2yrs"] > 0) | (df["pub_rec"] > 0)).astype(float)
@@ -35,6 +36,7 @@ def hypotheses(df: pd.DataFrame) -> list[tuple]:
     ]
 
 
+# Contrasta una hipótesis en train: AUC univariado, Mann-Whitney y veredicto.
 def contrast(x: pd.Series, y: pd.Series, expected: int, kind: str) -> dict:
     ok = x.notna()
     x, y = x[ok].astype(float).to_numpy(), y[ok].to_numpy()
@@ -61,6 +63,7 @@ def contrast(x: pd.Series, y: pd.Series, expected: int, kind: str) -> dict:
             "labels": labels, "rates": rates}
 
 
+# Evalúa todas las hipótesis, guarda la tabla, el resumen de datos y las figuras.
 def run_eda(mode: str = "matured", save: bool = True) -> pd.DataFrame:
     df = load_pd_dataset(mode)
     train = df[df["split"] == "train"]

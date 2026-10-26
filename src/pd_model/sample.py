@@ -20,6 +20,7 @@ DEFAULT_TERMS = {
 }
 
 
+# True si el crédito ya cumplió todo su plazo antes de la fecha de corte.
 def is_matured(df: pd.DataFrame, snapshot: str = SNAPSHOT) -> pd.Series:
     """True si issue_d + term (meses) es anterior a la fecha de corte."""
     snap = pd.Timestamp(snapshot)
@@ -27,6 +28,7 @@ def is_matured(df: pd.DataFrame, snapshot: str = SNAPSHOT) -> pd.Series:
     return end_month < snap.year * 12 + snap.month
 
 
+# Filtra la muestra B (maduros de 36 meses) o A (todos los resueltos).
 def select_sample(
     df: pd.DataFrame,
     mode: str = "matured",

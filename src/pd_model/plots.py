@@ -16,10 +16,12 @@ from src.utils import FIGURES_DIR, RESULTS_DIR
 SPLIT_LABELS = {"val": "Validación (2012 T3)", "test": "Prueba (2012 T4)"}
 
 
+# Lee las predicciones guardadas de un modelo.
 def load_predictions(name: str) -> pd.DataFrame:
     return pd.read_parquet(RESULTS_DIR / f"{name}_predicciones.parquet")
 
 
+# Curva ROC de validación y prueba con AUC y KS.
 def plot_roc(preds: pd.DataFrame, title: str, splits=("val", "test")) -> plt.Figure:
     apply_style()
     fig, ax = plt.subplots(figsize=(5.2, 5))
@@ -37,6 +39,7 @@ def plot_roc(preds: pd.DataFrame, title: str, splits=("val", "test")) -> plt.Fig
     return fig
 
 
+# Curva de calibración por deciles e histograma de PD en prueba.
 def plot_calibration(preds: pd.DataFrame, title: str, splits=("val", "test"), n_bins: int = 10) -> plt.Figure:
     """Curva de calibración (deciles de PD predicha) e histograma de PD en prueba."""
     apply_style()
@@ -65,6 +68,7 @@ def plot_calibration(preds: pd.DataFrame, title: str, splits=("val", "test"), n_
 LOSS_LABELS = {"train_loss": "Entrenamiento", "val_loss": "Validación (2012 T3)", "test_loss": "Prueba (2012 T4)"}
 
 
+# Pérdida por época en train, val y test para todas las semillas.
 def plot_loss_curves(histories: pd.DataFrame, highlight_seed: int, title: str) -> plt.Figure:
     """Entropía cruzada por época en train, val y test.
 
@@ -85,7 +89,9 @@ def plot_loss_curves(histories: pd.DataFrame, highlight_seed: int, title: str) -
     best_epoch = int(h.loc[h["val_loss"].idxmin(), "epoca"])
     ax.axvline(best_epoch, color=MUTED, linewidth=1, linestyle="--")
     values = histories[list(LOSS_LABELS)].to_numpy().ravel()
-    low, high = values.min(), pd.Series(values).quantile(0.98)
+    # El eje llega al máximo de la semilla resaltada para no cortar sus primeras épocas
+    low = values.min()
+    high = max(pd.Series(values).quantile(0.98), h[list(LOSS_LABELS)].to_numpy().max())
     pad = (high - low) * 0.08
     ax.set_ylim(low - pad, high + pad)
     ax.text(best_epoch, 0.42, f"pesos guardados (época {best_epoch})  ", color=TEXT_SECONDARY, fontsize=8.5,
@@ -94,11 +100,12 @@ def plot_loss_curves(histories: pd.DataFrame, highlight_seed: int, title: str) -
     ax.set(xlabel="Época", ylabel="Entropía cruzada binaria (log-loss)",
            title=f"{title}\nLínea gruesa: semilla {highlight_seed}; líneas tenues: las otras {n_seeds - 1} semillas")
     ax.title.set_fontsize(11)
-    ax.legend(loc="center left", bbox_to_anchor=(0.01, 0.42), fontsize=8.5)
+    ax.legend(loc="upper right", fontsize=8.5)
     fig.tight_layout()
     return fig
 
 
+# Genera y guarda la figura de pérdidas desde el historial.
 def save_loss_figure(name: str, model_label: str) -> Path:
     """Guarda la figura de pérdidas a partir de results/{name}_historial.csv."""
     import json
@@ -113,6 +120,7 @@ def save_loss_figure(name: str, model_label: str) -> Path:
     return path
 
 
+# Genera y guarda las figuras ROC y de calibración.
 def save_figures(name: str, model_label: str) -> list[Path]:
     """Genera y guarda las figuras de ROC y calibración de `name`."""
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)

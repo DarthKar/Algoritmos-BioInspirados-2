@@ -10,10 +10,12 @@ from src.utils import RESULTS_DIR, SEED
 METRICS = ["auc", "gini", "ks", "brier", "log_loss"]
 
 
+# Lee el JSON de métricas de un modelo.
 def _load(name: str) -> dict:
     return json.loads((RESULTS_DIR / f"{name}_metricas.json").read_text(encoding="utf-8"))
 
 
+# Tabla LR vs MLP contra la tasa base, costos y bootstrap de la diferencia en test.
 def run_comparison(n_boot: int = 1000, save: bool = True) -> dict:
     lr, mlp = _load("pd_logistic"), _load("pd_mlp")
     seeds = {r["metrica"]: r for r in mlp["semillas"]["resumen_test"]}

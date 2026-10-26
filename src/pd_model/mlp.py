@@ -38,6 +38,7 @@ SEARCH_SPACE = {
 }
 
 
+# Parámetros del experimento del MLP (presupuesto de búsqueda, semillas, épocas).
 @dataclass
 class MLPExperimentConfig:
     mode: str = "matured"
@@ -51,6 +52,7 @@ class MLPExperimentConfig:
     name: str = "pd_mlp"
 
 
+# Sortea una configuración aleatoria del espacio de búsqueda.
 def sample_config(rng: np.random.Generator, max_epochs: int, patience: int, seed: int) -> MLPConfig:
     """Una configuración aleatoria del espacio de búsqueda (capas en embudo)."""
     s = SEARCH_SPACE
@@ -66,10 +68,12 @@ def sample_config(rng: np.random.Generator, max_epochs: int, patience: int, seed
                      patience=patience, seed=seed)
 
 
+# Métricas de discriminación y calibración más log-loss.
 def _metrics(y, p) -> dict:
     return {**evaluate(y, p), "log_loss": float(log_loss(y, p))}
 
 
+# Entrena una configuración con varias semillas y guarda métricas e historial de pérdidas.
 def train_seeds(mcfg: MLPConfig, X: dict, y: dict, n_seeds: int, verbose: bool = True):
     """Entrena `mcfg` con las semillas 0..n_seeds-1.
 
@@ -94,6 +98,7 @@ def train_seeds(mcfg: MLPConfig, X: dict, y: dict, n_seeds: int, verbose: bool =
     return pd.DataFrame(runs), pd.concat(histories, ignore_index=True), best_run
 
 
+# Rehace las curvas de pérdida de la configuración guardada sin repetir la búsqueda.
 def regenerate_histories(name: str = "pd_mlp") -> pd.DataFrame:
     """Reentrena la configuración guardada con sus semillas para obtener las pérdidas
     por época, sin repetir la búsqueda. El entrenamiento es determinista en CPU."""
@@ -106,6 +111,7 @@ def regenerate_histories(name: str = "pd_mlp") -> pd.DataFrame:
     return histories
 
 
+# Búsqueda aleatoria + 30 semillas de la mejor configuración; guarda modelo y resultados.
 def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: bool = True, verbose: bool = True) -> dict:
     set_seed(cfg.seed)
     start = time.perf_counter()
@@ -156,6 +162,7 @@ def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: b
     return results
 
 
+# Guarda red, preprocesador, predicciones, búsqueda, semillas, historial y métricas.
 def _save(cfg, data, best_run, trials_df, runs_df, histories_df, results) -> None:
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -174,6 +181,7 @@ def _save(cfg, data, best_run, trials_df, runs_df, histories_df, results) -> Non
     (RESULTS_DIR / f"{cfg.name}_metricas.json").write_text(json.dumps(results, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
 
 
+# Carga el preprocesador y la red guardados, listos para predecir.
 def load_mlp(name: str = "pd_mlp"):
     """Carga (preprocesador, red) guardados. PD = predict_proba(red, preprocesador.transform(df))."""
     ckpt = torch.load(MODELS_DIR / f"{name}.pt", weights_only=False)
