@@ -10,6 +10,7 @@ from src.pd_model.scorecard import ScorecardParams, prob_to_score, scorecard_tab
 from src.utils import MODELS_DIR, RESULTS_DIR
 
 
+# Scorecard final desde la logística: puntajes, tabla de puntos y bandas por decil.
 def run_scorecard(params: ScorecardParams = ScorecardParams(), name: str = "pd_logistic",
                   mode: str = "matured", save: bool = True) -> dict:
     pipe = joblib.load(MODELS_DIR / f"{name}.joblib")

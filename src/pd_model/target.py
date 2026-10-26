@@ -16,6 +16,7 @@ LOAN_STATUS_TO_TARGET = {
 }
 
 
+# Crea target (1 = malo, 0 = bueno) desde loan_status y quita los casos sin desenlace.
 def build_target(df: pd.DataFrame) -> pd.DataFrame:
     """Agrega la columna `target` y elimina los casos NA.
 
@@ -34,6 +35,7 @@ def build_target(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+# Cuenta cuántos créditos hay por estado y cómo se codificó cada uno.
 def target_report(df: pd.DataFrame) -> pd.DataFrame:
     """Conteo por loan_status y su codificación (sirve como tabla para el reporte)."""
     status = df["loan_status"].astype("string").str.strip()

@@ -18,6 +18,7 @@ DATA_DICTIONARY = DATA_RAW / "LCDataDictionary.xlsx"
 SEED = 42
 
 
+# Fija todas las semillas (Python, NumPy, PyTorch) para que los resultados se repitan.
 def set_seed(seed: int = SEED) -> None:
     """Fija las semillas de Python, NumPy y PyTorch (si está instalado)."""
     os.environ["PYTHONHASHSEED"] = str(seed)

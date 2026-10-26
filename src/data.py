@@ -12,16 +12,19 @@ from src.utils import RAW_LOANS_CSV
 DATE_COLUMNS = ["issue_d", "earliest_cr_line", "last_pymnt_d", "next_pymnt_d", "last_credit_pull_d"]
 
 
+# Lee loan.csv sin modificar nada.
 def load_raw(path: Path = RAW_LOANS_CSV, nrows: int | None = None) -> pd.DataFrame:
     """Lee loan.csv tal como viene de Kaggle."""
     return pd.read_csv(path, nrows=nrows, low_memory=False)
 
 
+# Convierte fechas tipo 'Dec-2011' a datetime.
 def _parse_month_year(s: pd.Series) -> pd.Series:
     # Las fechas vienen como "Dec-2011"
     return pd.to_datetime(s, format="%b-%Y", errors="coerce")
 
 
+# Convierte la antigüedad laboral en texto a años (0 a 10).
 def _parse_emp_length(s: pd.Series) -> pd.Series:
     # "< 1 year" -> 0, "1 year" -> 1, ..., "10+ years" -> 10, "n/a" -> NaN
     s = s.astype("string").str.strip()
@@ -30,12 +33,14 @@ def _parse_emp_length(s: pd.Series) -> pd.Series:
     return out
 
 
+# Convierte '12.5%' a 12.5 (número).
 def _parse_percent(s: pd.Series) -> pd.Series:
     if pd.api.types.is_numeric_dtype(s):
         return s.astype(float)
     return pd.to_numeric(s.astype("string").str.rstrip("%").str.strip(), errors="coerce")
 
 
+# Pasa las columnas de texto a tipos numéricos/fecha y calcula la antigüedad crediticia.
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Convierte fechas, plazo, antigüedad laboral y porcentajes a numérico."""
     df = df.copy()

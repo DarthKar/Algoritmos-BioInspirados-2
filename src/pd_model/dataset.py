@@ -27,6 +27,7 @@ DEFAULT_SPLITS = {
 ID_COLUMNS = ["id", "issue_d", "loan_status", "target", "split"]
 
 
+# Construye el dataset de la Parte 1 desde loan.csv: target, muestra, limpieza y partición.
 def build_pd_dataset(
     mode: str = "matured",
     terms: tuple[int, ...] | None = None,
@@ -68,10 +69,12 @@ def build_pd_dataset(
     return df, report
 
 
+# Ruta del parquet procesado para un modo de muestra.
 def dataset_path(mode: str) -> Path:
     return DATA_PROCESSED / f"pd_{mode}.parquet"
 
 
+# Guarda el dataset procesado (parquet) y su reporte de conteos (json).
 def save_pd_dataset(df: pd.DataFrame, report: dict, mode: str) -> Path:
     path = dataset_path(mode)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -80,10 +83,12 @@ def save_pd_dataset(df: pd.DataFrame, report: dict, mode: str) -> Path:
     return path
 
 
+# Lee el dataset procesado ya guardado.
 def load_pd_dataset(mode: str = "matured") -> pd.DataFrame:
     return pd.read_parquet(dataset_path(mode))
 
 
+# Ajusta el preprocesador con train y devuelve X, y, ids por partición (igual para LR y MLP).
 def make_design_matrices(
     df: pd.DataFrame,
     lc_features: tuple[str, ...] = DEFAULT_LC_FEATURES,

@@ -14,6 +14,7 @@ GRID = "#e1e0d9"
 AXIS = "#c3c2b7"
 
 
+# Aplica el estilo común (colores, fuentes, rejilla) a todas las figuras.
 def apply_style() -> None:
     plt.rcParams.update({
         "figure.facecolor": SURFACE,
