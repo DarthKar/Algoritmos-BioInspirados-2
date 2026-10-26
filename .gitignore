@@ -1,7 +1,18 @@
+# Archivos locales y credenciales
 .venv/
+venv/
 __pycache__/
 *.pyc
 .vscode/
-
-# Datos originales de Kaggle (no se versionan)
+.idea/
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+# Archivos temporales
+.pytest_cache/
+*.log
+# Datos originales de Kaggle: evitar subirlos accidentalmente
 data/raw/
+# Resultados de comprobación locales (regenerables)
+results/verificacion_*.csv
