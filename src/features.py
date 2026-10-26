@@ -158,7 +158,7 @@ def build_preprocessor(
 
     categorical_pipeline = Pipeline([
         ("impute", SimpleImputer(strategy="constant", fill_value="missing")),
-        ("onehot", OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=min_category_frequency, sparse_output=False)),
+        ("onehot", OneHotEncoder(drop="first", handle_unknown="infrequent_if_exist", min_frequency=min_category_frequency, sparse_output=False)),
     ])
 
     transformers = []
