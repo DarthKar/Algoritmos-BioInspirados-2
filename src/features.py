@@ -15,6 +15,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer, OneHotEncoder, StandardScaler
+from sklearn.base import BaseEstimator, TransformerMixin
 
 # Información que solo existe después de la originación (pagos, saldos, recuperaciones)
 POST_ORIGINATION = [
@@ -51,6 +52,7 @@ SPARSE_RECENT = [
 REPLACED = [
     "earliest_cr_line",          # -> credit_history_months
     "mths_since_last_record",    # 95 % vacío; la información está en pub_rec
+    "revol_bal",                 # colineal exacta: revol_limit = revol_bal / (revol_util/100)
 ]
 
 # Evaluación de riesgo de la propia Lending Club. Para el inversionista es
@@ -66,7 +68,9 @@ GEOGRAPHIC = ["addr_state"]
 TARGET_SOURCE = ["loan_status", "target", "split"]
 DATE_FEATURES = ["issue_d"]  # se usa para particionar, no como predictor
 
-LOG_FEATURES = ["annual_inc", "revol_bal", "revol_limit"]
+LOG_FEATURES = ["annual_inc", "revol_limit"]
+
+WINSOR_FEATURES = ["revol_util"]   # las de LOG_FEATURES también se topan
 
 STATIC_EXCLUDED = POST_ORIGINATION + NON_PREDICTIVE + ERA_DEPENDENT + SPARSE_RECENT + REPLACED + TARGET_SOURCE + DATE_FEATURES
 
@@ -75,6 +79,23 @@ def _safe_log1p(x):
     # Función de módulo (no lambda) para que el preprocesador se pueda guardar con joblib
     return np.log1p(np.clip(x, 0, None))
 
+class Winsorizer(BaseEstimator, TransformerMixin):
+    """Topa en los percentiles de entrenamiento (se ajusta solo con train)."""
+
+    def __init__(self, lower=0.01, upper=0.99):
+        self.lower, self.upper = lower, upper
+
+    def fit(self, X, y=None):
+        X = np.asarray(X, dtype=float)
+        self.lo_ = np.nanquantile(X, self.lower, axis=0)
+        self.hi_ = np.nanquantile(X, self.upper, axis=0)
+        return self
+
+    def transform(self, X):
+        return np.clip(np.asarray(X, dtype=float), self.lo_, self.hi_)
+
+    def get_feature_names_out(self, input_features=None):
+        return np.asarray(input_features, dtype=object)
 
 def select_features(
     df: pd.DataFrame,
@@ -111,18 +132,24 @@ def build_preprocessor(
     numeric: list[str],
     categorical: list[str],
     log_features: list[str] = LOG_FEATURES,
+    winsor_features: list[str] = WINSOR_FEATURES,
     min_category_frequency: float = 0.005,
 ) -> ColumnTransformer:
-    """Imputación + log1p en variables sesgadas + estandarización; one-hot en categóricas.
+    """Imputación + log1p y/o topes en variables extremas + estandarización; one-hot en categóricas.
 
     El mismo preprocesador se usa para la regresión logística y para la red, de
     acuerdo con la regla de comparación justa.
     """
     logged = [c for c in numeric if c in log_features]
-    plain = [c for c in numeric if c not in log_features]
+    winsor = [c for c in numeric if c in winsor_features and c not in logged]
+    plain = [c for c in numeric if c not in logged and c not in winsor]
 
-    def numeric_pipeline(log: bool) -> Pipeline:
-        steps = [("log", FunctionTransformer(_safe_log1p, feature_names_out="one-to-one"))] if log else []
+    def numeric_pipeline(log: bool, clip: bool) -> Pipeline:
+        steps = []
+        if log:
+            steps.append(("log", FunctionTransformer(_safe_log1p, feature_names_out="one-to-one")))
+        if clip:
+            steps.append(("winsor", Winsorizer()))
         steps += [
             ("impute", SimpleImputer(strategy="median", add_indicator=True)),
             ("scale", StandardScaler()),
@@ -131,14 +158,16 @@ def build_preprocessor(
 
     categorical_pipeline = Pipeline([
         ("impute", SimpleImputer(strategy="constant", fill_value="missing")),
-        ("onehot", OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=min_category_frequency, sparse_output=False)),
+        ("onehot", OneHotEncoder(drop="first", handle_unknown="infrequent_if_exist", min_frequency=min_category_frequency, sparse_output=False)),
     ])
 
     transformers = []
     if plain:
-        transformers.append(("num", numeric_pipeline(log=False), plain))
+        transformers.append(("num", numeric_pipeline(False, False), plain))
+    if winsor:
+        transformers.append(("num_win", numeric_pipeline(False, True), winsor))
     if logged:
-        transformers.append(("num_log", numeric_pipeline(log=True), logged))
+        transformers.append(("num_log", numeric_pipeline(True, True), logged))
     if categorical:
         transformers.append(("cat", categorical_pipeline, categorical))
     return ColumnTransformer(transformers, verbose_feature_names_out=False)
