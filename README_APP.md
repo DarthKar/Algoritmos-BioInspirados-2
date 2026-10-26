@@ -8,11 +8,11 @@ Se recomienda Python 3.12 o 3.13. Desde la raíz del repositorio:
 python -m venv .venv
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 # Linux/macOS: source .venv/bin/activate
-python -m pip install -r requirements_app.txt
+python -m pip install -r requirements-app.txt
 streamlit run app.py
 ```
 
-El modelo se carga desde `models/pd_logistic.joblib`. **No se reentrena**. El objeto `joblib` y el preprocesamiento deben provenir de código confiable; no cargues archivos desconocidos. Versiones del entorno de despliegue deben coincidir con las usadas para entrenar/serializar los modelos.
+La aplicación permite elegir entre `models/pd_logistic.joblib` y la red neuronal `models/pd_mlp.pt` con `models/pd_mlp_preprocessor.joblib`. **No se reentrena**. El objeto `joblib` y el preprocesamiento deben provenir de código confiable; no cargues archivos desconocidos. Versiones del entorno de despliegue deben coincidir con las usadas para entrenar/serializar los modelos.
 
 ## Publicar
 
@@ -49,3 +49,10 @@ La scorecard se calcula con las odds `P(bueno)/P(malo)` y `PDO` configurable. El
 - Cambiar parámetros de scorecard sin modificar código y comprobar el nuevo puntaje.
 - Comparar un escenario modificado.
 - Verificar enlaces al blog y al video y el despliegue público.
+## Integración de la red neuronal
+
+Se añadió el adaptador `src/pd_model/adapter.py`. Permite ejecutar inferencias con la MLP de PyTorch usando el preprocesador exacto guardado al entrenarla, sin entrenar nuevamente. Su entrada se deriva de `preprocessor.transformers_`, la probabilidad corresponde a la clase 1 (incumplimiento), y se convierte al puntaje mediante la misma fórmula de scorecard que el modelo logístico. El percentil se calcula exclusivamente con las predicciones históricas del modelo seleccionado, evitando mezclar distribuciones.
+
+Para reemplazar el modelo tras un nuevo entrenamiento, actualizar `models/pd_mlp.pt`, `models/pd_mlp_preprocessor.joblib` y `results/pd_mlp_predicciones.parquet` conjuntamente; verificar la compatibilidad de versiones y dimensiones. Si el modelo cambia de arquitectura o de formato de guardado, modificar el adaptador en lugar de `app.py`.
+
+Los modelos son históricos y se presentan como ejercicios académicos, no herramientas para aprobar o denegar créditos.

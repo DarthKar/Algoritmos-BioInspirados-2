@@ -11,6 +11,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))  # Necesario para deserializar src.features._safe_log1p
 from src.pd_model.scorecard import ScorecardParams, prob_to_score
+from src.pd_model.adapter import load_registered_model
 
 st.set_page_config(page_title="Simulador de riesgo crediticio", page_icon="📊", layout="wide")
 
@@ -33,6 +34,8 @@ def predictors(model):
     if hasattr(model, "named_steps") and "preprocessor" in model.named_steps:
         pre = model.named_steps["preprocessor"]
         return list(dict.fromkeys(col for name, _, cols in pre.transformers_ if name != "remainder" and name != "drop" for col in cols))
+    if hasattr(model, "input_columns"):
+        return list(model.input_columns)
     if hasattr(model, "feature_names_in_"):
         return list(model.feature_names_in_)
     raise ValueError("El modelo debe incluir un preprocesador sklearn con columnas identificables.")
@@ -103,10 +106,10 @@ def main():
         scorecfg = cfg.get("scorecard", {})
         with st.expander("Parámetros de scorecard"):
             base_score = st.number_input("Puntaje base", value=float(scorecfg.get("base_score", 600)))
-            base_odds = st.number_input("Odds buenos/malos de referencia", min_value=0.01, value=float(scorecfg.get("base_odds", 50)))
+            base_odds = st.number_input("Odds buenos/malos de referencia", min_value=0.01, value=float(scorecfg.get("base_odds", 7)))
             pdo = st.number_input("PDO: puntos para duplicar odds", min_value=0.01, value=float(scorecfg.get("pdo", 20)))
         params = ScorecardParams(base_score, base_odds, pdo)
-        st.caption("Un puntaje más alto representa un riesgo estimado menor.")
+        st.caption("Un puntaje más alto representa un riesgo estimado menor. Misma escala de scorecard para ambos modelos, no puntos atribuibles a variables individuales de la red neuronal.")
         if cfg.get("report_url"):
             st.link_button("📄 Reporte técnico", cfg["report_url"])
         else:
@@ -116,7 +119,7 @@ def main():
         else:
             st.caption("Video promocional: enlace pendiente")
     try:
-        model = load_model(str(ROOT / mcfg["path"]))
+        model = load_registered_model(str(ROOT / mcfg["path"]), mcfg.get("type", "sklearn"), str(ROOT / mcfg["preprocessor_path"]) if mcfg.get("preprocessor_path") else None)
         cols = predictors(model)
     except Exception as exc:
         st.error(f"No fue posible cargar el modelo {choice}: {exc}")
