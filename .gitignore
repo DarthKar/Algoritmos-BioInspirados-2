@@ -16,3 +16,5 @@ __pycache__/
 data/raw/
 # Resultados de comprobación locales (regenerables)
 results/verificacion_*.csv
+# Salidas del modo demostración (python run.py --demo)
+demo/

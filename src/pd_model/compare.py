@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
 
-from src.utils import RESULTS_DIR, SEED
+from src.utils import RESULTS_DIR, SEED, records, update_analysis
 
 METRICS = ["auc", "gini", "ks", "brier", "log_loss"]
 
@@ -15,7 +15,7 @@ def _load(name: str) -> dict:
     return json.loads((RESULTS_DIR / f"{name}_metricas.json").read_text(encoding="utf-8"))
 
 
-# Tabla LR vs MLP contra la tasa base, costos y bootstrap de la diferencia en test.
+# Tabla LR vs MLP contra la tasa base, costos y bootstrap de la diferencia en test (en pd_analisis.json).
 def run_comparison(n_boot: int = 1000, save: bool = True) -> dict:
     lr, mlp = _load("pd_logistic"), _load("pd_mlp")
     seeds = {r["metrica"]: r for r in mlp["semillas"]["resumen_test"]}
@@ -36,16 +36,16 @@ def run_comparison(n_boot: int = 1000, save: bool = True) -> dict:
         "metrica": METRICS,
         "referencia_tasa_base": [ref[m] for m in METRICS],
         "logistica": [lr["metricas"]["test"][m] for m in METRICS],
-        "mlp_media_30_semillas": [seeds[m]["mean"] for m in METRICS],
+        "mlp_media_semillas": [seeds[m]["mean"] for m in METRICS],
         "mlp_std_semillas": [seeds[m]["std"] for m in METRICS],
         "mlp_modelo_guardado": [mlp["metricas_modelo_guardado"]["test"][m] for m in METRICS],
     })
-    for col in ("logistica", "mlp_media_30_semillas"):
+    for col in ("logistica", "mlp_media_semillas"):
         metrics[f"mejora_brier_vs_base_{col}"] = np.nan
     brier_i = METRICS.index("brier")
     base_b = ref["brier"]
     metrics.loc[brier_i, "mejora_brier_vs_base_logistica"] = 1 - metrics.loc[brier_i, "logistica"] / base_b
-    metrics.loc[brier_i, "mejora_brier_vs_base_mlp_media_30_semillas"] = 1 - metrics.loc[brier_i, "mlp_media_30_semillas"] / base_b
+    metrics.loc[brier_i, "mejora_brier_vs_base_mlp_media_semillas"] = 1 - metrics.loc[brier_i, "mlp_media_semillas"] / base_b
 
     costs = pd.DataFrame([
         {"concepto": "parametros", "logistica": lr["n_parametros"], "mlp": mlp["n_parametros"]},
@@ -72,9 +72,7 @@ def run_comparison(n_boot: int = 1000, save: bool = True) -> dict:
     }
 
     if save:
-        metrics.to_csv(RESULTS_DIR / "pd_comparacion_metricas.csv", index=False)
-        costs.to_csv(RESULTS_DIR / "pd_comparacion_costos.csv", index=False)
-        (RESULTS_DIR / "pd_comparacion_bootstrap.json").write_text(json.dumps(boot, indent=2, ensure_ascii=False), encoding="utf-8")
+        update_analysis("comparacion", {"metricas_test": records(metrics), "costos": records(costs), "bootstrap": boot})
     print(metrics.round(4).to_string(index=False))
     print(costs.to_string(index=False))
     print(json.dumps(boot, indent=2, ensure_ascii=False))

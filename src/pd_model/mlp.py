@@ -24,7 +24,7 @@ from src.features import DEFAULT_LC_FEATURES
 from src.pd_model.dataset import load_pd_dataset, make_design_matrices
 from src.pd_model.metrics import calibration_in_the_large, calibration_table, evaluate, summarize_seeds
 from src.pd_model.models import MLP, MLPConfig, n_trainable_params, predict_proba, train_mlp
-from src.utils import MODELS_DIR, RESULTS_DIR, SEED, set_seed
+from src.utils import MODELS_DIR, RESULTS_DIR, SEED, records, set_seed
 
 SEARCH_SPACE = {
     "n_layers": [1, 2, 3],
@@ -50,6 +50,9 @@ class MLPExperimentConfig:
     patience: int = 8
     seed: int = SEED
     name: str = "pd_mlp"
+    # Si se da (p. ej. {"hidden": [64, 32], "lr": 0.01}), se salta la búsqueda y se entrena
+    # esa configuración; lo que no se indique toma el valor por defecto de MLPConfig.
+    fixed: dict | None = None
 
 
 # Sortea una configuración aleatoria del espacio de búsqueda.
@@ -111,7 +114,7 @@ def regenerate_histories(name: str = "pd_mlp") -> pd.DataFrame:
     return histories
 
 
-# Búsqueda aleatoria + 30 semillas de la mejor configuración; guarda modelo y resultados.
+# Búsqueda aleatoria (o configuración fija) + n semillas de la elegida; guarda modelo y resultados.
 def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: bool = True, verbose: bool = True) -> dict:
     set_seed(cfg.seed)
     start = time.perf_counter()
@@ -119,9 +122,9 @@ def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: b
     X, y = data["X"], data["y"]
     rng = np.random.default_rng(cfg.seed)
 
-    # 1. Búsqueda aleatoria
+    # 1. Búsqueda aleatoria (se omite si hay configuración fija)
     trials = []
-    for i in range(cfg.n_trials):
+    for i in range(0 if cfg.fixed else cfg.n_trials):
         mcfg = sample_config(rng, cfg.max_epochs, cfg.patience, cfg.seed)
         model, hist = train_mlp(X["train"], y["train"], X["val"], y["val"], mcfg)
         p_val = predict_proba(model, X["val"])
@@ -131,10 +134,14 @@ def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: b
             t = trials[-1]
             print(f"[{i + 1}/{cfg.n_trials}] {t['hidden']} {t['activation']} {t['optimizer']} lr={t['lr']:.1e} "
                   f"drop={t['dropout']} l2={t['l2']:.1e} -> val_logloss={t['val_log_loss']:.4f} auc={t['val_auc']:.4f} ({t['segundos']:.0f}s)", flush=True)
-    trials_df = pd.DataFrame(trials).sort_values("val_log_loss")
     search_seconds = time.perf_counter() - start
-    best = json.loads(trials_df.iloc[[0]].to_json(orient="records"))[0]  # tipos nativos de Python
-    best_cfg = MLPConfig(**{k: best[k] for k in asdict(MLPConfig()).keys()})
+    if cfg.fixed:
+        trials_df = pd.DataFrame()
+        best_cfg = MLPConfig(**{**asdict(MLPConfig()), "max_epochs": cfg.max_epochs, "patience": cfg.patience, **cfg.fixed})
+    else:
+        trials_df = pd.DataFrame(trials).sort_values("val_log_loss")
+        best = json.loads(trials_df.iloc[[0]].to_json(orient="records"))[0]  # tipos nativos de Python
+        best_cfg = MLPConfig(**{k: best[k] for k in asdict(MLPConfig()).keys()})
 
     # 2. Configuración final con varias semillas
     runs_df, histories_df, best_run = train_seeds(best_cfg, X, y, cfg.n_seeds, verbose)
@@ -149,7 +156,8 @@ def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: b
         "n_columnas_X": len(data["feature_names"]),
         "mejor_config": asdict(best_cfg),
         "n_parametros": n_trainable_params(best_run["model"]),
-        "busqueda": {"metodo": "búsqueda aleatoria", "n_configuraciones": cfg.n_trials,
+        "busqueda": {"metodo": "configuración fija" if cfg.fixed else "búsqueda aleatoria",
+                     "n_configuraciones": 0 if cfg.fixed else cfg.n_trials,
                      "criterio": "log-loss en validación", "segundos": search_seconds},
         "semillas": {"n": cfg.n_seeds, "resumen_test": seed_summary.reset_index(names="metrica").to_dict("records"),
                      "semilla_guardada": best_run["seed"], "segundos": float(runs_df["segundos"].sum())},
@@ -162,7 +170,7 @@ def run_mlp_experiment(cfg: MLPExperimentConfig = MLPExperimentConfig(), save: b
     return results
 
 
-# Guarda red, preprocesador, predicciones, búsqueda, semillas, historial y métricas.
+# Guarda red, preprocesador, predicciones, historial de pérdidas y un JSON con métricas, búsqueda y semillas.
 def _save(cfg, data, best_run, trials_df, runs_df, histories_df, results) -> None:
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -175,8 +183,8 @@ def _save(cfg, data, best_run, trials_df, runs_df, histories_df, results) -> Non
     preds = pd.concat([pd.DataFrame({"id": data["ids"][s], "split": s, "target": data["y"][s], "pd": p})
                        for s, p in best_run["probs"].items()], ignore_index=True)
     preds.to_parquet(RESULTS_DIR / f"{cfg.name}_predicciones.parquet", index=False)
-    trials_df.to_csv(RESULTS_DIR / f"{cfg.name}_busqueda.csv", index=False)
-    runs_df.to_csv(RESULTS_DIR / f"{cfg.name}_semillas.csv", index=False)
+    results["busqueda"]["configuraciones"] = records(trials_df)
+    results["semillas"]["corridas"] = records(runs_df)
     histories_df.to_csv(RESULTS_DIR / f"{cfg.name}_historial.csv", index=False)
     (RESULTS_DIR / f"{cfg.name}_metricas.json").write_text(json.dumps(results, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
 

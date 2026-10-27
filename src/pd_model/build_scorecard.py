@@ -7,10 +7,10 @@ from sklearn.metrics import roc_auc_score
 
 from src.pd_model.dataset import load_pd_dataset
 from src.pd_model.scorecard import ScorecardParams, prob_to_score, scorecard_table
-from src.utils import MODELS_DIR, RESULTS_DIR
+from src.utils import MODELS_DIR, records, update_analysis
 
 
-# Scorecard final desde la logística: puntajes, tabla de puntos y bandas por decil.
+# Scorecard final desde la logística: puntajes, tabla de puntos y bandas por decil (en pd_analisis.json).
 def run_scorecard(params: ScorecardParams = ScorecardParams(), name: str = "pd_logistic",
                   mode: str = "matured", save: bool = True) -> dict:
     pipe = joblib.load(MODELS_DIR / f"{name}.joblib")
@@ -52,11 +52,7 @@ def run_scorecard(params: ScorecardParams = ScorecardParams(), name: str = "pd_l
     }
 
     if save:
-        RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-        table.to_csv(RESULTS_DIR / "pd_scorecard_tabla.csv", index=False)
-        bands.to_csv(RESULTS_DIR / "pd_scorecard_bandas.csv", index=False)
-        (RESULTS_DIR / "pd_scorecard_resumen.json").write_text(
-            json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+        update_analysis("scorecard", {**summary, "tabla": records(table), "bandas_test": records(bands)})
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     print(table.head(12).to_string())
     print(bands.to_string())

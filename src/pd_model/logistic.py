@@ -18,7 +18,7 @@ from src.features import DEFAULT_LC_FEATURES
 from src.pd_model.dataset import load_pd_dataset, make_design_matrices
 from src.pd_model.metrics import calibration_in_the_large, calibration_table, evaluate
 from src.pd_model.models import fit_logistic, logistic_n_params
-from src.utils import MODELS_DIR, RESULTS_DIR, SEED, set_seed
+from src.utils import MODELS_DIR, RESULTS_DIR, SEED, records, set_seed
 
 
 # Parámetros del experimento de la logística (rejilla de C, variables, semilla).
@@ -82,7 +82,7 @@ def coefficient_table(model, feature_names: list[str]) -> pd.DataFrame:
     return pd.concat([intercept, coef], ignore_index=True)
 
 
-# Guarda modelo, predicciones, coeficientes y métricas en disco.
+# Guarda modelo (con preprocesador), predicciones y un JSON con métricas y coeficientes.
 def _save(cfg: LogisticConfig, data: dict, model, probs: dict, results: dict) -> None:
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -94,5 +94,5 @@ def _save(cfg: LogisticConfig, data: dict, model, probs: dict, results: dict) ->
         pd.DataFrame({"id": data["ids"][s], "split": s, "target": data["y"][s], "pd": probs[s]}) for s in probs
     ], ignore_index=True)
     preds.to_parquet(RESULTS_DIR / f"{cfg.name}_predicciones.parquet", index=False)
-    coefficient_table(model, data["feature_names"]).to_csv(RESULTS_DIR / f"{cfg.name}_coeficientes.csv", index=False)
+    results["coeficientes"] = records(coefficient_table(model, data["feature_names"]))
     (RESULTS_DIR / f"{cfg.name}_metricas.json").write_text(json.dumps(results, indent=2, ensure_ascii=False, default=str), encoding="utf-8")

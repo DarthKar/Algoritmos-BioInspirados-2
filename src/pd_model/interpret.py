@@ -8,7 +8,7 @@ import torch
 
 from src.pd_model.dataset import load_pd_dataset
 from src.pd_model.mlp import load_mlp
-from src.utils import FIGURES_DIR, MODELS_DIR, RESULTS_DIR, SEED
+from src.utils import FIGURES_DIR, MODELS_DIR, SEED, records, update_analysis
 
 
 # Nombre de la variable original a la que pertenece una columna one-hot o indicador.
@@ -44,8 +44,9 @@ def run_interpretability(n_background: int = 100, n_explain: int = 300, nsamples
     names = list(pre_mlp.get_feature_names_out())
     categorical = next((cols for n, _, cols in pre_mlp.transformers_ if n == "cat"), [])
 
-    Z_bg = pre_mlp.transform(train.iloc[rng.choice(len(train), n_background, replace=False)])
-    Z_ex = pre_mlp.transform(test.iloc[rng.choice(len(test), n_explain, replace=False)])
+    bg_rows = train.iloc[rng.choice(len(train), n_background, replace=False)]
+    ex_rows = test.iloc[rng.choice(len(test), n_explain, replace=False)]
+    Z_bg, Z_ex = pre_mlp.transform(bg_rows), pre_mlp.transform(ex_rows)
 
     # MLP: SHAP sobre el logit (KernelExplainer, agnóstico al modelo)
     f = _logit_fn(mlp)
@@ -55,8 +56,7 @@ def run_interpretability(n_background: int = 100, n_explain: int = 300, nsamples
     print(f"Aditividad SHAP (error máximo en logit): {err:.2e}")
 
     # Logística: SHAP exacto (modelo lineal) con el mismo fondo y las mismas filas
-    Zl_bg = pre_lr.transform(train.iloc[rng.choice(len(train), n_background, replace=False)])
-    Zl_ex = pre_lr.transform(test.iloc[rng.choice(len(test), n_explain, replace=False)])
+    Zl_bg, Zl_ex = pre_lr.transform(bg_rows), pre_lr.transform(ex_rows)
     sv_lr = lr.coef_.ravel() * (Zl_ex - Zl_bg.mean(axis=0))
 
     groups = [_group(n, categorical) for n in names]
@@ -73,11 +73,10 @@ def run_interpretability(n_background: int = 100, n_explain: int = 300, nsamples
     out.index.name = "variable"
 
     if save:
-        RESULTS_DIR.mkdir(parents=True, exist_ok=True)
         FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-        out.to_csv(RESULTS_DIR / "pd_shap_importancia.csv")
+        update_analysis("shap_importancia", records(out.reset_index()))
         shap.summary_plot(sv_mlp, Z_ex, feature_names=names, max_display=15, show=False)
-        plt.title("SHAP sobre el logit del MLP (test, 300 clientes)")
+        plt.title(f"SHAP sobre el logit del MLP (test, {n_explain} clientes)")
         plt.tight_layout()
         plt.savefig(FIGURES_DIR / "pd_mlp_shap.png", dpi=150)
         plt.close()

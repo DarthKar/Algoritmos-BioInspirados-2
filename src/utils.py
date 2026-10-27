@@ -1,4 +1,5 @@
-"""Rutas del proyecto y control de semillas."""
+"""Rutas del proyecto, archivo único de análisis y control de semillas."""
+import json
 import os
 import random
 from pathlib import Path
@@ -8,9 +9,14 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 DATA_RAW = ROOT / "data" / "raw"
 DATA_PROCESSED = ROOT / "data" / "processed"
-MODELS_DIR = ROOT / "models"
-FIGURES_DIR = ROOT / "figures"
-RESULTS_DIR = ROOT / "results"
+
+# Carpeta de salida de modelos, figuras y resultados. El modo demo la cambia (PD_SALIDA=demo)
+# para no sobrescribir los resultados completos.
+OUTPUT_ROOT = ROOT / os.environ.get("PD_SALIDA", "")
+MODELS_DIR = OUTPUT_ROOT / "models"
+FIGURES_DIR = OUTPUT_ROOT / "figures"
+RESULTS_DIR = OUTPUT_ROOT / "results"
+ANALYSIS_FILE = RESULTS_DIR / "pd_analisis.json"
 
 RAW_LOANS_CSV = DATA_RAW / "loan.csv"
 DATA_DICTIONARY = DATA_RAW / "LCDataDictionary.xlsx"
@@ -31,3 +37,24 @@ def set_seed(seed: int = SEED) -> None:
         torch.use_deterministic_algorithms(True, warn_only=True)
     except ImportError:
         pass
+
+
+# Convierte un DataFrame en lista de dicts con tipos nativos (apto para JSON).
+def records(df) -> list[dict]:
+    return json.loads(df.to_json(orient="records", force_ascii=False))
+
+
+# Lee una sección de results/pd_analisis.json (EDA, SHAP, comparación, scorecard...).
+def read_analysis(section: str):
+    data = json.loads(ANALYSIS_FILE.read_text(encoding="utf-8")) if ANALYSIS_FILE.exists() else {}
+    if section not in data:
+        raise KeyError(f"Falta la sección '{section}' en {ANALYSIS_FILE}; ejecute antes esa etapa.")
+    return data[section]
+
+
+# Escribe o reemplaza una sección de results/pd_analisis.json sin tocar las demás.
+def update_analysis(section: str, value) -> None:
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    data = json.loads(ANALYSIS_FILE.read_text(encoding="utf-8")) if ANALYSIS_FILE.exists() else {}
+    data[section] = value
+    ANALYSIS_FILE.write_text(json.dumps(data, indent=2, ensure_ascii=False, default=str), encoding="utf-8")

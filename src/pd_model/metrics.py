@@ -41,11 +41,11 @@ def calibration_in_the_large(y_true, y_prob) -> dict[str, float]:
 def summarize_seeds(results: list[dict[str, float]]) -> pd.DataFrame:
     """Media, desviación estándar, mejor y peor de cada métrica entre semillas.
 
-    Para el Brier "mejor" es el mínimo; para el resto, el máximo.
+    Para Brier y log-loss "mejor" es el mínimo; para el resto, el máximo.
     """
     df = pd.DataFrame(results)
     summary = df.agg(["mean", "std", "max", "min"]).T
-    lower_is_better = summary.index.isin(["brier"])
+    lower_is_better = summary.index.isin(["brier", "log_loss"])
     summary["mejor"] = np.where(lower_is_better, summary["min"], summary["max"])
     summary["peor"] = np.where(lower_is_better, summary["max"], summary["min"])
     return summary[["mean", "std", "mejor", "peor"]]

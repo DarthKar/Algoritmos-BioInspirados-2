@@ -1,6 +1,4 @@
 """Análisis descriptivo de la Parte 1: hipótesis explícitas contrastadas SOLO con entrenamiento."""
-import json
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -8,12 +6,13 @@ from scipy.stats import mannwhitneyu
 from sklearn.metrics import roc_auc_score
 
 from src.pd_model.dataset import load_pd_dataset
-from src.utils import FIGURES_DIR, RESULTS_DIR
+from src.plotting import MUTED, SERIES, apply_style
+from src.utils import FIGURES_DIR, records, update_analysis
 
 ALPHA = 0.01          # nivel de significancia (Mann-Whitney)
 MIN_EFFECT = 0.01     # variables continuas: |AUC univariado - 0,5|
 MIN_DIFF_BIN = 0.01   # indicadores sí/no: diferencia absoluta de tasas de malos (1 punto porcentual)
-FECHA_DESCARGA = "AAAA-MM-DD"   # COMPLETAR: fecha en que se descargó loan.csv de Kaggle
+FECHA_DESCARGA = "2026-10-24"   # fecha en que se descargó loan.csv de Kaggle
 
 
 # Lista de hipótesis: variable, dirección esperada del riesgo y tipo (numérica o sí/no).
@@ -63,7 +62,7 @@ def contrast(x: pd.Series, y: pd.Series, expected: int, kind: str) -> dict:
             "labels": labels, "rates": rates}
 
 
-# Evalúa todas las hipótesis, guarda la tabla, el resumen de datos y las figuras.
+# Evalúa todas las hipótesis; guarda datos e hipótesis en pd_analisis.json y las figuras.
 def run_eda(mode: str = "matured", save: bool = True) -> pd.DataFrame:
     df = load_pd_dataset(mode)
     train = df[df["split"] == "train"]
@@ -86,16 +85,18 @@ def run_eda(mode: str = "matured", save: bool = True) -> pd.DataFrame:
     }
 
     if save:
-        RESULTS_DIR.mkdir(parents=True, exist_ok=True)
         FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-        table.drop(columns=["_labels", "_rates"]).to_csv(RESULTS_DIR / "pd_eda_hipotesis.csv", index=False)
-        (RESULTS_DIR / "pd_eda_resumen_datos.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+        apply_style()
+        update_analysis("datos", summary)
+        update_analysis("eda_hipotesis", records(table.drop(columns=["_labels", "_rates"])))
 
         fig, axes = plt.subplots(3, 4, figsize=(16, 9), sharey=True)
         base = float(y.mean())
         for ax, (_, r) in zip(axes.ravel(), table.iterrows()):
-            ax.bar(r["_labels"], r["_rates"], color="#4c72b0")
-            ax.axhline(base, color="gray", ls="--", lw=1)
+            ax.bar(r["_labels"], r["_rates"], color=SERIES[0])
+            ax.axhline(base, color=MUTED, ls="--", lw=1)
+            ax.set_axisbelow(True)
+            ax.grid(axis="x", visible=False)
             ax.set_title(f"{r['id']}: {r['veredicto']}", fontsize=9)
         fig.supylabel("tasa de malos (train)")
         fig.suptitle("Tasa de malos por grupo (quintiles o sí/no); línea punteada = tasa global de train")
@@ -106,7 +107,7 @@ def run_eda(mode: str = "matured", save: bool = True) -> pd.DataFrame:
         q = df.groupby(df["issue_d"].dt.to_period("Q"))["target"].agg(["mean", "size"])
         q = q[q["size"] >= 100]   # se omiten trimestres con muy pocos créditos (p. ej. 2007Q2)
         fig, ax = plt.subplots(figsize=(9, 4))
-        ax.plot(q.index.astype(str), q["mean"], marker="o")
+        ax.plot(q.index.astype(str), q["mean"], marker="o", color=SERIES[0])
         ax.set_ylabel("tasa de malos")
         ax.set_title("Tasa de malos por trimestre de originación (todas las particiones)")
         ax.tick_params(axis="x", rotation=90)
@@ -114,7 +115,7 @@ def run_eda(mode: str = "matured", save: bool = True) -> pd.DataFrame:
         fig.savefig(FIGURES_DIR / "pd_eda_tasa_por_trimestre.png", dpi=150)
         plt.close(fig)
 
-    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    print(summary)
     print(table.drop(columns=["_labels", "_rates", "hipotesis"]).round(4).to_string(index=False))
     return table
 
