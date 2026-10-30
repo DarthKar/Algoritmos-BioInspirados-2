@@ -15,6 +15,6 @@ __pycache__/
 # Datos originales de Kaggle: evitar subirlos accidentalmente
 data/raw/
 # Resultados de comprobación locales (regenerables)
-results/verificacion_*.csv
-# Salidas del modo demostración (python run.py --demo)
-demo/
+parte1/salidas/resultados/verificacion_*.csv
+# Salidas del modo demostración (python parte1/run.py --demo)
+parte1/salidas_demo/

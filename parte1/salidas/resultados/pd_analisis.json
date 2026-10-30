@@ -1,0 +1,1302 @@
+{
+  "datos": {
+    "n_registros": 78302,
+    "n_variables_guardadas": 57,
+    "periodo_originacion": [
+      "2007-06-01",
+      "2012-12-01"
+    ],
+    "particiones": {
+      "train": 49844,
+      "val": 13322,
+      "test": 15136
+    },
+    "tasa_malos": {
+      "train": 0.1343190755156087,
+      "val": 0.14217084521843568,
+      "test": 0.1308139534883721
+    },
+    "fecha_descarga": "2026-10-24"
+  },
+  "eda_hipotesis": [
+    {
+      "id": "H1",
+      "hipotesis": "Peor subcalificación de Lending Club (sub_grade_num alto) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.6447539208,
+      "efecto": 0.1447539208,
+      "p_valor": 0.0,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.0592881787,
+      "tasa_mayor_grupo": 0.2276184268
+    },
+    {
+      "id": "H2",
+      "hipotesis": "Mayor utilización del crédito rotativo (revol_util) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.5719825634,
+      "efecto": 0.0719825634,
+      "p_valor": 4.052990507e-80,
+      "n": 49765,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.0947516026,
+      "tasa_mayor_grupo": 0.1804253603
+    },
+    {
+      "id": "H3",
+      "hipotesis": "Mayor ingreso anual (annual_inc) -> menos riesgo",
+      "direccion_esperada": -1,
+      "direccion_observada": -1,
+      "auc_univariado": 0.4319918366,
+      "efecto": 0.0680081634,
+      "p_valor": 6.097564646e-72,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1799274012,
+      "tasa_mayor_grupo": 0.0983979216
+    },
+    {
+      "id": "H4",
+      "hipotesis": "Más consultas recientes (inq_last_6mths) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.5762757256,
+      "efecto": 0.0762757256,
+      "p_valor": 2.136575224e-103,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1176344028,
+      "tasa_mayor_grupo": 0.2250922509
+    },
+    {
+      "id": "H5",
+      "hipotesis": "Mayor monto del crédito (loan_amnt) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": -1,
+      "auc_univariado": 0.4985816347,
+      "efecto": 0.0014183653,
+      "p_valor": 0.7081681258,
+      "n": 49844,
+      "veredicto": "Sin evidencia suficiente",
+      "tasa_menor_grupo": 0.1408934708,
+      "tasa_mayor_grupo": 0.1402485975
+    },
+    {
+      "id": "H6",
+      "hipotesis": "Mayor endeudamiento sobre ingreso (dti) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.5334584326,
+      "efecto": 0.0334584326,
+      "p_valor": 1.108316325e-18,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1152420082,
+      "tasa_mayor_grupo": 0.1531052473
+    },
+    {
+      "id": "H7",
+      "hipotesis": "Tener moras o registros públicos previos (delinq_2yrs o pub_rec > 0) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.524932878,
+      "efecto": 0.0460547249,
+      "p_valor": 1.02959941e-26,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1275158306,
+      "tasa_mayor_grupo": 0.1735705555
+    },
+    {
+      "id": "H8",
+      "hipotesis": "Historial crediticio más largo (credit_history_months) -> menos riesgo",
+      "direccion_esperada": -1,
+      "direccion_observada": -1,
+      "auc_univariado": 0.4720543458,
+      "efecto": 0.0279456542,
+      "p_valor": 0.0,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1516663341,
+      "tasa_mayor_grupo": 0.1191510864
+    },
+    {
+      "id": "H9",
+      "hipotesis": "No informar antigüedad laboral (emp_length faltante) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.5083243292,
+      "efecto": 0.0679487379,
+      "p_valor": 0.0,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1323246729,
+      "tasa_mayor_grupo": 0.2002734108
+    },
+    {
+      "id": "H10",
+      "hipotesis": "Mayor antigüedad laboral (emp_length) -> menos riesgo",
+      "direccion_esperada": -1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.5010921637,
+      "efecto": 0.0010921637,
+      "p_valor": 0.7759996654,
+      "n": 48381,
+      "veredicto": "Sin evidencia suficiente",
+      "tasa_menor_grupo": 0.1348753379,
+      "tasa_mayor_grupo": 0.1342932883
+    },
+    {
+      "id": "H11",
+      "hipotesis": "Ingreso verificado -> menos riesgo",
+      "direccion_esperada": -1,
+      "direccion_observada": -1,
+      "auc_univariado": 0.4970083777,
+      "efecto": 0.0027975079,
+      "p_valor": 0.3610378801,
+      "n": 49844,
+      "veredicto": "Sin evidencia suficiente",
+      "tasa_menor_grupo": 0.1358190233,
+      "tasa_mayor_grupo": 0.1330215154
+    },
+    {
+      "id": "H12",
+      "hipotesis": "Crédito para pequeño negocio (purpose = small_business) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.5177244001,
+      "efecto": 0.104812739,
+      "p_valor": 3.565475756e-42,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1300209205,
+      "tasa_mayor_grupo": 0.2348336595
+    },
+    {
+      "id": "H13",
+      "hipotesis": "Plazo de 60 meses (term) -> más riesgo",
+      "direccion_esperada": 1,
+      "direccion_observada": 1,
+      "auc_univariado": 0.5264052912,
+      "efecto": 0.0973561396,
+      "p_valor": 1.118901538e-57,
+      "n": 49844,
+      "veredicto": "Confirmada",
+      "tasa_menor_grupo": 0.1277328284,
+      "tasa_mayor_grupo": 0.225088968
+    }
+  ],
+  "shap_importancia": [
+    {
+      "variable": "annual_inc",
+      "mlp_shap_abs": 0.2811044321,
+      "lr_shap_abs": 0.2518058217,
+      "rango_mlp": 1,
+      "rango_lr": 1
+    },
+    {
+      "variable": "sub_grade_num",
+      "mlp_shap_abs": 0.2249566237,
+      "lr_shap_abs": 0.1765255341,
+      "rango_mlp": 2,
+      "rango_lr": 2
+    },
+    {
+      "variable": "inq_last_6mths",
+      "mlp_shap_abs": 0.1503500007,
+      "lr_shap_abs": 0.1184780306,
+      "rango_mlp": 3,
+      "rango_lr": 4
+    },
+    {
+      "variable": "purpose",
+      "mlp_shap_abs": 0.1274130419,
+      "lr_shap_abs": 0.1044479875,
+      "rango_mlp": 4,
+      "rango_lr": 5
+    },
+    {
+      "variable": "revol_util",
+      "mlp_shap_abs": 0.1086915346,
+      "lr_shap_abs": 0.1563594558,
+      "rango_mlp": 5,
+      "rango_lr": 3
+    },
+    {
+      "variable": "loan_amnt",
+      "mlp_shap_abs": 0.1026734211,
+      "lr_shap_abs": 0.0876941424,
+      "rango_mlp": 6,
+      "rango_lr": 7
+    },
+    {
+      "variable": "open_acc",
+      "mlp_shap_abs": 0.0595248381,
+      "lr_shap_abs": 0.0532140687,
+      "rango_mlp": 7,
+      "rango_lr": 9
+    },
+    {
+      "variable": "dti",
+      "mlp_shap_abs": 0.0518288458,
+      "lr_shap_abs": 0.0251306074,
+      "rango_mlp": 8,
+      "rango_lr": 13
+    },
+    {
+      "variable": "mths_since_last_delinq",
+      "mlp_shap_abs": 0.0514541894,
+      "lr_shap_abs": 0.0562181733,
+      "rango_mlp": 9,
+      "rango_lr": 8
+    },
+    {
+      "variable": "credit_history_months",
+      "mlp_shap_abs": 0.0513663571,
+      "lr_shap_abs": 0.0205991461,
+      "rango_mlp": 10,
+      "rango_lr": 15
+    },
+    {
+      "variable": "emp_length",
+      "mlp_shap_abs": 0.0417332761,
+      "lr_shap_abs": 0.0908842059,
+      "rango_mlp": 11,
+      "rango_lr": 6
+    },
+    {
+      "variable": "revol_limit",
+      "mlp_shap_abs": 0.0359287034,
+      "lr_shap_abs": 0.0115009133,
+      "rango_mlp": 12,
+      "rango_lr": 19
+    },
+    {
+      "variable": "delinq_2yrs",
+      "mlp_shap_abs": 0.0259495052,
+      "lr_shap_abs": 0.017220908,
+      "rango_mlp": 13,
+      "rango_lr": 17
+    },
+    {
+      "variable": "home_ownership",
+      "mlp_shap_abs": 0.0193338676,
+      "lr_shap_abs": 0.0266668945,
+      "rango_mlp": 14,
+      "rango_lr": 11
+    },
+    {
+      "variable": "verification_status",
+      "mlp_shap_abs": 0.0133183993,
+      "lr_shap_abs": 0.0256720928,
+      "rango_mlp": 15,
+      "rango_lr": 12
+    },
+    {
+      "variable": "total_acc",
+      "mlp_shap_abs": 0.0067222937,
+      "lr_shap_abs": 0.0124373577,
+      "rango_mlp": 16,
+      "rango_lr": 18
+    },
+    {
+      "variable": "never_delinquent",
+      "mlp_shap_abs": 0.0050207958,
+      "lr_shap_abs": 0.0400151071,
+      "rango_mlp": 17,
+      "rango_lr": 10
+    },
+    {
+      "variable": "pub_rec",
+      "mlp_shap_abs": 0.0036488759,
+      "lr_shap_abs": 0.0209336089,
+      "rango_mlp": 18,
+      "rango_lr": 14
+    },
+    {
+      "variable": "term",
+      "mlp_shap_abs": 0.0036388244,
+      "lr_shap_abs": 0.0184249874,
+      "rango_mlp": 19,
+      "rango_lr": 16
+    }
+  ],
+  "scorecard": {
+    "parametros": {
+      "base_score": 600,
+      "base_odds": 7,
+      "pdo": 20,
+      "factor": 28.85390081777927,
+      "offset": 543.8529015588479
+    },
+    "justificacion_base_odds": {
+      "tasa_malos_train": 0.1343190755156087,
+      "odds_train": 6.4449589245705745
+    },
+    "puntos_base": 466.34840938901243,
+    "percentiles_puntaje": {
+      "train": [
+        551.1,
+        590.5,
+        603.1,
+        614.8,
+        640.5
+      ],
+      "val": [
+        568.0,
+        592.2,
+        602.0,
+        612.2,
+        638.1
+      ],
+      "test": [
+        566.5,
+        592.2,
+        602.3,
+        612.3,
+        637.6
+      ]
+    },
+    "auc_test_con_puntaje": 0.6380314623891699,
+    "tabla": [
+      {
+        "variable": "annual_inc",
+        "puntos_por_unidad": 17.4675456603,
+        "desv_est": 0.5435911804,
+        "media": 10.94813604,
+        "impacto_1sd": 9.4952037648
+      },
+      {
+        "variable": "sub_grade_num",
+        "puntos_por_unidad": -1.3805882507,
+        "desv_est": 6.2492541036,
+        "media": 9.8329187064,
+        "impacto_1sd": 8.6276467911
+      },
+      {
+        "variable": "revol_util",
+        "puntos_por_unidad": -0.2120513377,
+        "desv_est": 27.9056980134,
+        "media": 50.8317602921,
+        "impacto_1sd": 5.9174405945
+      },
+      {
+        "variable": "inq_last_6mths",
+        "puntos_por_unidad": -3.9209588759,
+        "desv_est": 1.4542117041,
+        "media": 1.011255116,
+        "impacto_1sd": 5.7019042888
+      },
+      {
+        "variable": "purpose_small_business",
+        "puntos_por_unidad": -20.3175266912,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 4.0291398852
+      },
+      {
+        "variable": "loan_amnt",
+        "puntos_por_unidad": -0.0004557955,
+        "desv_est": 6713.0770580232,
+        "media": 10358.3299895674,
+        "impacto_1sd": 3.0597900173
+      },
+      {
+        "variable": "purpose_credit_card",
+        "puntos_por_unidad": 7.7709141278,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 2.8337346743
+      },
+      {
+        "variable": "term",
+        "puntos_por_unidad": -0.4430272987,
+        "desv_est": 6.0275083277,
+        "media": 37.6236257122,
+        "impacto_1sd": 2.6703507326
+      },
+      {
+        "variable": "missingindicator_revol_limit",
+        "puntos_por_unidad": -16.2570661367,
+        "desv_est": 0.1474936662,
+        "media": 0.0222494182,
+        "impacto_1sd": 2.3978142865
+      },
+      {
+        "variable": "emp_length",
+        "puntos_por_unidad": -0.6300057343,
+        "desv_est": 3.5054688347,
+        "media": 4.9159176631,
+        "impacto_1sd": 2.2084654674
+      },
+      {
+        "variable": "missingindicator_emp_length",
+        "puntos_por_unidad": -12.7036011001,
+        "desv_est": 0.1687899933,
+        "media": 0.0293515769,
+        "impacto_1sd": 2.1442407451
+      },
+      {
+        "variable": "open_acc",
+        "puntos_por_unidad": -0.4589594259,
+        "desv_est": 4.4531277217,
+        "media": 9.4467739347,
+        "impacto_1sd": 2.0438049424
+      },
+      {
+        "variable": "purpose_other",
+        "puntos_por_unidad": -6.6035666669,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.9338502515
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "puntos_por_unidad": -0.0215457902,
+        "desv_est": 87.7475161686,
+        "media": 114.8170090683,
+        "impacto_1sd": 1.890589574
+      },
+      {
+        "variable": "pub_rec",
+        "puntos_por_unidad": -7.7437983917,
+        "desv_est": 0.228743161,
+        "media": 0.0498756119,
+        "impacto_1sd": 1.771340922
+      },
+      {
+        "variable": "purpose_medical",
+        "puntos_por_unidad": -9.6042755759,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.2484827848
+      },
+      {
+        "variable": "never_delinquent",
+        "puntos_por_unidad": 2.2492050597,
+        "desv_est": 0.4738038179,
+        "media": 0.6597183212,
+        "impacto_1sd": 1.0656819446
+      },
+      {
+        "variable": "purpose_major_purchase",
+        "puntos_por_unidad": 4.6835733177,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.0201400655
+      },
+      {
+        "variable": "purpose_moving",
+        "puntos_por_unidad": -6.6453309075,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.8036704864
+      },
+      {
+        "variable": "purpose_vacation",
+        "puntos_por_unidad": -8.0519179116,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.7920002328
+      },
+      {
+        "variable": "home_ownership_RENT",
+        "puntos_por_unidad": -1.538269616,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.7691277191
+      },
+      {
+        "variable": "verification_status_Verified",
+        "puntos_por_unidad": 1.7090915088,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.7601314528
+      },
+      {
+        "variable": "purpose_wedding",
+        "puntos_por_unidad": 4.957950715,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.7437156259
+      },
+      {
+        "variable": "credit_history_months",
+        "puntos_por_unidad": 0.0088473172,
+        "desv_est": 81.9134897183,
+        "media": 162.1837533103,
+        "impacto_1sd": 0.7247146249
+      },
+      {
+        "variable": "dti",
+        "puntos_por_unidad": -0.0984783685,
+        "desv_est": 6.7859692499,
+        "media": 13.6449408153,
+        "impacto_1sd": 0.6682711803
+      },
+      {
+        "variable": "purpose_educational",
+        "puntos_por_unidad": -7.1791486206,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.6577736022
+      },
+      {
+        "variable": "delinq_2yrs",
+        "puntos_por_unidad": -1.2358407504,
+        "desv_est": 0.508815945,
+        "media": 0.1455340663,
+        "impacto_1sd": 0.6288154793
+      },
+      {
+        "variable": "total_acc",
+        "puntos_por_unidad": 0.0448336271,
+        "desv_est": 11.3015651869,
+        "media": 21.7262458872,
+        "impacto_1sd": 0.5066901596
+      },
+      {
+        "variable": "purpose_infrequent_sklearn",
+        "puntos_por_unidad": -10.1269877899,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.4921530325
+      },
+      {
+        "variable": "purpose_home_improvement",
+        "puntos_por_unidad": -1.6219376895,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.4115713893
+      },
+      {
+        "variable": "purpose_house",
+        "puntos_por_unidad": -3.7800257316,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.3664784156
+      },
+      {
+        "variable": "home_ownership_infrequent_sklearn",
+        "puntos_por_unidad": -6.8884822024,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.3632604298
+      },
+      {
+        "variable": "purpose_debt_consolidation",
+        "puntos_por_unidad": 0.6627978065,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.3308336386
+      },
+      {
+        "variable": "verification_status_Source Verified",
+        "puntos_por_unidad": 0.7323503278,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.3230643812
+      },
+      {
+        "variable": "revol_limit",
+        "puntos_por_unidad": 0.3058056535,
+        "desv_est": 0.9607991219,
+        "media": 9.8666125525,
+        "impacto_1sd": 0.2938178033
+      },
+      {
+        "variable": "missingindicator_revol_util",
+        "puntos_por_unidad": 3.971845139,
+        "desv_est": 0.0397798062,
+        "media": 0.001584945,
+        "impacto_1sd": 0.1579992297
+      },
+      {
+        "variable": "home_ownership_OWN",
+        "puntos_por_unidad": -0.5422918141,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.1456866172
+      }
+    ],
+    "bandas_test": [
+      {
+        "banda": 1,
+        "n": 1514,
+        "score_min": 545.4893763783,
+        "score_max": 583.1399527818,
+        "pd_media": 0.2510510063,
+        "tasa_malos": 0.2291941876
+      },
+      {
+        "banda": 2,
+        "n": 1514,
+        "score_min": 583.145672337,
+        "score_max": 589.7877647469,
+        "pd_media": 0.1848850929,
+        "tasa_malos": 0.1935270806
+      },
+      {
+        "banda": 3,
+        "n": 1513,
+        "score_min": 589.7890199736,
+        "score_max": 594.4812721018,
+        "pd_media": 0.1578946972,
+        "tasa_malos": 0.1718440185
+      },
+      {
+        "banda": 4,
+        "n": 1514,
+        "score_min": 594.4830230263,
+        "score_max": 598.5200409943,
+        "pd_media": 0.138529007,
+        "tasa_malos": 0.1552179657
+      },
+      {
+        "banda": 5,
+        "n": 1513,
+        "score_min": 598.5236728712,
+        "score_max": 602.2950450547,
+        "pd_media": 0.1235760196,
+        "tasa_malos": 0.1368142763
+      },
+      {
+        "banda": 6,
+        "n": 1514,
+        "score_min": 602.3084208967,
+        "score_max": 606.0135738272,
+        "pd_media": 0.1100876827,
+        "tasa_malos": 0.1162483487
+      },
+      {
+        "banda": 7,
+        "n": 1513,
+        "score_min": 606.0156875502,
+        "score_max": 610.0556282629,
+        "pd_media": 0.0976875751,
+        "tasa_malos": 0.1090548579
+      },
+      {
+        "banda": 8,
+        "n": 1514,
+        "score_min": 610.0558546669,
+        "score_max": 614.9210417409,
+        "pd_media": 0.0851177216,
+        "tasa_malos": 0.0799207398
+      },
+      {
+        "banda": 9,
+        "n": 1513,
+        "score_min": 614.9232547915,
+        "score_max": 621.7592876024,
+        "pd_media": 0.0710383345,
+        "tasa_malos": 0.0621282221
+      },
+      {
+        "banda": 10,
+        "n": 1514,
+        "score_min": 621.7669779514,
+        "score_max": 661.1366587554,
+        "pd_media": 0.0509972415,
+        "tasa_malos": 0.0541611625
+      }
+    ]
+  },
+  "clasificacion": [
+    {
+      "modelo": "pd_logistic",
+      "criterio_umbral": "0.5",
+      "split": "val",
+      "umbral": 0.5,
+      "accuracy": 0.8578291548,
+      "precision": 0.0,
+      "sensibilidad": 0.0,
+      "especificidad": 1.0,
+      "f1": 0.0,
+      "tasa_rechazo": 0.0,
+      "vn": 11428,
+      "fp": 0,
+      "fn": 1894,
+      "vp": 0
+    },
+    {
+      "modelo": "pd_logistic",
+      "criterio_umbral": "0.5",
+      "split": "test",
+      "umbral": 0.5,
+      "accuracy": 0.8691860465,
+      "precision": 0.0,
+      "sensibilidad": 0.0,
+      "especificidad": 1.0,
+      "f1": 0.0,
+      "tasa_rechazo": 0.0,
+      "vn": 13156,
+      "fp": 0,
+      "fn": 1980,
+      "vp": 0
+    },
+    {
+      "modelo": "pd_logistic",
+      "criterio_umbral": "max F1 en validación",
+      "split": "val",
+      "umbral": 0.1391308768,
+      "accuracy": 0.6645398589,
+      "precision": 0.2238901994,
+      "sensibilidad": 0.5512143611,
+      "especificidad": 0.6833216661,
+      "f1": 0.3184383102,
+      "tasa_rechazo": 0.3500225191,
+      "vn": 7809,
+      "fp": 3619,
+      "fn": 850,
+      "vp": 1044
+    },
+    {
+      "modelo": "pd_logistic",
+      "criterio_umbral": "max F1 en validación",
+      "split": "test",
+      "umbral": 0.1391308768,
+      "accuracy": 0.6592230444,
+      "precision": 0.1946579554,
+      "sensibilidad": 0.5116161616,
+      "especificidad": 0.6814381271,
+      "f1": 0.2820155902,
+      "tasa_rechazo": 0.3438160677,
+      "vn": 8965,
+      "fp": 4191,
+      "fn": 967,
+      "vp": 1013
+    },
+    {
+      "modelo": "pd_mlp",
+      "criterio_umbral": "0.5",
+      "split": "val",
+      "umbral": 0.5,
+      "accuracy": 0.8579042186,
+      "precision": 1.0,
+      "sensibilidad": 0.0005279831,
+      "especificidad": 1.0,
+      "f1": 0.001055409,
+      "tasa_rechazo": 7.50638e-05,
+      "vn": 11428,
+      "fp": 0,
+      "fn": 1893,
+      "vp": 1
+    },
+    {
+      "modelo": "pd_mlp",
+      "criterio_umbral": "0.5",
+      "split": "test",
+      "umbral": 0.5,
+      "accuracy": 0.8691199789,
+      "precision": 0.0,
+      "sensibilidad": 0.0,
+      "especificidad": 0.9999239891,
+      "f1": 0.0,
+      "tasa_rechazo": 6.60677e-05,
+      "vn": 13155,
+      "fp": 1,
+      "fn": 1980,
+      "vp": 0
+    },
+    {
+      "modelo": "pd_mlp",
+      "criterio_umbral": "max F1 en validación",
+      "split": "val",
+      "umbral": 0.1547206491,
+      "accuracy": 0.6551568834,
+      "precision": 0.2243772969,
+      "sensibilidad": 0.5802534319,
+      "especificidad": 0.6675708785,
+      "f1": 0.3236160188,
+      "tasa_rechazo": 0.3676625131,
+      "vn": 7629,
+      "fp": 3799,
+      "fn": 795,
+      "vp": 1099
+    },
+    {
+      "modelo": "pd_mlp",
+      "criterio_umbral": "max F1 en validación",
+      "split": "test",
+      "umbral": 0.1547206491,
+      "accuracy": 0.6596194503,
+      "precision": 0.2006417516,
+      "sensibilidad": 0.5368686869,
+      "especificidad": 0.6780936455,
+      "f1": 0.2921132179,
+      "tasa_rechazo": 0.3500264271,
+      "vn": 8921,
+      "fp": 4235,
+      "fn": 917,
+      "vp": 1063
+    },
+    {
+      "modelo": "referencia_todos_buenos",
+      "criterio_umbral": "ninguno",
+      "split": "test",
+      "umbral": 1.0,
+      "accuracy": 0.8691860465,
+      "precision": 0.0,
+      "sensibilidad": 0.0,
+      "especificidad": 1.0,
+      "f1": 0.0,
+      "tasa_rechazo": 0.0,
+      "vn": 13156,
+      "fp": 0,
+      "fn": 1980,
+      "vp": 0
+    }
+  ],
+  "hipotesis_vs_modelos": [
+    {
+      "id": "H1",
+      "hipotesis": "Peor subcalificación de Lending Club (sub_grade_num alto) -> más riesgo",
+      "escenario": "sub_grade_num: P25 5 -> P75 13",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.0592881787,
+      "eda_tasa_grupo_alto": 0.2276184268,
+      "delta_pd_lr_pp": 4.0079423325,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 5.7847961783,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 2
+    },
+    {
+      "id": "H2",
+      "hipotesis": "Mayor utilización del crédito rotativo (revol_util) -> más riesgo",
+      "escenario": "revol_util: P25 28 -> P75 74.1",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.0947516026,
+      "eda_tasa_grupo_alto": 0.1804253603,
+      "delta_pd_lr_pp": 3.6849800985,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 3.0120745301,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 5
+    },
+    {
+      "id": "H3",
+      "hipotesis": "Mayor ingreso anual (annual_inc) -> menos riesgo",
+      "escenario": "annual_inc: P25 40000 -> P75 80000",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1799274012,
+      "eda_tasa_grupo_alto": 0.0983979216,
+      "delta_pd_lr_pp": -4.5722278197,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": -5.4131068289,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 1
+    },
+    {
+      "id": "H4",
+      "hipotesis": "Más consultas recientes (inq_last_6mths) -> más riesgo",
+      "escenario": "inq_last_6mths: 0 -> 2",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1176344028,
+      "eda_tasa_grupo_alto": 0.2250922509,
+      "delta_pd_lr_pp": 2.9690295664,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 3.9955928922,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 3
+    },
+    {
+      "id": "H5",
+      "hipotesis": "Mayor monto del crédito (loan_amnt) -> más riesgo",
+      "escenario": "loan_amnt: P25 5000 -> P75 14000",
+      "veredicto_eda": "Sin evidencia suficiente",
+      "eda_tasa_grupo_bajo": 0.1408934708,
+      "eda_tasa_grupo_alto": 0.1402485975,
+      "delta_pd_lr_pp": 1.5442678391,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 2.5796622038,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 6
+    },
+    {
+      "id": "H6",
+      "hipotesis": "Mayor endeudamiento sobre ingreso (dti) -> más riesgo",
+      "escenario": "dti: P25 8.46 -> P75 18.95",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1152420082,
+      "eda_tasa_grupo_alto": 0.1531052473,
+      "delta_pd_lr_pp": 0.3917780702,
+      "veredicto_lr": "Efecto despreciable",
+      "delta_pd_mlp_pp": 0.4931628704,
+      "veredicto_mlp": "Efecto despreciable",
+      "mejor_rango_shap_mlp": 8
+    },
+    {
+      "id": "H7",
+      "hipotesis": "Tener moras o registros públicos previos (delinq_2yrs o pub_rec > 0) -> más riesgo",
+      "escenario": "sin moras -> 1 mora hace 12 meses",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1275158306,
+      "eda_tasa_grupo_alto": 0.1735705555,
+      "delta_pd_lr_pp": 0.1411199256,
+      "veredicto_lr": "Efecto despreciable",
+      "delta_pd_mlp_pp": -0.1159057021,
+      "veredicto_mlp": "Efecto despreciable",
+      "mejor_rango_shap_mlp": 9
+    },
+    {
+      "id": "H8",
+      "hipotesis": "Historial crediticio más largo (credit_history_months) -> menos riesgo",
+      "escenario": "credit_history_months: P25 105 -> P75 201",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1516663341,
+      "eda_tasa_grupo_alto": 0.1191510864,
+      "delta_pd_lr_pp": 0.1748209238,
+      "veredicto_lr": "Efecto despreciable",
+      "delta_pd_mlp_pp": -0.3450885415,
+      "veredicto_mlp": "Efecto despreciable",
+      "mejor_rango_shap_mlp": 10
+    },
+    {
+      "id": "H9",
+      "hipotesis": "No informar antigüedad laboral (emp_length faltante) -> más riesgo",
+      "escenario": "emp_length: mediana 4 -> faltante",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1323246729,
+      "eda_tasa_grupo_alto": 0.2002734108,
+      "delta_pd_lr_pp": 5.4385078449,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 2.7869179845,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 11
+    },
+    {
+      "id": "H10",
+      "hipotesis": "Mayor antigüedad laboral (emp_length) -> menos riesgo",
+      "escenario": "emp_length: P25 2 -> P75 9",
+      "veredicto_eda": "Sin evidencia suficiente",
+      "eda_tasa_grupo_bajo": 0.1348753379,
+      "eda_tasa_grupo_alto": 0.1342932883,
+      "delta_pd_lr_pp": 1.6727855184,
+      "veredicto_lr": "Contraria",
+      "delta_pd_mlp_pp": 1.7414659262,
+      "veredicto_mlp": "Contraria",
+      "mejor_rango_shap_mlp": 11
+    },
+    {
+      "id": "H11",
+      "hipotesis": "Ingreso verificado -> menos riesgo",
+      "escenario": "Not Verified -> Verified",
+      "veredicto_eda": "Sin evidencia suficiente",
+      "eda_tasa_grupo_bajo": 0.1358190233,
+      "eda_tasa_grupo_alto": 0.1330215154,
+      "delta_pd_lr_pp": -0.6457929601,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": -0.8027330041,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 15
+    },
+    {
+      "id": "H12",
+      "hipotesis": "Crédito para pequeño negocio (purpose = small_business) -> más riesgo",
+      "escenario": "debt_consolidation -> small_business",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1300209205,
+      "eda_tasa_grupo_alto": 0.2348336595,
+      "delta_pd_lr_pp": 9.8358330967,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 8.8955491781,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 4
+    },
+    {
+      "id": "H13",
+      "hipotesis": "Plazo de 60 meses (term) -> más riesgo",
+      "escenario": "term: 36 -> 60 meses",
+      "veredicto_eda": "Confirmada",
+      "eda_tasa_grupo_bajo": 0.1277328284,
+      "eda_tasa_grupo_alto": 0.225088968,
+      "delta_pd_lr_pp": 4.473165241,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 7.0631742477,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 19
+    }
+  ],
+  "comparacion": {
+    "metricas_test": [
+      {
+        "metrica": "auc",
+        "referencia_tasa_base": 0.5,
+        "logistica": 0.6380314624,
+        "mlp_media_semillas": 0.6412970167,
+        "mlp_std_semillas": 0.0019842931,
+        "mlp_modelo_guardado": 0.6451058356,
+        "mejora_brier_vs_base_logistica": null,
+        "mejora_brier_vs_base_mlp_media_semillas": null
+      },
+      {
+        "metrica": "gini",
+        "referencia_tasa_base": 0.0,
+        "logistica": 0.2760629248,
+        "mlp_media_semillas": 0.2825940335,
+        "mlp_std_semillas": 0.0039685862,
+        "mlp_modelo_guardado": 0.2902116713,
+        "mejora_brier_vs_base_logistica": null,
+        "mejora_brier_vs_base_mlp_media_semillas": null
+      },
+      {
+        "metrica": "ks",
+        "referencia_tasa_base": 0.0,
+        "logistica": 0.2059947299,
+        "mlp_media_semillas": 0.2140871367,
+        "mlp_std_semillas": 0.0048997259,
+        "mlp_modelo_guardado": 0.2199520286,
+        "mejora_brier_vs_base_logistica": null,
+        "mejora_brier_vs_base_mlp_media_semillas": null
+      },
+      {
+        "metrica": "brier",
+        "referencia_tasa_base": 0.1137139489,
+        "logistica": 0.1110098157,
+        "mlp_media_semillas": 0.1110501428,
+        "mlp_std_semillas": 0.0002232071,
+        "mlp_modelo_guardado": 0.1106174588,
+        "mejora_brier_vs_base_logistica": 0.0237801362,
+        "mejora_brier_vs_base_mlp_media_semillas": 0.0234254999
+      },
+      {
+        "metrica": "log_loss",
+        "referencia_tasa_base": 0.3879842981,
+        "logistica": 0.3755243273,
+        "mlp_media_semillas": 0.3752571503,
+        "mlp_std_semillas": 0.0006504496,
+        "mlp_modelo_guardado": 0.3738519549,
+        "mejora_brier_vs_base_logistica": null,
+        "mejora_brier_vs_base_mlp_media_semillas": null
+      }
+    ],
+    "costos": [
+      {
+        "concepto": "parametros",
+        "logistica": 38,
+        "mlp": 13185
+      },
+      {
+        "concepto": "configuraciones_evaluadas",
+        "logistica": 5,
+        "mlp": 25
+      },
+      {
+        "concepto": "semillas",
+        "logistica": 1,
+        "mlp": 30
+      },
+      {
+        "concepto": "segundos_totales",
+        "logistica": 2.0781437,
+        "mlp": 963.4431524
+      },
+      {
+        "concepto": "interpretabilidad",
+        "logistica": "coeficientes y scorecard directa",
+        "mlp": "SHAP (aproximado)"
+      }
+    ],
+    "bootstrap": {
+      "n_boot": 1000,
+      "dif_auc_mlp_menos_lr": {
+        "media": 0.007115815654570811,
+        "ic95": [
+          0.001960158434028772,
+          0.012315480295849853
+        ]
+      },
+      "dif_brier_mlp_menos_lr": {
+        "media": -0.0004026912457426356,
+        "ic95": [
+          -0.0007738324715393229,
+          -4.735087751907324e-05
+        ]
+      },
+      "nota": "El bootstrap recoge la variabilidad de la muestra de test, no la de las semillas."
+    }
+  },
+  "calidad_datos": [
+    {
+      "variable": "loan_amnt",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 500.0,
+      "p1": 1200.0,
+      "mediana": 9000.0,
+      "p99": 33000.0,
+      "maximo": 35000.0
+    },
+    {
+      "variable": "term",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 36.0,
+      "p1": 36.0,
+      "mediana": 36.0,
+      "p99": 60.0,
+      "maximo": 60.0
+    },
+    {
+      "variable": "emp_length",
+      "faltantes": 0.0293515769,
+      "ceros": 0.1159216756,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 0.0,
+      "mediana": 4.0,
+      "p99": 10.0,
+      "maximo": 10.0
+    },
+    {
+      "variable": "annual_inc",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 1896.0,
+      "p1": 14400.0,
+      "mediana": 57000.0,
+      "p99": 235000.0,
+      "maximo": 6000000.0
+    },
+    {
+      "variable": "dti",
+      "faltantes": 0.0,
+      "ceros": 0.0039924565,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 0.4043,
+      "mediana": 13.71,
+      "p99": 28.07,
+      "maximo": 34.92
+    },
+    {
+      "variable": "delinq_2yrs",
+      "faltantes": 0.0,
+      "ceros": 0.8944908113,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 0.0,
+      "mediana": 0.0,
+      "p99": 2.0,
+      "maximo": 13.0
+    },
+    {
+      "variable": "inq_last_6mths",
+      "faltantes": 0.0,
+      "ceros": 0.4797769039,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 0.0,
+      "mediana": 1.0,
+      "p99": 6.0,
+      "maximo": 33.0
+    },
+    {
+      "variable": "mths_since_last_delinq",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 1.0,
+      "p1": 4.0,
+      "mediana": 93.0,
+      "p99": 396.0,
+      "maximo": 657.0
+    },
+    {
+      "variable": "open_acc",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 1.0,
+      "p1": 2.0,
+      "mediana": 9.0,
+      "p99": 22.0,
+      "maximo": 49.0
+    },
+    {
+      "variable": "pub_rec",
+      "faltantes": 0.0,
+      "ceros": 0.9520905224,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 0.0,
+      "mediana": 0.0,
+      "p99": 1.0,
+      "maximo": 5.0
+    },
+    {
+      "variable": "revol_util",
+      "faltantes": 0.001584945,
+      "ceros": 0.0206644732,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 0.0,
+      "mediana": 52.7,
+      "p99": 98.2,
+      "maximo": 119.0
+    },
+    {
+      "variable": "total_acc",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 1.0,
+      "p1": 4.0,
+      "mediana": 20.0,
+      "p99": 55.0,
+      "maximo": 90.0
+    },
+    {
+      "variable": "credit_history_months",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 6.0,
+      "p1": 39.0,
+      "mediana": 147.0,
+      "p99": 428.0,
+      "maximo": 785.0
+    },
+    {
+      "variable": "never_delinquent",
+      "faltantes": 0.0,
+      "ceros": 0.3402816788,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 0.0,
+      "mediana": 1.0,
+      "p99": 1.0,
+      "maximo": 1.0
+    },
+    {
+      "variable": "revol_limit",
+      "faltantes": 0.0222494182,
+      "ceros": 0.0013642565,
+      "negativos": 0,
+      "minimo": 0.0,
+      "p1": 1000.0,
+      "mediana": 20265.9574468085,
+      "p99": 255907.2718631164,
+      "maximo": 44140000.0
+    },
+    {
+      "variable": "sub_grade_num",
+      "faltantes": 0.0,
+      "ceros": 0.0,
+      "negativos": 0,
+      "minimo": 1.0,
+      "p1": 1.0,
+      "mediana": 9.0,
+      "p99": 29.0,
+      "maximo": 35.0
+    }
+  ]
+}

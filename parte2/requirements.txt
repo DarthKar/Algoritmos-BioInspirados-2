@@ -1,0 +1,9 @@
+# Parte 2: dependencias de la Parte 1 más TensorFlow.
+# Uso, desde la raíz: python -m pip install -r parte2/requirements.txt
+-r ../requirements.txt
+# En Python 3.14 la única versión publicada de TensorFlow es esta versión candidata,
+# que depende de una compilación de desarrollo de Keras. Se fijan ambas para que la
+# instalación sea reproducible. Pendiente: definir si la Parte 2 migra a PyTorch
+# (ya instalado para la Parte 1) o si el proyecto usa Python 3.12 o 3.13.
+tensorflow==2.22.0rc0
+keras-nightly==3.16.0.dev2026103003

@@ -16,8 +16,8 @@ def check_file(relative, context):
 
 check_file('web/app.py', 'entrada cloud')
 check_file('app.py', 'entrada local')
-check_file('src/pd_model/adapter.py', 'adaptador')
-check_file('src/pd_model/scorecard.py', 'scorecard')
+check_file('parte1/inference.py', 'adaptador')
+check_file('parte1/puntaje/transform.py', 'scorecard')
 config_path = ROOT / 'app_config.json'
 if config_path.is_file():
     config = json.loads(config_path.read_text(encoding='utf-8'))

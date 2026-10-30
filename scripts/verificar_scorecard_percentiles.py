@@ -10,7 +10,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from src.pd_model.scorecard import ScorecardParams, prob_to_score, score_to_prob
+from parte1.puntaje.transform import ScorecardParams, prob_to_score, score_to_prob
 
 
 def main():
@@ -96,7 +96,7 @@ def main():
         for p,s,a,b in zip(test_pd, scores_test, percentiles_app, percentiles_pd):
             rows.append({'modelo':name,'split_referencia':split,'n_referencia':len(ps),'PD_usuario':p,'puntaje':s,'percentil_app':a,'percentil_comprobacion_pd':b,'diferencia':a-b})
 
-    report = ROOT/'results'/'verificacion_scorecard_percentiles.csv'
+    report = ROOT/'parte1'/'salidas'/'resultados'/'verificacion_scorecard_percentiles.csv'
     report.parent.mkdir(exist_ok=True, parents=True)
     pd.DataFrame(rows).to_csv(report,index=False, encoding='utf-8-sig')
     print('\nReporte:',report)
