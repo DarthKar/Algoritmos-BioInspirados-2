@@ -30,10 +30,10 @@ def main():
     if not np.isfinite(args.tolerancia) or args.tolerancia < 0 or args.lote < 1:
         parser.error('La tolerancia debe ser finita y no negativa; el lote debe ser positivo.')
 
-    dataset_path = ROOT / 'parte1/data/processed/pd_matured.parquet'
-    preds_path = ROOT / 'parte1/outputs/results/pd_mlp_predicciones.parquet'
-    model_path = ROOT / 'parte1/outputs/models/pd_mlp.pt'
-    pre_path = ROOT / 'parte1/outputs/models/pd_mlp_preprocessor.joblib'
+    dataset_path = ROOT / 'parte1/datos/procesados/pd_matured.parquet'
+    preds_path = ROOT / 'parte1/salidas/resultados/pd_mlp_predicciones.parquet'
+    model_path = ROOT / 'parte1/salidas/modelos/pd_mlp.pt'
+    pre_path = ROOT / 'parte1/salidas/modelos/pd_mlp_preprocessor.joblib'
     for path in [dataset_path, preds_path, model_path, pre_path]:
         if not path.is_file():
             raise FileNotFoundError(f'Falta el archivo requerido: {path}')
@@ -95,7 +95,7 @@ def main():
     unexpected_splits = sorted(set(datos['split'].dropna()) - {'train', 'val', 'test'})
     report = comparison.loc[:, ['id', 'split', 'target_historico', 'target_actual',
                                 'pd_historica', 'pd_actual', 'diferencia_absoluta', 'target_coincide', '_merge']]
-    out = ROOT / 'parte1/outputs/results/verificacion_predicciones_historicas.csv'
+    out = ROOT / 'parte1/salidas/resultados/verificacion_predicciones_historicas.csv'
     out.parent.mkdir(parents=True, exist_ok=True)
     report.to_csv(out, index=False)
 

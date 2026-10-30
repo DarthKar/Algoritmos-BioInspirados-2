@@ -31,7 +31,7 @@ scorecard:
 comparacion:
   n_boot: 1000             # réplicas del bootstrap pareado en prueba
 
-# Cambios que aplica --demo (todo lo demás se hereda de arriba). Las salidas van a parte1/outputs_demo/,
+# Cambios que aplica --demo (todo lo demás se hereda de arriba). Las salidas van a parte1/salidas_demo/,
 # así no se sobrescriben los modelos ni los resultados completos.
 demo:
   mlp:

@@ -10,7 +10,7 @@ import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))  # Necesario para importar parte1 y deserializar sus preprocesadores
-from parte1.scorecard.transform import ScorecardParams, prob_to_score
+from parte1.puntaje.transform import ScorecardParams, prob_to_score
 from parte1.inference import load_registered_model
 
 st.set_page_config(page_title="Simulador de riesgo crediticio", page_icon="📊", layout="wide")
@@ -91,29 +91,30 @@ def reference_scores(pred_path, params, split):
 
 
 
-# Información orientativa de interfaz; las columnas del modelo siguen siendo la fuente
-# de verdad. Las descripciones deben cotejarse con el diccionario del conjunto de datos.
+# Grupo y descripción de cada campo. Las variables originales se describen con una
+# traducción fiel del diccionario de Lending Club (LCDataDictionary.xlsx); las derivadas,
+# con la fórmula con que se construyen en parte1/preparacion/cleaning.py.
 FIELD_GUIDANCE = {
-    "loan_amnt": ("Préstamo", "Cantidad solicitada en dólares estadounidenses."),
-    "term": ("Préstamo", "Plazo del crédito en meses. Lending Club ofrece 36 o 60 meses."),
-    "annual_inc": ("Ingresos y empleo", "Ingresos anuales declarados, en USD."),
-    "emp_length": ("Ingresos y empleo", "Años de antigüedad laboral registrados."),
-    "dti": ("Ingresos y empleo", "Relación deuda/ingresos expresada como porcentaje; utiliza la definición del conjunto Lending Club."),
-    "home_ownership": ("Ingresos y empleo", "Situación de vivienda registrada en el crédito."),
-    "verification_status": ("Ingresos y empleo", "Estado de verificación de ingresos registrado por la plataforma."),
-    "purpose": ("Préstamo", "Finalidad declarada para solicitar el préstamo."),
-    "sub_grade_num": ("Préstamo", "Codificación numérica de la subcalificación de Lending Club. No es una nota escolar ni una clasificación universal."),
-    "delinq_2yrs": ("Historial crediticio", "Cantidad de eventos de morosidad registrados en los últimos dos años."),
-    "inq_last_6mths": ("Historial crediticio", "Número de consultas de crédito recientes, dentro de seis meses."),
-    "mths_since_last_delinq": ("Historial crediticio", "Meses desde la última morosidad registrada."),
-    "never_delinquent": ("Historial crediticio", "Indicador del conjunto de datos: 1 significa sin moras anteriores y 0 lo contrario."),
-    "open_acc": ("Historial crediticio", "Número de cuentas crediticias abiertas."),
-    "total_acc": ("Historial crediticio", "Cantidad total de cuentas crediticias registradas."),
-    "pub_rec": ("Historial crediticio", "Número de registros públicos desfavorables."),
-    "credit_history_months": ("Historial crediticio", "Duración del historial crediticio expresada en meses."),
-    "revol_util": ("Crédito rotativo", "Porcentaje utilizado del crédito rotativo disponible; puede superar 100 % en ciertos casos."),
-    "revol_bal": ("Crédito rotativo", "Saldo vigente en cuentas de crédito rotativo, en USD."),
-    "revol_limit": ("Crédito rotativo", "Variable derivada de límite rotativo. Mantén la transformación utilizada por el equipo."),
+    "loan_amnt": ("Préstamo", "Monto del préstamo solicitado, tal como aparece publicado (USD). Si el área de crédito de Lending Club lo reduce, el valor refleja la reducción."),
+    "term": ("Préstamo", "Número de pagos del préstamo, en meses: 36 o 60."),
+    "annual_inc": ("Ingresos y empleo", "Ingreso anual que el solicitante declaró al registrarse (USD)."),
+    "emp_length": ("Ingresos y empleo", "Antigüedad laboral en años, de 0 a 10: 0 significa menos de un año y 10, diez años o más."),
+    "dti": ("Ingresos y empleo", "Pagos mensuales totales de deudas del solicitante, sin contar la hipoteca ni el préstamo solicitado, divididos por su ingreso mensual declarado (%)."),
+    "home_ownership": ("Ingresos y empleo", "Situación de vivienda que el solicitante declaró al registrarse: RENT, OWN, MORTGAGE u OTHER."),
+    "verification_status": ("Ingresos y empleo", "Indica si Lending Club verificó el ingreso, no lo verificó o verificó la fuente del ingreso."),
+    "purpose": ("Préstamo", "Categoría que el solicitante indica como propósito del préstamo."),
+    "sub_grade_num": ("Préstamo", "Subcalificación asignada por Lending Club (A1 a G5), convertida a número: A1 = 1, …, G5 = 35. Un número mayor indica más riesgo."),
+    "delinq_2yrs": ("Historial crediticio", "Número de moras de 30 días o más registradas en el historial crediticio durante los últimos 2 años."),
+    "inq_last_6mths": ("Historial crediticio", "Número de consultas de crédito en los últimos 6 meses, sin contar las de vehículo e hipoteca."),
+    "mths_since_last_delinq": ("Historial crediticio", "Meses desde la última mora del solicitante. Si nunca tuvo mora, se usa la antigüedad de su historial crediticio."),
+    "never_delinquent": ("Historial crediticio", "Variable derivada: 1 si el solicitante nunca ha registrado mora, 0 si sí."),
+    "open_acc": ("Historial crediticio", "Número de líneas de crédito abiertas en el historial crediticio."),
+    "total_acc": ("Historial crediticio", "Número total de líneas de crédito que hay en el historial crediticio."),
+    "pub_rec": ("Historial crediticio", "Número de registros públicos negativos."),
+    "credit_history_months": ("Historial crediticio", "Variable derivada: meses entre la apertura de la primera línea de crédito y la fecha del préstamo."),
+    "revol_util": ("Crédito rotativo", "Tasa de utilización del crédito rotativo: crédito que el solicitante usa frente a todo su crédito rotativo disponible (%)."),
+    "revol_bal": ("Crédito rotativo", "Saldo total de crédito rotativo (USD)."),
+    "revol_limit": ("Crédito rotativo", "Variable derivada: límite total del crédito rotativo, calculado como saldo rotativo / (utilización / 100), en USD."),
 }
 CATEGORY_NAMES = {
     "RENT": "Alquiler (RENT)", "OWN": "Propia (OWN)", "MORTGAGE": "Hipoteca (MORTGAGE)",
@@ -177,7 +178,7 @@ def main():
     st.info("Proyecto educativo con préstamos históricos de Lending Club. No determina la aprobación de créditos ni constituye asesoría financiera.")
     available = {m["name"]: m for m in cfg["models"] if (ROOT / m["path"]).is_file()}
     if not available:
-        st.error("No se encontraron modelos guardados. Verifica app_config.json y parte1/outputs/models/.")
+        st.error("No se encontraron modelos guardados. Verifica app_config.json y parte1/salidas/modelos/.")
         st.stop()
 
     loaded, model_columns = {}, {}
@@ -265,7 +266,7 @@ def main():
             try:
                 p, s = inference(model, {c: entry[c] for c in model_columns[name]}, params)
                 refmc = available[name]
-                ref_file = ROOT / refmc.get("predictions_path", "parte1/outputs/results/none.parquet")
+                ref_file = ROOT / refmc.get("predictions_path", "parte1/salidas/resultados/none.parquet")
                 try:
                     ref = reference_scores(ref_file, params, refmc.get("reference_split", "train"))
                 except Exception:

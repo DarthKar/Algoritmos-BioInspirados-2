@@ -1,4 +1,4 @@
-"""Resumen legible de la Parte 1: parte1/outputs/results/pd_resumen.md.
+"""Resumen legible de la Parte 1: parte1/salidas/resultados/pd_resumen.md.
 
 Reúne en un solo Markdown lo que está repartido en los JSON de resultados
 (datos, hipótesis, comparación, umbrales, SHAP, scorecard y búsqueda), para
@@ -6,7 +6,7 @@ revisarlo sin abrir archivos de máquina. Se regenera en cada corrida.
 """
 import json
 
-from parte1.common.utils import RESULTS_DIR, read_analysis
+from parte1.comun.utils import RESULTS_DIR, read_analysis
 
 
 # Tabla Markdown a partir de una lista de dicts, con columnas y formato elegidos.
@@ -28,7 +28,7 @@ def _model(name: str) -> dict:
     return json.loads((RESULTS_DIR / f"{name}_metricas.json").read_text(encoding="utf-8"))
 
 
-# Arma el Markdown completo y lo guarda en outputs/results/pd_resumen.md.
+# Arma el Markdown completo y lo guarda en salidas/resultados/pd_resumen.md.
 def run_report() -> str:
     datos, lr, mlp = read_analysis("datos"), _model("pd_logistic"), _model("pd_mlp")
     eda = {h["id"]: h for h in read_analysis("eda_hipotesis")}
@@ -48,7 +48,7 @@ def run_report() -> str:
 
     md = f"""# Resumen de resultados, Parte 1 (generado automáticamente)
 
-No editar a mano: lo reescribe `python run.py`. Las conclusiones redactadas están en `parte1/docs/eda_y_conclusiones.md`. Las rutas de figuras son relativas a `parte1/outputs/`.
+No editar a mano: lo reescribe `python run.py`. Las conclusiones redactadas están en `parte1/documentos/eda_y_conclusiones.md`. Las rutas de figuras son relativas a `parte1/salidas/`.
 
 ## 1. Datos
 
@@ -63,7 +63,7 @@ Calidad de las variables numéricas en entrenamiento (antes del preprocesamiento
           {"faltantes": ".1%", "ceros": ".1%", "minimo": ",.4g", "p1": ",.4g", "mediana": ",.4g", "p99": ",.4g", "maximo": ",.4g"})}
 ## 2. Hipótesis: EDA univariado y efecto controlado en los modelos
 
-EDA en entrenamiento (Mann-Whitney, α = 0,01, efecto mínimo). Δ PD: cambio medio de la PD al mover la variable de un valor bajo a uno alto dejando las demás fijas (pp = puntos porcentuales). Figura: `figures/pd_eda_hipotesis.png`.
+EDA en entrenamiento (Mann-Whitney, α = 0,01, efecto mínimo). Δ PD: cambio medio de la PD al mover la variable de un valor bajo a uno alto dejando las demás fijas (pp = puntos porcentuales). Figura: `figuras/pd_eda_hipotesis.png`.
 
 {md_table(hyp_rows, {"id": "Id", "hipotesis": "Hipótesis", "tasas": "Tasa de malos bajo → alto", "auc": "AUC univ.",
                      "veredicto_eda": "EDA", "escenario": "Escenario", "delta_pd_lr_pp": "Δ PD LR (pp)",
@@ -72,7 +72,7 @@ EDA en entrenamiento (Mann-Whitney, α = 0,01, efecto mínimo). Δ PD: cambio me
           {"auc": ".3f", "delta_pd_lr_pp": "+.2f", "delta_pd_mlp_pp": "+.2f"})}
 ## 3. Logística contra MLP en prueba
 
-MLP: media y desviación de {n_seeds} semillas; peor y mejor semilla. Figuras: `figures/pd_*_roc.png`, `figures/pd_*_calibracion.png`, `figures/pd_mlp_perdidas.png`.
+MLP: media y desviación de {n_seeds} semillas; peor y mejor semilla. Figuras: `figuras/pd_*_roc.png`, `figuras/pd_*_calibracion.png`, `figuras/pd_mlp_perdidas.png`.
 
 {md_table(metric_rows, {"metrica": "Métrica", "referencia_tasa_base": "Tasa base", "logistica": "Logística",
                         "mlp_media_semillas": "MLP media", "mlp_std_semillas": "MLP d.e.", "mlp_peor": "MLP peor",
@@ -85,7 +85,7 @@ Bootstrap pareado en prueba ({boot['n_boot']} réplicas), MLP guardado menos log
           {"logistica": ",.5g", "mlp": ",.5g"})}
 ## 4. Accuracy, F1 y matriz de confusión (prueba)
 
-Umbral 0,5 y umbral que maximiza F1 en validación. Figuras: `figures/pd_matriz_confusion.png` y `figures/pd_distribucion_por_clase.png`.
+Umbral 0,5 y umbral que maximiza F1 en validación. Figuras: `figuras/pd_matriz_confusion.png` y `figuras/pd_distribucion_por_clase.png`.
 
 {md_table(clas, {"modelo": "Modelo", "criterio_umbral": "Umbral", "umbral": "Valor", "accuracy": "Accuracy",
                  "precision": "Precisión", "sensibilidad": "Sensibilidad", "especificidad": "Especificidad",
@@ -93,7 +93,7 @@ Umbral 0,5 y umbral que maximiza F1 en validación. Figuras: `figures/pd_matriz_
           {k: ".3f" for k in ("umbral", "accuracy", "precision", "sensibilidad", "especificidad", "f1", "tasa_rechazo")})}
 ## 5. Variables de riesgo (SHAP, |valor| medio sobre el logit)
 
-Figura: `figures/pd_mlp_shap.png`.
+Figura: `figuras/pd_mlp_shap.png`.
 
 {md_table(read_analysis("shap_importancia"), {"variable": "Variable", "mlp_shap_abs": "MLP", "rango_mlp": "Rango MLP",
                                               "lr_shap_abs": "Logística", "rango_lr": "Rango LR"},

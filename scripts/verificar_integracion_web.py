@@ -11,12 +11,12 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from parte1.inference import load_registered_model
-from parte1.modeling.core import MLP, predict_proba
+from parte1.modelos.core import MLP, predict_proba
 
-DATA = ROOT / 'parte1/data/processed/pd_matured.parquet'
-MODEL = ROOT / 'parte1/outputs/models/pd_mlp.pt'
-PRE = ROOT / 'parte1/outputs/models/pd_mlp_preprocessor.joblib'
-OUT = ROOT / 'parte1/outputs/results/verificacion_web_mlp.csv'
+DATA = ROOT / 'parte1/datos/procesados/pd_matured.parquet'
+MODEL = ROOT / 'parte1/salidas/modelos/pd_mlp.pt'
+PRE = ROOT / 'parte1/salidas/modelos/pd_mlp_preprocessor.joblib'
+OUT = ROOT / 'parte1/salidas/resultados/verificacion_web_mlp.csv'
 
 for path in (DATA, MODEL, PRE):
     if not path.is_file():

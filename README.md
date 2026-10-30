@@ -52,7 +52,7 @@ python -m pip install torch==2.14.1 --index-url https://download.pytorch.org/whl
 
 ## 2. Datos
 
-**No necesitas descargar nada para correr el experimento.** El repositorio ya trae los datos procesados que usan los modelos (`parte1/data/processed/pd_matured.parquet`, 3 MB) y los modelos entrenados (`parte1/outputs/models/`).
+**No necesitas descargar nada para correr el experimento.** El repositorio ya trae los datos procesados que usan los modelos (`parte1/datos/procesados/pd_matured.parquet`, 3 MB) y los modelos entrenados (`parte1/salidas/modelos/`).
 
 El archivo original no está en el repositorio: `loan.csv` pesa 442 MB y GitHub no admite archivos de más de 100 MB. Para regenerar los datos procesados desde cero:
 
@@ -70,15 +70,37 @@ El resultado son 78.302 créditos:
 - 74.930 a 36 meses, originados entre 2007-06 y 2012-12.
 - 3.372 a 60 meses, todos de 2010. Lending Club ofrece este plazo desde mayo de 2010, y los originados después aún no habían vencido en el corte.
 
-Entrenamiento va hasta 2012-06, validación es 2012 T3 y prueba es 2012 T4. Por eso los créditos a 60 meses quedan todos en entrenamiento: el efecto del plazo no se puede validar fuera de tiempo. El detalle y la justificación están en `parte1/docs/caso_de_uso.md`.
+Entrenamiento va hasta 2012-06, validación es 2012 T3 y prueba es 2012 T4. Por eso los créditos a 60 meses quedan todos en entrenamiento: el efecto del plazo no se puede validar fuera de tiempo. El detalle y la justificación están en `parte1/documentos/caso_de_uso.md`.
 
 ## 3. Ejecutar el experimento
+
+### Sin comandos: el orquestador
+
+```bash
+python parte1/orquestador.py
+```
+
+Abre un menú en la consola desde el que se hace todo lo de la Parte 1 sin escribir comandos:
+
+1. ver el estado del proyecto (datos, modelos y resultados disponibles);
+2. correr la demostración (menos de 2 minutos);
+3. correr el experimento completo;
+4. correr etapas específicas;
+5. ver o cambiar parámetros para la sesión (scorecard, semillas, arquitectura fija…);
+6. ver resultados en tablas: métricas, **mejores hiperparámetros de la red** y ranking de la búsqueda, hipótesis, scorecard, umbrales y SHAP;
+7. abrir la aplicación web;
+8. verificar la aplicación;
+9. abrir una figura.
+
+La salida de cada etapa se imprime en vivo, y el orquestador muestra el comando equivalente de `run.py`.
+
+### Con comandos
 
 Todo se lanza con un solo comando:
 
 | Comando | Qué hace | Tiempo aprox. |
 |---|---|---|
-| `python parte1/run.py --demo` | Demostración: todas las etapas con un presupuesto pequeño (MLP con la mejor arquitectura ya encontrada, 3 semillas, 20 épocas). Escribe en `parte1/outputs_demo/` y no toca los resultados oficiales. | 1 a 1,5 min |
+| `python parte1/run.py --demo` | Demostración: todas las etapas con un presupuesto pequeño (MLP con la mejor arquitectura ya encontrada, 3 semillas, 20 épocas). Escribe en `parte1/salidas_demo/` y no toca los resultados oficiales. | 1 a 1,5 min |
 | `python parte1/run.py` | Experimento completo: datos, EDA, logística, búsqueda del MLP con 25 configuraciones, 30 semillas, figuras, SHAP, scorecard e informe. | 15–35 min según la máquina |
 | `python parte1/run.py --etapas scorecard informe` | Solo las etapas indicadas, a partir de lo que ya está guardado. | segundos |
 | `python parte1/run.py --listar` | Lista las etapas disponibles. | — |
@@ -87,7 +109,7 @@ Etapas, en orden:
 
 | Etapa | Qué produce |
 |---|---|
-| `datos` | `parte1/data/processed/pd_matured.parquet`. Se salta si no está `data/raw/loan.csv`. |
+| `datos` | `parte1/datos/procesados/pd_matured.parquet`. Se salta si no está `data/raw/loan.csv`. |
 | `eda` | Contraste de las 13 hipótesis en entrenamiento y figuras del EDA. |
 | `logistica` | Regresión logística con L2; elige C por log-loss en validación. |
 | `mlp` | Búsqueda aleatoria de arquitectura e hiperparámetros, y la mejor configuración entrenada con 30 semillas. |
@@ -97,7 +119,7 @@ Etapas, en orden:
 | `clasificacion` | Accuracy, F1 y matriz de confusión con dos umbrales. |
 | `hipotesis` | Efecto de cada hipótesis en los modelos, controlando el resto de variables. |
 | `comparacion` | Logística contra MLP: métricas, costos y bootstrap de la diferencia. |
-| `informe` | `parte1/outputs/results/pd_resumen.md`, con todas las tablas. |
+| `informe` | `parte1/salidas/resultados/pd_resumen.md`, con todas las tablas. |
 
 ## 4. Cambiar parámetros
 
@@ -109,10 +131,10 @@ python parte1/run.py --demo --set mlp.fixed.lr=0.05 mlp.fixed.hidden=[32] mlp.n_
 
 Más ejemplos:
 - `python parte1/run.py --set mlp.n_trials=50 mlp.max_epochs=200` amplía la búsqueda.
-- `python parte1/run.py --etapas scorecard informe --set scorecard.pdo=40 scorecard.base_score=700` cambia la escala de la scorecard sin reentrenar. Sin `--demo` se sobrescriben las salidas; para volver a los resultados oficiales usa `git checkout parte1/outputs/`.
+- `python parte1/run.py --etapas scorecard informe --set scorecard.pdo=40 scorecard.base_score=700` cambia la escala de la scorecard sin reentrenar. Sin `--demo` se sobrescriben las salidas; para volver a los resultados oficiales usa `git checkout parte1/salidas/`.
 - `python parte1/run.py --etapas mlp figuras --set mlp.fixed.dropout=0.5 mlp.fixed.optimizer=adam mlp.fixed.lr=0.001` entrena una arquitectura fija sin búsqueda.
 
-Con `mlp.fixed` el MLP se salta la búsqueda y entrena esa configuración. Los campos posibles son `hidden`, `activation`, `dropout`, `l2`, `optimizer`, `lr`, `momentum` y `batch_size`; lo que no se indique toma el valor por defecto de `MLPConfig` en `parte1/modeling/core.py`.
+Con `mlp.fixed` el MLP se salta la búsqueda y entrena esa configuración. Los campos posibles son `hidden`, `activation`, `dropout`, `l2`, `optimizer`, `lr`, `momentum` y `batch_size`; lo que no se indique toma el valor por defecto de `MLPConfig` en `parte1/modelos/core.py`.
 
 ## 5. Aplicación web
 
@@ -120,7 +142,7 @@ Con `mlp.fixed` el MLP se salta la búsqueda y entrena esa configuración. Los c
 streamlit run app.py
 ```
 
-La app carga los modelos guardados en `parte1/outputs/models/` y nunca reentrena. Para cada perfil muestra:
+La app carga los modelos guardados en `parte1/salidas/modelos/` y nunca reentrena. Para cada perfil muestra:
 - la PD;
 - el puntaje de la scorecard;
 - el percentil frente a los créditos de entrenamiento;
@@ -137,7 +159,7 @@ python scripts/verificar_scorecard_percentiles.py
 
 ## 6. Resultados
 
-Partición de prueba (2012 T4, 15.136 créditos). Tablas completas en [`parte1/outputs/results/pd_resumen.md`](parte1/outputs/results/pd_resumen.md); conclusiones en [`parte1/docs/eda_y_conclusiones.md`](parte1/docs/eda_y_conclusiones.md).
+Partición de prueba (2012 T4, 15.136 créditos). Tablas completas en [`parte1/salidas/resultados/pd_resumen.md`](parte1/salidas/resultados/pd_resumen.md); conclusiones en [`parte1/documentos/eda_y_conclusiones.md`](parte1/documentos/eda_y_conclusiones.md).
 
 | Métrica | Tasa base | Regresión logística | MLP (media ± d.e., 30 semillas) | MLP guardado |
 |---|---|---|---|---|
@@ -152,13 +174,13 @@ Partición de prueba (2012 T4, 15.136 créditos). Tablas completas en [`parte1/o
 - **Variables que más pesan en ambos:** ingreso, subcalificación de Lending Club, consultas recientes, propósito del crédito y utilización del crédito rotativo.
 - **Plazo de 60 meses:** a igual perfil sube la PD entre 4,5 y 7,1 pp según el modelo, pero ese efecto se estima con una sola cohorte (2010).
 
-Salidas del experimento, en `parte1/outputs/`:
+Salidas del experimento, en `parte1/salidas/`:
 
 | Carpeta | Contenido |
 |---|---|
-| `models/` | `pd_logistic.joblib` (preprocesador y logística), `pd_mlp.pt` (red), `pd_mlp_preprocessor.joblib`. |
-| `results/` | `pd_resumen.md` (legible), `pd_analisis.json` (EDA, SHAP, scorecard, comparación), `pd_*_metricas.json` (métricas, búsqueda y semillas de cada modelo), `pd_*_predicciones.parquet` (los usa la app), `pd_mlp_historial.csv` (pérdida por época). |
-| `figures/` | Figuras del reporte; todas se regeneran con `python parte1/run.py --etapas eda figuras interpretabilidad clasificacion`. |
+| `modelos/` | `pd_logistic.joblib` (preprocesador y logística), `pd_mlp.pt` (red), `pd_mlp_preprocessor.joblib`. |
+| `resultados/` | `pd_resumen.md` (legible), `pd_analisis.json` (EDA, SHAP, scorecard, comparación), `pd_*_metricas.json` (métricas, búsqueda y semillas de cada modelo), `pd_*_predicciones.parquet` (los usa la app), `pd_mlp_historial.csv` (pérdida por época). |
+| `figuras/` | Figuras del reporte; todas se regeneran con `python parte1/run.py --etapas eda figuras interpretabilidad clasificacion`. |
 
 ## 7. Reproducibilidad
 
@@ -180,17 +202,17 @@ data/raw/                   loan.csv y diccionario (no versionados), compartidos
 parte1/                     Parte 1: probabilidad de incumplimiento
   run.py                    comando único del experimento
   config.yaml               parámetros (editables o con --set)
-  common/                   rutas, semillas y estilo de figuras
-  data_prep/                lectura, variable objetivo, muestra, limpieza, partición y preprocesamiento
-  modeling/                 regresión logística y MLP (definición, entrenamiento y experimentos)
-  evaluation/               métricas, umbrales, comparación y figuras de evaluación
-  analysis/                 EDA e hipótesis, SHAP y contraste de hipótesis con los modelos
-  scorecard/                transformación PD → puntaje y scorecard de la logística
-  report.py                 informe automático (outputs/results/pd_resumen.md)
+  comun/                    rutas, semillas y estilo de figuras
+  preparacion/              lectura, variable objetivo, muestra, limpieza, partición y preprocesamiento
+  modelos/                  regresión logística y MLP (definición, entrenamiento y experimentos)
+  evaluacion/               métricas, umbrales, comparación y figuras de evaluación
+  analisis/                 EDA e hipótesis, SHAP y contraste de hipótesis con los modelos
+  puntaje/                  transformación PD → puntaje y scorecard de la logística
+  report.py                 informe automático (salidas/resultados/pd_resumen.md)
   inference.py              carga de modelos para la app
-  data/processed/           datos procesados que usan los modelos
-  outputs/                  modelos, resultados y figuras regenerables
-  docs/                     caso de uso, conclusiones y reporte técnico
+  datos/procesados/         datos procesados que usan los modelos
+  salidas/                  modelos, resultados y figuras regenerables
+  documentos/               caso de uso, conclusiones y reporte técnico
 parte2/                     Parte 2: pérdida dado incumplimiento (LGD), en construcción
   analisis.py, config.py    experimento (python parte2/analisis.py) y sus parámetros
   requirements.txt          dependencias propias (TensorFlow)

@@ -12,11 +12,11 @@ python -m pip install -r requirements-app.txt
 streamlit run app.py
 ```
 
-La aplicación permite elegir entre `parte1/outputs/models/pd_logistic.joblib` y la red neuronal `parte1/outputs/models/pd_mlp.pt` con `parte1/outputs/models/pd_mlp_preprocessor.joblib`. **No se reentrena**. El objeto `joblib` y el preprocesamiento deben provenir de código confiable; no cargues archivos desconocidos. Versiones del entorno de despliegue deben coincidir con las usadas para entrenar/serializar los modelos.
+La aplicación permite elegir entre `parte1/salidas/modelos/pd_logistic.joblib` y la red neuronal `parte1/salidas/modelos/pd_mlp.pt` con `parte1/salidas/modelos/pd_mlp_preprocessor.joblib`. **No se reentrena**. El objeto `joblib` y el preprocesamiento deben provenir de código confiable; no cargues archivos desconocidos. Versiones del entorno de despliegue deben coincidir con las usadas para entrenar/serializar los modelos.
 
 ## Publicar
 
-1. Subir el repositorio con `app.py`, `app_config.json`, `requirements-app.txt`, `parte1/outputs/models/`, `parte1/`, `parte1/outputs/results/` y `parte1/data/processed/`.
+1. Subir el repositorio con `app.py`, `app_config.json`, `requirements-app.txt`, `parte1/salidas/modelos/`, `parte1/`, `parte1/salidas/resultados/` y `parte1/datos/procesados/`.
 2. En Streamlit Community Cloud, conectar GitHub y seleccionar `web/app.py` como archivo principal.
 3. La nube usará `web/requirements.txt` (al estar junto al punto de entrada) en vez de `requirements.txt` de entrenamiento. Configurar Python 3.13 si el entorno lo permite.
 4. Actualizar `report_url` y `video_url` dentro de `app_config.json` con enlaces HTTPS públicos reales.
@@ -29,9 +29,9 @@ Registrar otra entrada en `app_config.json` bajo `models`, apuntando a un **pipe
 ```json
 {
   "name": "Red neuronal MLP",
-  "path": "parte1/outputs/models/pd_mlp_pipeline.joblib",
-  "data_path": "parte1/data/processed/pd_matured.parquet",
-  "predictions_path": "parte1/outputs/results/pd_mlp_predicciones.parquet",
+  "path": "parte1/salidas/modelos/pd_mlp_pipeline.joblib",
+  "data_path": "parte1/datos/procesados/pd_matured.parquet",
+  "predictions_path": "parte1/salidas/resultados/pd_mlp_predicciones.parquet",
   "reference_split": "train"
 }
 ```
@@ -53,6 +53,6 @@ La scorecard se calcula con las odds `P(bueno)/P(malo)` y `PDO` configurable. El
 
 Se añadió el adaptador `parte1/inference.py`. Permite ejecutar inferencias con la MLP de PyTorch usando el preprocesador exacto guardado al entrenarla, sin entrenar nuevamente. Su entrada se deriva de `preprocessor.transformers_`, la probabilidad corresponde a la clase 1 (incumplimiento), y se convierte al puntaje mediante la misma fórmula de scorecard que el modelo logístico. El percentil se calcula exclusivamente con las predicciones históricas del modelo seleccionado, evitando mezclar distribuciones.
 
-Para reemplazar el modelo tras un nuevo entrenamiento, actualizar `parte1/outputs/models/pd_mlp.pt`, `parte1/outputs/models/pd_mlp_preprocessor.joblib` y `parte1/outputs/results/pd_mlp_predicciones.parquet` conjuntamente; verificar la compatibilidad de versiones y dimensiones. Si el modelo cambia de arquitectura o de formato de guardado, modificar el adaptador en lugar de `app.py`.
+Para reemplazar el modelo tras un nuevo entrenamiento, actualizar `parte1/salidas/modelos/pd_mlp.pt`, `parte1/salidas/modelos/pd_mlp_preprocessor.joblib` y `parte1/salidas/resultados/pd_mlp_predicciones.parquet` conjuntamente; verificar la compatibilidad de versiones y dimensiones. Si el modelo cambia de arquitectura o de formato de guardado, modificar el adaptador en lugar de `app.py`.
 
 Los modelos son históricos y se presentan como ejercicios académicos, no herramientas para aprobar o denegar créditos.

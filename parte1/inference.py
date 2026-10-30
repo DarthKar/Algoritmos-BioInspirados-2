@@ -18,7 +18,7 @@ class MLPAdapter:
 
     # Devuelve [P(bueno), P(malo)] por fila, como sklearn.
     def predict_proba(self, X):
-        from parte1.modeling.core import predict_proba
+        from parte1.modelos.core import predict_proba
         frame = pd.DataFrame(X).reindex(columns=self.input_columns)
         transformed = self.preprocessor.transform(frame)
         p = np.asarray(predict_proba(self.network, transformed), dtype=float).reshape(-1)
@@ -35,7 +35,7 @@ def load_registered_model(path, kind="sklearn", preprocessor_path=None):
     if not preprocessor_path:
         raise ValueError("Falta preprocessor_path en app_config.json")
     import torch
-    from parte1.modeling.core import MLP
+    from parte1.modelos.core import MLP
     # Solo cargar checkpoints producidos por el equipo, nunca archivos de origen desconocido.
     ckpt = torch.load(path, map_location="cpu", weights_only=True)
     conf = ckpt["config"]
