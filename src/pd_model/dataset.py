@@ -35,12 +35,16 @@ def build_pd_dataset(
     val_start: str | None = None,
     test_start: str | None = None,
     raw_path: Path = RAW_LOANS_CSV,
+    keep_columns: tuple[str, ...] = (),
 ) -> tuple[pd.DataFrame, dict]:
-    """Devuelve (dataset, reporte con conteos de cada paso)."""
+    """Devuelve (dataset, reporte); `keep_columns` conserva auxiliares solicitados explícitamente."""
     val_start = val_start or DEFAULT_SPLITS[mode]["val_start"]
     test_start = test_start or DEFAULT_SPLITS[mode]["test_start"]
 
     raw = load_raw(raw_path)
+    missing_columns = set(keep_columns) - set(raw.columns)
+    if missing_columns:
+        raise ValueError(f"Columnas solicitadas no presentes en el CSV: {sorted(missing_columns)}")
     report = {"modo": mode, "snapshot": snapshot, "val_start": val_start, "test_start": test_start,
               "filas_originales": len(raw), "columnas_originales": int(raw.shape[1])}
     df = clean(raw)
@@ -58,8 +62,10 @@ def build_pd_dataset(
 
     df["split"] = assign_split(df, val_start, test_start)
 
-    # Se guardan solo columnas disponibles al fondear (sin fuga ni texto libre)
-    drop = [c for c in POST_ORIGINATION + NON_PREDICTIVE if c in df and c != "id"]
+    # Se excluyen campos de fuga salvo auxiliares pedidos explícitamente para otra tarea.
+    keep_columns = set(keep_columns)
+    drop = [c for c in POST_ORIGINATION + NON_PREDICTIVE
+            if c in df and c != "id" and c not in keep_columns]
     df = df.drop(columns=drop)
     df = df[ID_COLUMNS + [c for c in df.columns if c not in ID_COLUMNS]].reset_index(drop=True)
 

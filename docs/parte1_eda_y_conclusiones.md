@@ -84,7 +84,7 @@ La figura `figures/pd_matriz_confusion.png` muestra las matrices de confusión e
 - De cada cinco rechazados, solo uno habría sido malo.
 - El MLP detecta 84 malos más (1.106 frente a 1.022), pero a cambio rechaza 428 buenos más.
 
-El umbral de máximo F1 es una convención. Al inversionista le importa el dinero: el umbral correcto sale de comparar la pérdida esperada (PD × LGD × EAD, de la Parte 2) con el interés que gana. Por eso conviene que la scorecard y la app muestren PD y puntaje, no una etiqueta de "aprobado".
+El umbral de máximo F1 es una convención. Al inversionista le importa el dinero: un umbral económico requiere una pérdida esperada con definiciones compatibles de default, LGD y EAD, comparada con el ingreso esperado. El cálculo actual de Parte 2 es solo un proxy sobre el monto financiado al origen: el target PD también incluye mora de 31–120 días, la severidad observada solo incluye préstamos castigados y las recuperaciones pueden estar censuradas. Por eso todavía no debe usarse como umbral económico validado. Conviene que la scorecard y la app muestren PD y puntaje, no una etiqueta de "aprobado".
 
 ## 4. Hipótesis contra lo que aprendieron los modelos
 
@@ -140,7 +140,7 @@ Es un efecto *ceteris paribus*, el mismo principio de la dependencia parcial (Fr
 5. **El accuracy no sirve aquí.**
    - Con 13 % de malos, aprobar a todos da 86,9 % de accuracy.
    - Cualquier umbral útil baja el accuracy (65 %) a cambio de detectar la mitad de los malos.
-   - Para comparar modelos se usan AUC, KS y Brier; el umbral se decide con la pérdida esperada de la Parte 2.
+   - Para comparar modelos se usan AUC, KS y Brier. El proxy de pérdida de la Parte 2 aún no basta para decidir un umbral económico: primero deben alinearse el evento de PD con los casos usados para LGD y definirse la exposición en default.
 6. **Hay deriva temporal.**
    - El AUC baja de 0,66 a 0,67 en validación (2012 T3) a 0,64 en prueba (2012 T4).
    - Con validación aleatoria se habría reportado un desempeño optimista.

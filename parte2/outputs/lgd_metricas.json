@@ -1,0 +1,71 @@
+{
+  "modo": "matured",
+  "n_por_particion": {
+    "train": 46472,
+    "val": 13322,
+    "test": 15136
+  },
+  "n_test_con_lgd_observada": 1890,
+  "lgd_definition": "(funded_amnt - total_rec_prncp - recoveries + collection_recovery_fee) / funded_amnt; pérdida observada acumulada sobre el principal financiado al origen, recortada a [0, 1]",
+  "lgd_observed_statuses": [
+    "Charged Off",
+    "Does not meet the credit policy. Status:Charged Off"
+  ],
+  "pd_bad_statuses": [
+    "Charged Off",
+    "Default",
+    "Late (31-120 days)",
+    "Does not meet the credit policy. Status:Charged Off"
+  ],
+  "ead_loss_projection": "funded_amnt (monto financiado en originación)",
+  "loss_projection_interpretation": "Proxy indicativo, no pérdida esperada estándar a la fecha de default: el target PD incluye estados Late (31-120 days), la LGD observada solo incluye Charged Off, y las recuperaciones pueden estar censuradas.",
+  "modelo_referencia": {
+    "tipo": "Regresión lineal",
+    "n_parametros": 78,
+    "segundos_entrenamiento": 0.021105289459228516,
+    "test": {
+      "mae": 0.19278561505153688,
+      "rmse": 0.22857813063541685
+    }
+  },
+  "mlp": {
+    "configuracion": {
+      "unidades": [
+        256,
+        128
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.0005
+    },
+    "funcion_perdida": "mean_squared_error",
+    "funcion_salida": "sigmoid",
+    "n_configuraciones": 6,
+    "segundos_busqueda": 17.213929414749146,
+    "n_semillas": 30,
+    "n_parametros": 52993,
+    "segundos_entrenamiento_semillas": 111.1567132472992,
+    "segundos_totales_busqueda_y_semillas": 128.37064266204834,
+    "test_por_semilla": {
+      "mae": {
+        "media": 0.1929325661386173,
+        "desv_est": 0.000278921622671351,
+        "mejor": 0.19215461984640594,
+        "peor": 0.1933946013179904
+      },
+      "rmse": {
+        "media": 0.2283573019071498,
+        "desv_est": 0.0004339033832512379,
+        "mejor": 0.22724303318977643,
+        "peor": 0.22918572018534342
+      }
+    },
+    "test_ensamble_semillas": {
+      "mae": 0.19257242704585928,
+      "rmse": 0.22765998900794124
+    }
+  },
+  "referencia_media_constante_test": {
+    "mae": 0.1945350486853666,
+    "rmse": 0.22989518121730265
+  }
+}
