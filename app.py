@@ -9,9 +9,9 @@ import pandas as pd
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
-sys.path.insert(0, str(ROOT))  # Necesario para deserializar src.features._safe_log1p
-from src.pd_model.scorecard import ScorecardParams, prob_to_score
-from src.pd_model.adapter import load_registered_model
+sys.path.insert(0, str(ROOT))  # Necesario para importar parte1 y deserializar sus preprocesadores
+from parte1.scorecard.transform import ScorecardParams, prob_to_score
+from parte1.inference import load_registered_model
 
 st.set_page_config(page_title="Simulador de riesgo crediticio", page_icon="📊", layout="wide")
 
@@ -95,6 +95,7 @@ def reference_scores(pred_path, params, split):
 # de verdad. Las descripciones deben cotejarse con el diccionario del conjunto de datos.
 FIELD_GUIDANCE = {
     "loan_amnt": ("Préstamo", "Cantidad solicitada en dólares estadounidenses."),
+    "term": ("Préstamo", "Plazo del crédito en meses. Lending Club ofrece 36 o 60 meses."),
     "annual_inc": ("Ingresos y empleo", "Ingresos anuales declarados, en USD."),
     "emp_length": ("Ingresos y empleo", "Años de antigüedad laboral registrados."),
     "dti": ("Ingresos y empleo", "Relación deuda/ingresos expresada como porcentaje; utiliza la definición del conjunto Lending Club."),
@@ -138,6 +139,10 @@ def friendly_widget(col, meta, key, labels, initial=None):
     val = float(meta["value"] if initial is None else initial)
     # Preservar la posibilidad de valores fuera del intervalo de entrenamiento.
     # No aplicar redondeos que cambien la inferencia.
+    if col == "term":
+        return st.selectbox(title, [36, 60], index=1 if val >= 48 else 0,
+                            format_func=lambda x: f"{x} meses", key=key,
+                            help=f"{explanation} Variable original: {col}")
     if col == "never_delinquent":
         return st.selectbox(title, [0, 1], index=1 if val >= 0.5 else 0,
                             format_func=lambda x: "Sí" if x == 1 else "No", key=key,
@@ -172,7 +177,7 @@ def main():
     st.info("Proyecto educativo con préstamos históricos de Lending Club. No determina la aprobación de créditos ni constituye asesoría financiera.")
     available = {m["name"]: m for m in cfg["models"] if (ROOT / m["path"]).is_file()}
     if not available:
-        st.error("No se encontraron modelos guardados. Verifica app_config.json y models/.")
+        st.error("No se encontraron modelos guardados. Verifica app_config.json y parte1/outputs/models/.")
         st.stop()
 
     loaded, model_columns = {}, {}
@@ -260,7 +265,7 @@ def main():
             try:
                 p, s = inference(model, {c: entry[c] for c in model_columns[name]}, params)
                 refmc = available[name]
-                ref_file = ROOT / refmc.get("predictions_path", "results/none.parquet")
+                ref_file = ROOT / refmc.get("predictions_path", "parte1/outputs/results/none.parquet")
                 try:
                     ref = reference_scores(ref_file, params, refmc.get("reference_split", "train"))
                 except Exception:

@@ -1,0 +1,55 @@
+# Configuración de la Parte 1 (probabilidad de incumplimiento).
+# Uso (desde la raíz): python parte1/run.py  |  python parte1/run.py --demo  |  python parte1/run.py --set mlp.n_seeds=5
+# Cualquier valor se puede cambiar aquí o desde la línea de comandos con --set, sin tocar el código.
+
+semilla: 42
+
+datos:
+  modo: matured            # matured = solo créditos que ya vencieron | resolved = todos los resueltos (con sesgo)
+  plazos: [36, 60]         # plazos incluidos; los de 60 meses vencidos son solo la cohorte de 2010
+
+logistica:
+  c_grid: [0.001, 0.01, 0.1, 1.0, 10.0]   # inverso de la fuerza de la penalización L2
+
+mlp:
+  n_trials: 25             # configuraciones de la búsqueda aleatoria
+  n_seeds: 30              # semillas de la configuración final
+  max_epochs: 100
+  patience: 8              # épocas sin mejorar la pérdida de validación antes de parar
+  fixed: null              # configuración fija que salta la búsqueda; ver ejemplo en demo
+
+interpretabilidad:
+  n_background: 100        # clientes de entrenamiento como referencia de SHAP
+  n_explain: 300           # clientes de prueba explicados
+  nsamples: 1000           # evaluaciones del modelo por cliente (KernelExplainer)
+
+scorecard:
+  base_score: 600
+  base_odds: 7             # odds buenos:malos que reciben el puntaje base
+  pdo: 20                  # puntos para duplicar las odds
+
+comparacion:
+  n_boot: 1000             # réplicas del bootstrap pareado en prueba
+
+# Cambios que aplica --demo (todo lo demás se hereda de arriba). Las salidas van a parte1/outputs_demo/,
+# así no se sobrescriben los modelos ni los resultados completos.
+demo:
+  mlp:
+    n_seeds: 3
+    max_epochs: 20
+    patience: 5
+    fixed:                 # mejor configuración hallada por la búsqueda completa
+      hidden: [128, 64, 32]
+      activation: relu
+      dropout: 0.2
+      l2: 0.0
+      optimizer: sgd
+      lr: 0.0086
+      momentum: 0.9
+      batch_size: 256
+  interpretabilidad:
+    n_background: 50
+    n_explain: 50
+    nsamples: 200
+  comparacion:
+    n_boot: 200

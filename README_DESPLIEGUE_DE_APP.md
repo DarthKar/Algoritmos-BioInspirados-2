@@ -7,13 +7,13 @@
 - Dependencias cloud: `web/requirements.txt` (NO usar `requirements.txt` raíz para este despliegue)
 - Dependencias locales web: `requirements-app.txt`
 - Registro de modelos y enlaces: `app_config.json`
-- Artefactos de inferencia: `models/`, `results/pd_*_predicciones.parquet`, `data/processed/pd_matured.parquet`
+- Artefactos de inferencia: `parte1/outputs/models/`, `parte1/outputs/results/pd_*_predicciones.parquet`, `parte1/data/processed/pd_matured.parquet`
 
 ## Antes de subir archivos
 
 1. Ejecuta `python scripts/verificar_despliegue.py` desde la raíz.
 2. Comprueba que las versiones de Python y bibliotecas usadas para guardar los modelos son compatibles; usa Python 3.12 en Community Cloud inicialmente y prueba el despliegue. Si tus modelos se guardaron en otra versión, prioriza la misma versión utilizada en el entrenamiento.
-3. **Revisa privacidad y licencia:** `data/processed/` incluye registros históricos y el repositorio puede hacerse público. No publiques datos personales, credenciales ni archivos originales sin comprobar que su distribución está autorizada. Para una publicación pública, preferir un conjunto de referencia anonimizado y mínimo; la versión incluida conserva los datos procesados porque el trabajo académico exige reproducibilidad y las pruebas los utilizan.
+3. **Revisa privacidad y licencia:** `parte1/data/processed/` incluye registros históricos y el repositorio puede hacerse público. No publiques datos personales, credenciales ni archivos originales sin comprobar que su distribución está autorizada. Para una publicación pública, preferir un conjunto de referencia anonimizado y mínimo; la versión incluida conserva los datos procesados porque el trabajo académico exige reproducibilidad y las pruebas los utilizan.
 4. Revisa el histórico Git antes de publicar: un `.gitignore` no elimina datos que ya se hayan subido al repositorio.
 5. Los enlaces al reporte técnico y al video están pendientes: configúralos como `report_url` y `video_url` en `app_config.json` cuando existan.
 
