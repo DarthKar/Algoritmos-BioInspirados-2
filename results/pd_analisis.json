@@ -1053,8 +1053,8 @@
       },
       {
         "concepto": "segundos_totales",
-        "logistica": 1.0757059,
-        "mlp": 816.4120297
+        "logistica": 1.1591015,
+        "mlp": 1248.188622
       },
       {
         "concepto": "interpretabilidad",
@@ -1072,7 +1072,7 @@
         ]
       },
       "dif_brier_mlp_menos_lr": {
-        "media": -0.00015507724352672474,
+        "media": -0.00015507724352672468,
         "ic95": [
           -0.0005282734231900011,
           0.0002130859286104035

@@ -45,7 +45,7 @@ Bootstrap pareado en prueba (1000 réplicas), MLP guardado menos logística: ΔA
 | parametros | 37 | 15,105 |
 | configuraciones_evaluadas | 5 | 25 |
 | semillas | 1 | 30 |
-| segundos_totales | 1.0757 | 816.41 |
+| segundos_totales | 1.1591 | 1,248.2 |
 | interpretabilidad | coeficientes y scorecard directa | SHAP (aproximado) |
 
 ## 4. Accuracy, F1 y matriz de confusión (prueba)
@@ -104,7 +104,7 @@ Puntaje base 600 con odds 7:1 y PDO 20: score = 543.85 + 28.85 · ln(odds buenos
 
 ## 7. MLP: búsqueda y configuración elegida
 
-Método: búsqueda aleatoria (25 configuraciones, 301 s); 30 semillas (514 s). Parámetros entrenables: 15,105. Configuración elegida: `{"hidden": [128, 64, 32], "activation": "relu", "dropout": 0.2, "l2": 0.0, "optimizer": "sgd", "lr": 0.0085791055, "momentum": 0.9, "batch_size": 256, "max_epochs": 100, "patience": 8, "seed": 9}`. Logística: C = 10 entre 5 valores.
+Método: búsqueda aleatoria (25 configuraciones, 381 s); 30 semillas (866 s). Parámetros entrenables: 15,105. Configuración elegida: `{"hidden": [128, 64, 32], "activation": "relu", "dropout": 0.2, "l2": 0.0, "optimizer": "sgd", "lr": 0.0085791055, "momentum": 0.9, "batch_size": 256, "max_epochs": 100, "patience": 8, "seed": 9}`. Logística: C = 10 entre 5 valores.
 
 | Capas | Activación | Dropout | L2 | Optimizador | Tasa | Lote | Mejor época | Log-loss val. | AUC val. |
 |---|---|---|---|---|---|---|---|---|---|
