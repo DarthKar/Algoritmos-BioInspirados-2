@@ -35,7 +35,7 @@ STAGE_HELP = {
     "mlp": "búsqueda aleatoria del MLP y entrenamiento con varias semillas",
     "figuras": "curvas ROC, de calibración y de pérdida",
     "interpretabilidad": "SHAP sobre el MLP y la logística",
-    "scorecard": "puntajes, tabla de puntos y bandas",
+    "scorecard": "scorecard del MLP (puntos por variable con SHAP) y de la logística",
     "clasificacion": "accuracy, F1 y matriz de confusión",
     "hipotesis": "efecto de cada hipótesis en los modelos",
     "comparacion": "logística contra MLP: métricas, costos y bootstrap",
@@ -220,23 +220,34 @@ def ver_hipotesis(res: Path) -> None:
     a = leer_json(res / "pd_analisis.json")
     eda = {h["id"]: h for h in a["eda_hipotesis"]}
     filas = [{"Id": h["id"], "Hipótesis": eda[h["id"]]["hipotesis"][:60], "EDA": h["veredicto_eda"],
-              "Δ PD LR (pp)": round(h["delta_pd_lr_pp"], 2), "Δ PD MLP (pp)": round(h["delta_pd_mlp_pp"], 2),
+              "Δ PD LR (pp)": None if h["delta_pd_lr_pp"] is None else round(h["delta_pd_lr_pp"], 2),
+              "Δ PD MLP (pp)": None if h["delta_pd_mlp_pp"] is None else round(h["delta_pd_mlp_pp"], 2),
               "LR": h["veredicto_lr"], "MLP": h["veredicto_mlp"]} for h in a["hipotesis_vs_modelos"]]
     titulo("Hipótesis: EDA frente a los modelos")
     print(pd.DataFrame(filas).to_string(index=False))
 
 
-# Parámetros de la scorecard, puntos por variable y bandas.
+# Scorecard del MLP: escala, puntos por variable y tramo, y bandas; la logística como comparación.
 def ver_scorecard(res: Path) -> None:
-    sc = leer_json(res / "pd_analisis.json")["scorecard"]
+    a = leer_json(res / "pd_analisis.json")
+    sc, sc_lr = a["scorecard"], a.get("scorecard_logistica", {})
     p = sc["parametros"]
-    titulo("Scorecard")
+    titulo("Scorecard del MLP")
     print(f"puntaje = {p['offset']:.2f} + {p['factor']:.2f} · ln(odds)   (base {p['base_score']:g}, odds {p['base_odds']:g}:1, PDO {p['pdo']:g})")
-    print(f"Puntos base: {sc['puntos_base']:.1f}. AUC en prueba con el puntaje: {sc['auc_test_con_puntaje']:.4f}")
-    print("\nPuntos por variable (las 12 de mayor impacto):")
-    print(pd.DataFrame(sc["tabla"]).head(12).round(4).to_string(index=False))
-    print("\nBandas en prueba (1 = más riesgo):")
+    print(f"Puntos base: {sc['puntos_base']:.1f}. AUC en prueba con el puntaje: MLP {sc['auc_test_con_puntaje']:.4f}"
+          + (f", logística {sc_lr['auc_test_con_puntaje']:.4f}" if sc_lr else ""))
+    print("Cada variable aporta −factor · φ puntos (φ = valor SHAP sobre el logit); los puntos de un cliente suman su puntaje.")
+    print("\nPuntos medios absolutos por variable:")
+    print(pd.DataFrame(sc["importancia_puntos"]).round(2).to_string(index=False))
+    tramos = pd.DataFrame(sc["tabla_tramos"])
+    top = [r["variable"] for r in sc["importancia_puntos"][:6]]
+    print("\nPuntos medios del MLP por tramo (6 variables más importantes):")
+    print(tramos[tramos["variable"].isin(top)].round(2).to_string(index=False))
+    print("\nBandas en prueba con el puntaje del MLP (1 = más riesgo):")
     print(pd.DataFrame(sc["bandas_test"]).round(3).to_string(index=False))
+    if sc_lr:
+        titulo("Logística (comparación): puntos exactos por unidad de cada variable")
+        print(pd.DataFrame(sc_lr["tabla_por_unidad"]).head(12).round(4).to_string(index=False))
 
 
 # Métricas por umbral en prueba.

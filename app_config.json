@@ -1,19 +1,19 @@
 {
   "models": [
     {
-      "name": "Regresión logística (referencia)",
-      "path": "parte1/salidas/modelos/pd_logistic.joblib",
-      "data_path": "parte1/datos/procesados/pd_matured.parquet",
-      "predictions_path": "parte1/salidas/resultados/pd_logistic_predicciones.parquet",
-      "reference_split": "train"
-    },
-    {
-      "name": "Red neuronal MLP (primera versión)",
+      "name": "Red neuronal (MLP)",
       "type": "pytorch_mlp",
       "path": "parte1/salidas/modelos/pd_mlp.pt",
       "preprocessor_path": "parte1/salidas/modelos/pd_mlp_preprocessor.joblib",
       "data_path": "parte1/datos/procesados/pd_matured.parquet",
       "predictions_path": "parte1/salidas/resultados/pd_mlp_predicciones.parquet",
+      "reference_split": "train"
+    },
+    {
+      "name": "Regresión logística (referencia)",
+      "path": "parte1/salidas/modelos/pd_logistic.joblib",
+      "data_path": "parte1/datos/procesados/pd_matured.parquet",
+      "predictions_path": "parte1/salidas/resultados/pd_logistic_predicciones.parquet",
       "reference_split": "train"
     }
   ],

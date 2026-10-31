@@ -27,6 +27,9 @@ scorecard:
   base_score: 600
   base_odds: 7             # odds buenos:malos que reciben el puntaje base
   pdo: 20                  # puntos para duplicar las odds
+  n_explicar: 2000         # créditos (de toda la base) cuyos puntos por variable se calculan con SHAP
+  n_fondo: 100             # créditos de entrenamiento usados como referencia de SHAP
+  max_evals: 200           # evaluaciones del modelo por crédito (estimador por permutaciones)
 
 comparacion:
   n_boot: 1000             # réplicas del bootstrap pareado en prueba
@@ -51,5 +54,8 @@ demo:
     n_background: 50
     n_explain: 50
     nsamples: 200
+  scorecard:
+    n_explicar: 300
+    n_fondo: 50
   comparacion:
     n_boot: 200

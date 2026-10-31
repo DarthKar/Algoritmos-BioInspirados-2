@@ -97,7 +97,9 @@ def run_stage(stage: str, cfg: dict) -> None:
     elif stage == "scorecard":
         from parte1.puntaje.build import run_scorecard
         from parte1.puntaje.transform import ScorecardParams
-        run_scorecard(ScorecardParams(**cfg["scorecard"]), mode=mode)
+        sc = dict(cfg["scorecard"])
+        params = ScorecardParams(**{k: sc.pop(k) for k in ("base_score", "base_odds", "pdo")})
+        run_scorecard(params, mode=mode, **sc)
     elif stage == "clasificacion":
         from parte1.evaluacion.classification import run_classification
         run_classification()
