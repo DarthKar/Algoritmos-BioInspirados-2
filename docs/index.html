@@ -1,30 +1,402 @@
----
-layout: default
-title: Inicio
-permalink: /
----
+<!-- ============ INICIO: pega todo esto dentro del <body> de tu blog ============ -->
+<style>
+.post{--bg:#fbfcfd;--tx:#1b2430;--mu:#5b6776;--ac:#0b6e8a;--ln:#d5dce4;--hd:#e8f1f5;--cd:#f0f3f6;
+ max-width:760px;margin:0 auto;padding:2rem 1.1rem 4rem;background:var(--bg);color:var(--tx);
+ font:1.06rem/1.72 Georgia,"Iowan Old Style",serif}
+@media (prefers-color-scheme:dark){.post{--bg:#12181f;--tx:#e3e9ef;--mu:#9aa7b5;--ac:#5cc3df;--ln:#2d3946;--hd:#1b2733;--cd:#1a232d}}
+.post h1,.post h2,.post h3{font-family:"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.25;color:var(--tx)}
+.post h1{font-size:2.1rem;margin:0 0 .4rem}
+.post h2{font-size:1.5rem;margin:2.6rem 0 .6rem;padding-top:.8rem;border-top:1px solid var(--ln)}
+.post h3{font-size:1.15rem;margin:1.8rem 0 .3rem;color:var(--ac)}
+.post .meta{color:var(--mu);font:.92rem "Segoe UI",Arial,sans-serif;margin-bottom:1.4rem}
+.post .lead{font-size:1.15rem;border-left:4px solid var(--ac);padding-left:1rem}
+.post a{color:var(--ac)}
+.post code{font:.88em Consolas,Menlo,monospace;background:var(--cd);padding:.1em .35em;border-radius:3px}
+.post pre.eq{font:.92rem/1.6 Consolas,Menlo,monospace;background:var(--cd);border-left:3px solid var(--ac);padding:.8rem 1rem;overflow-x:auto;white-space:pre}
+.post .tw{overflow-x:auto;margin:1rem 0}
+.post table{border-collapse:collapse;width:100%;font:.88rem/1.4 "Segoe UI",Arial,sans-serif}
+.post th,.post td{border:1px solid var(--ln);padding:.4rem .6rem;text-align:left;vertical-align:top}
+.post th{background:var(--hd)}
+.post caption{caption-side:top;text-align:left;font-weight:600;padding-bottom:.4rem}
+.post .nota{color:var(--mu);font:.85rem/1.5 "Segoe UI",Arial,sans-serif;margin:.2rem 0 1.2rem}
+.post figure{margin:1.4rem 0;padding:1rem;border:1px dashed var(--ln);border-radius:6px;text-align:center}
+.post figure img{max-width:100%;height:auto}
+.post figcaption{font:.88rem "Segoe UI",Arial,sans-serif;color:var(--mu)}
+.post .toc{background:var(--cd);padding:.8rem 1.2rem;border-radius:6px;font:.95rem/1.7 "Segoe UI",Arial,sans-serif}
+.post .toc ul{margin:.2rem 0;padding-left:1.1rem}
+.post .clave{background:var(--hd);padding:.8rem 1rem;border-radius:6px}
+.post ol.refs{padding-left:0;list-style:none;font-size:.95rem}
+.post ol.refs li{padding-left:2rem;text-indent:-2rem;margin-bottom:.6rem}
+</style>
 
-# Riesgo de crédito explicado con datos
+<article class="post">
+<h1>Riesgo de crédito en Lending Club: ¿una red neuronal supera a la regresión logística?</h1>
+<p class="meta">Entrega 2 · Análisis de riesgo crediticio · Datos: Lending Club (2007–2012)</p>
 
-Un proyecto académico que compara modelos para estimar la probabilidad de
-incumplimiento y la severidad de la pérdida en créditos de Lending Club.
+<p class="lead">Construimos dos modelos de probabilidad de incumplimiento (PD) con créditos de consumo de Lending Club: una regresión logística que se puede convertir en scorecard y un perceptrón multicapa (MLP). Ambos se compararon con los mismos datos, partición temporal y presupuesto explícito. El MLP discrimina un poco mejor (AUC 0,629 frente a 0,622), pero la logística queda mejor calibrada en los extremos y cuesta 1 segundo frente a 693.</p>
 
-## Entrada destacada
+<nav class="toc"><strong>Contenido</strong>
+<ul>
+<li><a href="#datos">1. Datos</a></li>
+<li><a href="#uso">2. Caso de uso</a></li>
+<li><a href="#hipotesis">3. Análisis descriptivo e hipótesis</a></li>
+<li><a href="#teoria">4. Fundamentación teórica y matemática</a></li>
+<li><a href="#metodo">5. Metodología experimental</a></li>
+<li><a href="#resultados">6. Resultados</a></li>
+<li><a href="#refs">Referencias</a></li>
+</ul></nav>
 
-### [¿Puede una red neuronal anticipar el riesgo de un crédito?](entrada-blog-prueba/)
+<h2 id="datos">1. Datos</h2>
+<h3>1.1 Fuente</h3>
+<p>Usamos el conjunto <em>Credit Risk Analysis</em> de Kaggle (Ranadeep, s. f.), con los créditos de consumo que Lending Club originó en Estados Unidos.</p>
+<ul>
+<li><strong>Archivo:</strong> <code>loan.csv</code>, descargado el 24 de octubre de 2026.</li>
+<li><strong>Tamaño:</strong> 887.379 registros y 74 variables.</li>
+<li><strong>Originación (<code>issue_d</code>):</strong> junio de 2007 a diciembre de 2015.</li>
+</ul>
+<p>Los significados de las variables vienen del diccionario incluido (<code>LCDataDictionary.xlsx</code>). Al compararlo con los datos hallamos tres diferencias:</p>
+<ul>
+<li>La verificación del ingreso se llama <code>is_inc_v</code> en el diccionario y <code>verification_status</code> en los datos.</li>
+<li>El diccionario describe el puntaje FICO, pero ninguna columna del archivo lo contiene.</li>
+<li>En los créditos de 2007 y 2008, la ausencia de eventos en las variables <code>mths_since_last_*</code> aparece como 0 y no como vacío.</li>
+</ul>
 
-Comparamos una regresión logística con un perceptrón multicapa, revisamos cómo
-el umbral afecta la clasificación y explicamos qué significa —y qué no— el
-proxy de pérdida esperada.
+<h3>1.2 Variable objetivo</h3>
+<p>Se construyó a partir de <code>loan_status</code>. Los créditos sin desenlace conocido se excluyen porque su comportamiento final no se observa. Quedan 268.530 créditos con desenlace, de los cuales 58.819 (21,9 %) son malos.</p>
+<div class="tw"><table><caption>Tabla 1. Codificación de la variable objetivo</caption>
+<tr><th>Categoría original</th><th>Créditos</th><th>Codificación</th></tr>
+<tr><td>Fully Paid</td><td>207.723</td><td>0 (bueno)</td></tr>
+<tr><td>Does not meet the credit policy. Status:Fully Paid</td><td>1.988</td><td>0 (bueno)</td></tr>
+<tr><td>Charged Off</td><td>45.248</td><td>1 (malo)</td></tr>
+<tr><td>Default</td><td>1.219</td><td>1 (malo)</td></tr>
+<tr><td>Late (31-120 days)</td><td>11.591</td><td>1 (malo)</td></tr>
+<tr><td>Does not meet the credit policy. Status:Charged Off</td><td>761</td><td>1 (malo)</td></tr>
+<tr><td>Current</td><td>601.779</td><td>NA (excluido)</td></tr>
+<tr><td>Issued</td><td>8.460</td><td>NA (excluido)</td></tr>
+<tr><td>In Grace Period</td><td>6.253</td><td>NA (excluido)</td></tr>
+<tr><td>Late (16-30 days)</td><td>2.357</td><td>NA (excluido)</td></tr>
+</table></div>
+<p class="nota">Nota. Elaboración propia con datos de Lending Club (Ranadeep, s. f.).</p>
 
-**Resultados principales en prueba:** AUC de 0,638 para la regresión logística
-y 0,645 para el MLP guardado. La diferencia es pequeña; la interpretación y
-las limitaciones también importan.
+<h3>1.3 Sesgo de censura y selección de la muestra</h3>
+<p>Excluir los créditos vigentes introduce un sesgo. Con corte en enero de 2016, un crédito de 2015 solo tiene desenlace si terminó antes de tiempo: se pagó por anticipado o cayó en impago muy pronto. Las cohortes recientes quedan representadas solo por sus créditos de desenlace temprano, y su tasa de malos no es comparable con la de las antiguas.</p>
+<p>Para evitarlo trabajamos con la <strong>muestra de créditos vencidos</strong>: aquellos cuya fecha de originación más el plazo es anterior a enero de 2016. Así todos tuvieron tiempo de mostrar su desenlace.</p>
+<ul>
+<li>A 36 meses: créditos originados hasta diciembre de 2012.</li>
+<li>A 60 meses: solo los de 2010, porque Lending Club ofrece ese plazo desde mayo de 2010 (3.372 créditos, 22,5 % de malos).</li>
+</ul>
+<p>La muestra queda en 78.331 créditos de junio de 2007 a diciembre de 2012. Se eliminaron 29 sin información de buró; quedan <strong>78.302 créditos con 13,5 % de malos</strong>.</p>
 
-## Sobre el proyecto
+<h3>1.4 Variables</h3>
+<p>Una variable solo entra al modelo si el inversionista la conoce al decidir (sección 2). Por eso se excluyeron cinco grupos:</p>
+<ol>
+<li><strong>Información posterior a la originación</strong> (pagos, saldos, recuperaciones, fechas del último pago): sería fuga de información.</li>
+<li><strong>Evaluaciones de riesgo de Lending Club:</strong> <code>sub_grade</code>, <code>grade</code>, <code>int_rate</code> e <code>installment</code>. Son salidas del modelo de la plataforma o funciones de ellas: usarlas sería alimentar nuestro modelo con otro modelo, y el solicitante no las conoce antes de pedir el crédito.</li>
+<li><strong>Estado de residencia</strong> (<code>addr_state</code>): puede ser sustituto de características protegidas y tiene muchas categorías pequeñas.</li>
+<li><strong>Variables que solo existen desde 2012</strong>, como <code>tot_cur_bal</code>, <code>total_rev_hi_lim</code> e <code>initial_list_status</code>.</li>
+<li><strong>Variables con más de 50 % de faltantes</strong> en entrenamiento, o con un solo valor en más del 99,5 % de los casos.</li>
+</ol>
+<p>La Tabla 2 lista las 18 variables que usan ambos modelos.</p>
+<div class="tw"><table><caption>Tabla 2. Variables de entrada y definición según el diccionario</caption>
+<tr><th>Variable</th><th>Definición (LCDataDictionary.xlsx)</th><th>Tratamiento</th></tr>
+<tr><td><code>loan_amnt</code></td><td>“The listed amount of the loan applied for by the borrower.”</td><td>Numérica</td></tr>
+<tr><td><code>term</code></td><td>“The number of payments on the loan. Values are in months and can be either 36 or 60.”</td><td>Numérica (36 o 60)</td></tr>
+<tr><td><code>annual_inc</code></td><td>“The self-reported annual income provided by the borrower during registration.”</td><td>ln(1 + x)</td></tr>
+<tr><td><code>emp_length</code></td><td>“Employment length in years. Possible values are between 0 and 10 where 0 means less than one year and 10 means ten or more years.”</td><td>Numérica, con indicador de faltante</td></tr>
+<tr><td><code>dti</code></td><td>“A ratio calculated using the borrower’s total monthly debt payments on the total debt obligations, excluding mortgage and the requested LC loan, divided by the borrower’s self-reported monthly income.”</td><td>Numérica</td></tr>
+<tr><td><code>delinq_2yrs</code></td><td>“The number of 30+ days past-due incidences of delinquency in the borrower’s credit file for the past 2 years”</td><td>Numérica</td></tr>
+<tr><td><code>inq_last_6mths</code></td><td>“The number of inquiries in past 6 months (excluding auto and mortgage inquiries)”</td><td>Numérica</td></tr>
+<tr><td><code>mths_since_last_delinq</code></td><td>“The number of months since the borrower’s last delinquency.”</td><td>Si nunca hubo mora, se llena con la antigüedad del historial</td></tr>
+<tr><td><code>open_acc</code></td><td>“The number of open credit lines in the borrower’s credit file.”</td><td>Numérica</td></tr>
+<tr><td><code>pub_rec</code></td><td>“Number of derogatory public records”</td><td>Numérica</td></tr>
+<tr><td><code>revol_util</code></td><td>“Revolving line utilization rate, or the amount of credit the borrower is using relative to all available revolving credit.”</td><td>Recortada en los percentiles 1 y 99</td></tr>
+<tr><td><code>total_acc</code></td><td>“The total number of credit lines currently in the borrower’s credit file”</td><td>Numérica</td></tr>
+<tr><td><code>home_ownership</code></td><td>“The home ownership status provided by the borrower during registration.”</td><td>Categórica</td></tr>
+<tr><td><code>verification_status</code> (<code>is_inc_v</code>)</td><td>“Indicates if income was verified by LC, not verified, or if the income source was verified”</td><td>Categórica</td></tr>
+<tr><td><code>purpose</code></td><td>“A category provided by the borrower for the loan request.”</td><td>Categórica</td></tr>
+<tr><td><code>credit_history_months</code></td><td>Derivada de <code>earliest_cr_line</code> (“The month the borrower’s earliest reported credit line was opened”) e <code>issue_d</code></td><td>Meses entre ambas fechas</td></tr>
+<tr><td><code>never_delinquent</code></td><td>Derivada de <code>mths_since_last_delinq</code></td><td>1 si nunca registró mora</td></tr>
+<tr><td><code>revol_limit</code></td><td>Derivada de <code>revol_bal</code> (“Total credit revolving balance”) y <code>revol_util</code></td><td>revol_bal / (revol_util / 100), en ln(1 + x)</td></tr>
+</table></div>
+<p class="nota">Nota. Definiciones citadas de LCDataDictionary.xlsx, incluido en el conjunto de datos (Ranadeep, s. f.).</p>
 
-- [Repositorio y guía completa](https://github.com/DarthKar/Algoritmos-BioInspirados-2)
-- [Código fuente de la entrada](https://github.com/DarthKar/Algoritmos-BioInspirados-2/blob/main/docs/entrada-blog-prueba.md)
+<h3>1.5 Limpieza y preprocesamiento</h3>
+<p>La limpieza fija, que no depende de estadísticas de los datos, hace cuatro cosas: corrige los ceros de 2007 y 2008 que significaban “nunca” en <code>mths_since_last_*</code>; crea las variables derivadas de la Tabla 2; agrupa las categorías raras de vivienda (NONE, ANY) en OTHER; y elimina los 29 registros sin información de buró.</p>
+<p>El preprocesamiento estadístico se ajusta <strong>solo con el conjunto de entrenamiento</strong> y se aplica igual a validación y prueba:</p>
+<ul>
+<li><strong>Numéricas:</strong> logaritmo ln(1 + x) para las de cola larga (ingreso y límite rotativo); recorte en los percentiles 1 y 99 para la utilización rotativa; imputación por la mediana con indicador binario de faltante; estandarización a media 0 y desviación 1.</li>
+<li><strong>Categóricas:</strong> codificación <em>one-hot</em> omitiendo la primera categoría como referencia (<code>MORTGAGE</code>, <code>Not Verified</code> y <code>car</code>). Las categorías con menos de 0,5 % de los casos se agrupan.</li>
+</ul>
+<p>El resultado es una matriz de 36 columnas, la misma para ambos modelos.</p>
 
-> **Nota:** es un ejercicio retrospectivo con datos históricos, no asesoría
-> financiera ni una herramienta para aprobar o denegar solicitudes de crédito.
+<h3>1.6 Partición temporal</h3>
+<p>La partición sigue la fecha de originación. Entrenar con el pasado y evaluar con el futuro reproduce el uso real del modelo y expone la deriva temporal, que una partición aleatoria esconde.</p>
+<div class="tw"><table><caption>Tabla 3. Partición temporal de la muestra</caption>
+<tr><th>Conjunto</th><th>Periodo de originación</th><th>Créditos</th><th>Tasa de malos</th></tr>
+<tr><td>Entrenamiento</td><td>junio de 2007 a junio de 2012</td><td>49.844</td><td>13,4 %</td></tr>
+<tr><td>Validación</td><td>julio a septiembre de 2012</td><td>13.322</td><td>14,2 %</td></tr>
+<tr><td>Prueba</td><td>octubre a diciembre de 2012</td><td>15.136</td><td>13,1 %</td></tr>
+<tr><td>Total</td><td>junio de 2007 a diciembre de 2012</td><td>78.302</td><td>13,5 %</td></tr>
+</table></div>
+<p class="nota">Nota. Los 3.372 créditos a 60 meses, todos de 2010, quedan en entrenamiento, donde son el 6,8 %. Elaboración propia.</p>
+<p>La validación sirve para elegir hiperparámetros, detener el entrenamiento y fijar umbrales. La prueba se usa una sola vez, para reportar.</p>
+
+<h2 id="uso">2. Caso de uso</h2>
+<ul>
+<li><strong>Quién usa el modelo:</strong> un inversionista que compra fracciones de créditos de consumo publicados en Lending Club.</li>
+<li><strong>Para qué decisión:</strong> fondear o no un crédito publicado, y con qué exposición, según la probabilidad de que el solicitante incumpla.</li>
+<li><strong>En qué momento:</strong> cuando el crédito aparece publicado, antes de comprometer dinero y antes de que exista cualquier pago.</li>
+<li><strong>Con qué información:</strong> datos de la solicitud (incluido el plazo) y del historial crediticio. Aunque el inversionista ve la subcalificación (<code>sub_grade</code>), el modelo no la usa, ni nada que se conozca después de la originación.</li>
+</ul>
+<p>Este caso de uso explica tres decisiones de modelamiento:</p>
+<ul>
+<li>Ninguna evaluación de riesgo de Lending Club (subcalificación, calificación ni tasa) entra al modelo.</li>
+<li>La partición es temporal.</li>
+<li>La salida principal es una probabilidad calibrada, no una etiqueta de aprobado o rechazado: con ella, el inversionista compara la pérdida esperada con el interés que recibiría.</li>
+</ul>
+
+<h2 id="hipotesis">3. Análisis descriptivo e hipótesis</h2>
+<p>La Figura 1 muestra la tasa de malos por trimestre de originación. Hay dos regularidades: las cohortes de 2007 y 2008 tienen tasas mucho más altas (cercanas a la crisis financiera, y con créditos que no cumplían la política de crédito), y desde 2009 la tasa se estabiliza entre 10 % y 15 %. Esa variación en el tiempo es otra razón para usar una partición temporal.</p>
+<figure>
+<!-- Sube tu imagen y descomenta: <img src="img/figura-1.png" alt="Tasa de malos por trimestre de originación"> -->
+<figcaption>Figura 1. Tasa de malos por trimestre de originación (se omiten trimestres con menos de 100 créditos). Elaboración propia con datos de Lending Club.</figcaption>
+</figure>
+<p>Antes de modelar formulamos trece hipótesis sobre qué hace más riesgosa a una persona (Tabla 4). Se contrastaron solo con el conjunto de entrenamiento, con tres criterios:</p>
+<ul>
+<li><strong>Prueba de Mann-Whitney</strong> (Mann y Whitney, 1947): compara la distribución de la variable entre buenos y malos.</li>
+<li><strong>AUC univariado:</strong> cuánto separa la variable por sí sola a buenos de malos (sección 4.9).</li>
+<li><strong>Tamaño de efecto mínimo:</strong> |AUC − 0,5| ≥ 0,01 para variables continuas, o una diferencia de al menos un punto porcentual en la tasa de malos para variables sí/no.</li>
+</ul>
+<p>Una hipótesis se considera <em>confirmada</em> si el efecto es significativo (α = 0,01), supera el tamaño mínimo y va en la dirección esperada.</p>
+<div class="tw"><table><caption>Tabla 4. Hipótesis y su contraste en entrenamiento</caption>
+<tr><th>Id</th><th>Hipótesis</th><th>Tasa de malos: grupo bajo → alto</th><th>AUC univariado</th><th>Veredicto</th></tr>
+<tr><td>H1</td><td>Peor subcalificación de Lending Club → más riesgo</td><td>5,9 % → 22,8 %</td><td>0,645</td><td>Confirmada</td></tr>
+<tr><td>H2</td><td>Mayor utilización del crédito rotativo → más riesgo</td><td>9,5 % → 18,0 %</td><td>0,572</td><td>Confirmada</td></tr>
+<tr><td>H3</td><td>Mayor ingreso anual → menos riesgo</td><td>18,0 % → 9,8 %</td><td>0,432</td><td>Confirmada</td></tr>
+<tr><td>H4</td><td>Más consultas de crédito en seis meses → más riesgo</td><td>11,8 % → 22,5 %</td><td>0,576</td><td>Confirmada</td></tr>
+<tr><td>H5</td><td>Mayor monto del crédito → más riesgo</td><td>14,1 % → 14,0 %</td><td>0,499</td><td>Sin evidencia</td></tr>
+<tr><td>H6</td><td>Mayor endeudamiento sobre ingreso (<code>dti</code>) → más riesgo</td><td>11,5 % → 15,3 %</td><td>0,534</td><td>Confirmada</td></tr>
+<tr><td>H7</td><td>Moras o registros públicos previos → más riesgo</td><td>12,8 % → 17,4 %</td><td>0,525</td><td>Confirmada</td></tr>
+<tr><td>H8</td><td>Historial crediticio más largo → menos riesgo</td><td>15,2 % → 11,9 %</td><td>0,472</td><td>Confirmada</td></tr>
+<tr><td>H9</td><td>No informar la antigüedad laboral → más riesgo</td><td>13,2 % → 20,0 %</td><td>0,508</td><td>Confirmada</td></tr>
+<tr><td>H10</td><td>Mayor antigüedad laboral → menos riesgo</td><td>13,5 % → 13,4 %</td><td>0,501</td><td>Sin evidencia</td></tr>
+<tr><td>H11</td><td>Ingreso verificado → menos riesgo</td><td>13,6 % → 13,3 %</td><td>0,497</td><td>Sin evidencia</td></tr>
+<tr><td>H12</td><td>Crédito para pequeño negocio → más riesgo</td><td>13,0 % → 23,5 %</td><td>0,518</td><td>Confirmada</td></tr>
+<tr><td>H13</td><td>Plazo de 60 meses → más riesgo</td><td>12,8 % → 22,5 %</td><td>0,526</td><td>Confirmada</td></tr>
+</table></div>
+<p class="nota">Nota. Para variables continuas, los grupos son el primer y el quinto quintil; para las demás, “no” y “sí”. Un AUC menor que 0,5 indica que valores altos se asocian con menos riesgo. La subcalificación (H1) se contrasta solo de forma descriptiva: no entra a los modelos (sección 1.4). Elaboración propia.</p>
+<p>Diez de las trece hipótesis se confirman. Monto del crédito, antigüedad laboral e ingreso verificado no muestran evidencia de efecto.</p>
+
+<h2 id="teoria">4. Fundamentación teórica y matemática</h2>
+<h3>4.1 Neurona artificial</h3>
+<p>Con entradas x ∈ ℝᵈ, una neurona calcula una combinación afín y le aplica una activación no lineal φ, donde w ∈ ℝᵈ son los pesos, b ∈ ℝ el sesgo y a la activación:</p>
+<pre class="eq">z = wᵀx + b,    a = φ(z)                                   (1)</pre>
+<h3>4.2 Perceptrón multicapa</h3>
+<p>Un MLP con L capas ocultas organiza neuronas en capas densas. Con h⁽⁰⁾ = x y nₗ neuronas en la capa l:</p>
+<pre class="eq">z⁽ˡ⁾ = W⁽ˡ⁾ h⁽ˡ⁻¹⁾ + b⁽ˡ⁾,    h⁽ˡ⁾ = φ(z⁽ˡ⁾),    l = 1, …, L     (2)</pre>
+<p>con W⁽ˡ⁾ ∈ ℝ^(nₗ×nₗ₋₁). La capa de salida tiene una neurona cuyo valor es el logit de la PD; la sigmoide lo convierte en probabilidad:</p>
+<pre class="eq">z_sal = w_salᵀ h⁽ᴸ⁾ + b_sal,    p̂ = σ(z_sal) = 1 / (1 + e^(−z_sal))   (3)</pre>
+<p>El número de parámetros entrenables es:</p>
+<pre class="eq">Σ (de l = 1 a L+1) (nₗ₋₁ + 1) · nₗ                         (4)</pre>
+<p>Para la arquitectura final (36 → 128 → 64 → 1): 37·128 + 129·64 + 65·1 = <strong>13.057 parámetros</strong>. La regresión logística es el caso L = 0: una sola neurona con activación sigmoide.</p>
+
+<h3>4.3 Funciones de activación</h3>
+<p>La búsqueda consideró cinco activaciones para las capas ocultas; la sigmoide se usa en la salida. Se muestran con sus derivadas, que necesita la retropropagación:</p>
+<pre class="eq">ReLU:        φ(z) = max(0, z)                 φ'(z) = 1[z &gt; 0]                    (5)
+Leaky ReLU:  φ(z) = max(αz, z), α = 0,01      φ'(z) = 1 si z &gt; 0; α si no         (6)
+ELU (final): φ(z) = z si z &gt; 0; α(eᶻ − 1)      φ'(z) = 1 si z &gt; 0; φ(z) + α       (7)
+             si no, con α = 1
+tanh:        φ(z) = (eᶻ − e⁻ᶻ)/(eᶻ + e⁻ᶻ)     φ'(z) = 1 − tanh²(z)                (8)
+GELU:        φ(z) = z·Φ(z)                    φ'(z) = Φ(z) + z·ϕ(z)              (9)
+             (Φ y ϕ: distribución y densidad de la normal estándar)
+Sigmoide:    σ(z) = 1/(1 + e⁻ᶻ)               σ'(z) = σ(z)(1 − σ(z))              (10)</pre>
+
+<h3>4.4 Pérdida: entropía cruzada binaria por máxima verosimilitud</h3>
+<p>Modelamos la etiqueta de cada crédito como Bernoulli, yᵢ | xᵢ ~ Bernoulli(pᵢ), con pᵢ = p̂(xᵢ; θ). Si las observaciones son independientes, la verosimilitud es:</p>
+<pre class="eq">L(θ) = Π (i = 1..n) pᵢ^yᵢ · (1 − pᵢ)^(1 − yᵢ)               (11)</pre>
+<p>Maximizar L equivale a minimizar el negativo de su logaritmo promediado, es decir, la entropía cruzada binaria (<em>log-loss</em>):</p>
+<pre class="eq">l(θ) = −(1/n) Σ [ yᵢ ln pᵢ + (1 − yᵢ) ln(1 − pᵢ) ]           (12)</pre>
+<p>Con pᵢ = σ(zᵢ), la derivada respecto al logit es notablemente simple:</p>
+<pre class="eq">∂lᵢ/∂zᵢ = pᵢ − yᵢ                                           (13)</pre>
+<p>Para evitar desbordamientos, la implementación calcula la pérdida desde el logit: lᵢ = max(zᵢ, 0) − zᵢyᵢ + ln(1 + e^(−|zᵢ|)).</p>
+
+<h3>4.5 Retropropagación</h3>
+<p>El gradiente se obtiene con la regla de la cadena, de la salida hacia la entrada. Con δ⁽ˡ⁾ = ∂lᵢ/∂z⁽ˡ⁾, en la salida δ_sal = p̂ᵢ − yᵢ, y hacia atrás:</p>
+<pre class="eq">δ⁽ˡ⁾ = (W⁽ˡ⁺¹⁾ᵀ δ⁽ˡ⁺¹⁾) ⊙ φ'(z⁽ˡ⁾)                          (14)
+
+∂J/∂W⁽ˡ⁾ = (1/|B|) Σ δᵢ⁽ˡ⁾ hᵢ⁽ˡ⁻¹⁾ᵀ + 2λW⁽ˡ⁾,   ∂J/∂b⁽ˡ⁾ = (1/|B|) Σ δᵢ⁽ˡ⁾   (15)</pre>
+<p>donde ⊙ es el producto elemento a elemento, B un minilote y W⁽ᴸ⁺¹⁾ = w_salᵀ. El término 2λW⁽ˡ⁾ viene de la penalización L2. Con dropout, h⁽ˡ⁾ incluye la máscara de esa iteración. PyTorch calcula (14) y (15) por diferenciación automática.</p>
+
+<h3>4.6 Optimizadores</h3>
+<p>Con gₜ = ∇J en el minilote del paso t y tasa de aprendizaje η, la búsqueda consideró tres reglas, tal como las implementa PyTorch (operaciones elemento a elemento):</p>
+<pre class="eq">SGD con momento (Polyak, 1964), μ = 0,9:
+  vₜ = μ vₜ₋₁ + gₜ,    θₜ = θₜ₋₁ − η vₜ                         (16)
+
+RMSprop (Tieleman y Hinton, 2012), α = 0,99, ε = 10⁻⁸ (optimizador final):
+  sₜ = α sₜ₋₁ + (1 − α) gₜ²,    θₜ = θₜ₋₁ − η gₜ / (√sₜ + ε)     (17)
+
+Adam (Kingma y Ba, 2015), β₁ = 0,9, β₂ = 0,999, ε = 10⁻⁸:
+  mₜ = β₁ mₜ₋₁ + (1 − β₁) gₜ,    vₜ = β₂ vₜ₋₁ + (1 − β₂) gₜ²    (18)
+  m̂ₜ = mₜ/(1 − β₁ᵗ),  v̂ₜ = vₜ/(1 − β₂ᵗ),  θₜ = θₜ₋₁ − η m̂ₜ/(√v̂ₜ + ε)   (19)</pre>
+
+<h3>4.7 Regularización</h3>
+<p><strong>Penalización L2.</strong> Se suma a la pérdida la norma de Frobenius al cuadrado de las matrices de pesos (los sesgos no se penalizan). Encoge los pesos hacia cero y reduce la varianza:</p>
+<pre class="eq">J(θ) = (1/|B|) Σ lᵢ + λ Σₗ ‖W⁽ˡ⁾‖²_F                       (20)</pre>
+<p><strong>Dropout.</strong> En entrenamiento, cada neurona oculta se apaga con probabilidad q y las activas se reescalan para conservar el valor esperado (Srivastava et al., 2014):</p>
+<pre class="eq">rⱼ ~ Bernoulli(1 − q),    h̃ⱼ = rⱼ hⱼ / (1 − q)                (21)</pre>
+<p><strong>Parada temprana.</strong> Al final de cada época se calcula la pérdida (12) en validación y se guardan los mejores pesos. El entrenamiento se detiene tras P = 8 épocas sin mejora mayor que 10⁻⁶, o al llegar a 100 épocas, y se restauran los mejores pesos. Así se limita cuánto se alejan los pesos de su valor inicial (Prechelt, 1998).</p>
+
+<h3>4.8 Regresión logística de referencia</h3>
+<p>Modela logit(p) = β₀ + βᵀx y se estima minimizando la log-loss con penalización L2, como en scikit-learn:</p>
+<pre class="eq">min (β₀, β)  ½‖β‖₂² + C Σ [ −yᵢ ln pᵢ − (1 − yᵢ) ln(1 − pᵢ) ]    (22)</pre>
+<p>donde C es el inverso de la fuerza de regularización. Como las variables están estandarizadas, la magnitud de los coeficientes es comparable, y e^(βⱼ) es la razón de odds asociada a una desviación estándar de la variable j.</p>
+
+<h3>4.9 Métricas de evaluación</h3>
+<p>Sean n₁ malos, n₀ buenos y s la PD estimada.</p>
+<ul>
+<li><strong>AUC:</strong> área bajo la curva ROC (TPR contra FPR al variar el umbral). Es la probabilidad de que un malo elegido al azar reciba una PD mayor que un bueno elegido al azar (Hanley y McNeil, 1982; Fawcett, 2006), y coincide con el estadístico de Mann-Whitney normalizado.</li>
+<li><strong>Gini:</strong> reescala del AUC, de 0 (azar) a 1 (separación perfecta).</li>
+<li><strong>KS:</strong> máxima distancia entre las distribuciones acumuladas de la PD en malos (F₁) y buenos (F₀), equivalente a la máxima diferencia entre TPR y FPR (Thomas et al., 2002).</li>
+<li><strong>Brier:</strong> error cuadrático medio de la probabilidad (Brier, 1950); mide a la vez discriminación y calibración.</li>
+</ul>
+<pre class="eq">AUC = (1/(n₁n₀)) Σ(i: yᵢ=1) Σ(j: yⱼ=0) ( 1[sᵢ &gt; sⱼ] + ½·1[sᵢ = sⱼ] )   (23)
+Gini = 2·AUC − 1                                                         (24)
+KS = máx_t |F₁(t) − F₀(t)| = máx_t (TPR(t) − FPR(t))                      (25)
+Brier = (1/n) Σ (p̂ᵢ − yᵢ)²                                               (26)</pre>
+
+<h3>4.10 Derivación de la scorecard</h3>
+<p>La scorecard expresa el riesgo como un puntaje en el que más puntos significan menos riesgo. Se define sobre las odds de ser bueno, odds = (1 − p)/p, con una transformación lineal de su logaritmo (Siddiqi, 2006):</p>
+<pre class="eq">puntaje = offset + factor · ln(odds)                                    (29)</pre>
+<p>Los parámetros salen de dos condiciones: las odds de referencia o₀ reciben el puntaje base S₀, y duplicar las odds suma PDO puntos (<em>points to double the odds</em>):</p>
+<pre class="eq">S₀ = offset + factor · ln o₀,    S₀ + PDO = offset + factor · ln(2o₀)    (30)
+factor = PDO / ln 2,    offset = S₀ − factor · ln o₀                    (31)</pre>
+<p>Para la logística, ln(odds) = −logit(p) = −(β₀ + Σ βⱼx̃ⱼ), con x̃ⱼ = (xⱼ − μⱼ)/sⱼ estandarizada con la media y desviación de entrenamiento. Al sustituir en (29), el puntaje queda como suma de puntos por variable en sus unidades originales:</p>
+<pre class="eq">puntaje = offset − factor · (β₀ − Σ βⱼμⱼ/sⱼ)   +   Σ (−factor·βⱼ/sⱼ) · xⱼ   (32)
+          └──────── puntos base ────────┘        └─ puntos por unidad de xⱼ ─┘</pre>
+<p>Cada variable continua aporta una cantidad fija de puntos por unidad y cada categoría aporta una cantidad fija frente a su referencia. La scorecard admite variables continuas sin discretizarlas.</p>
+
+<h2 id="metodo">5. Metodología experimental</h2>
+<h3>5.1 Regresión logística</h3>
+<p>Se ajustó (22) para cinco valores de C, de 0,001 a 10, y se eligió el de menor log-loss en validación (Tabla 5). Desde C = 0,01 la diferencia entre valores es menor que 10⁻⁴: la regularización casi no cambia el resultado, porque hay 49.844 observaciones para 37 parámetros. Se eligió <strong>C = 1</strong>.</p>
+<div class="tw"><table><caption>Tabla 5. Búsqueda del parámetro de regularización</caption>
+<tr><th>C</th><th>Log-loss en validación</th><th>AUC en validación</th></tr>
+<tr><td>0,001</td><td>0,39584</td><td>0,6382</td></tr>
+<tr><td>0,01</td><td>0,39424</td><td>0,6417</td></tr>
+<tr><td>0,1</td><td>0,39419</td><td>0,6417</td></tr>
+<tr><td><strong>1</strong></td><td><strong>0,39416</strong></td><td>0,6419</td></tr>
+<tr><td>10</td><td>0,39419</td><td>0,6419</td></tr>
+</table></div>
+
+<h3>5.2 Perceptrón multicapa</h3>
+<p>La arquitectura y los hiperparámetros se eligieron por <strong>búsqueda aleatoria</strong>. Con el mismo presupuesto, explora mejor que una rejilla cuando pocos hiperparámetros influyen de verdad: la rejilla repite valores de los importantes, mientras que la aleatoria prueba uno distinto en cada intento. Las capas forman un embudo: cada una tiene la mitad de neuronas que la anterior, con mínimo de 8.</p>
+<div class="tw"><table><caption>Tabla 6. Espacio de búsqueda del MLP</caption>
+<tr><th>Hiperparámetro</th><th>Valores</th></tr>
+<tr><td>Capas ocultas</td><td>1, 2 o 3</td></tr>
+<tr><td>Neuronas en la primera capa</td><td>16, 32, 64, 128 o 256</td></tr>
+<tr><td>Activación</td><td>ReLU, Leaky ReLU, ELU, tanh o GELU</td></tr>
+<tr><td>Dropout</td><td>0; 0,1; 0,2; 0,3 o 0,5</td></tr>
+<tr><td>Penalización L2 (λ)</td><td>0 con probabilidad 0,2; si no, log-uniforme en [10⁻⁷, 10⁻³]</td></tr>
+<tr><td>Optimizador</td><td>Adam, RMSprop o SGD con momento 0,9</td></tr>
+<tr><td>Tasa de aprendizaje</td><td>log-uniforme en [10⁻⁴, 10⁻²·³] para Adam y RMSprop; en [10⁻³, 10⁻¹] para SGD</td></tr>
+<tr><td>Tamaño del minilote</td><td>256, 512 o 1.024</td></tr>
+<tr><td>Parada temprana</td><td>paciencia de 8 épocas, máximo 100</td></tr>
+</table></div>
+<p>Se entrenaron 25 configuraciones y se eligió la de menor log-loss en validación, igual que en la logística. Todas quedaron en un rango estrecho (0,3910 a 0,3948): con estos datos, la arquitectura importa poco.</p>
+<div class="tw"><table><caption>Tabla 7. Las cinco mejores configuraciones</caption>
+<tr><th>Capas</th><th>Activación</th><th>Dropout</th><th>λ</th><th>Optimizador</th><th>η</th><th>Lote</th><th>Parámetros</th><th>Log-loss val.</th><th>AUC val.</th></tr>
+<tr><td>128-64</td><td>ELU</td><td>0,1</td><td>1,3·10⁻⁷</td><td>RMSprop</td><td>0,0009</td><td>512</td><td>13.057</td><td><strong>0,3910</strong></td><td>0,6529</td></tr>
+<tr><td>64-32</td><td>ReLU</td><td>0</td><td>1,4·10⁻⁴</td><td>Adam</td><td>0,0043</td><td>256</td><td>4.481</td><td>0,3918</td><td>0,6503</td></tr>
+<tr><td>128-64-32</td><td>ReLU</td><td>0,2</td><td>0</td><td>SGD</td><td>0,0086</td><td>256</td><td>15.105</td><td>0,3920</td><td>0,6482</td></tr>
+<tr><td>16-8</td><td>GELU</td><td>0,3</td><td>1,2·10⁻⁶</td><td>RMSprop</td><td>0,0035</td><td>1.024</td><td>737</td><td>0,3920</td><td>0,6479</td></tr>
+<tr><td>128-64-32</td><td>GELU</td><td>0,5</td><td>1,7·10⁻⁵</td><td>RMSprop</td><td>0,0006</td><td>256</td><td>15.105</td><td>0,3921</td><td>0,6474</td></tr>
+</table></div>
+<p><strong>Configuración final.</strong> Dos capas ocultas (128 y 64 neuronas) con ELU, dropout 0,1, L2 casi nula (λ = 1,3·10⁻⁷), RMSprop, tasa de aprendizaje 0,00089 y minilotes de 512. Se entrenó con 30 semillas (0 a 29), que cambian la inicialización, el orden de los minilotes y las máscaras de dropout. Como modelo final se guardó la corrida con menor log-loss en validación: la semilla 0.</p>
+
+<h3>5.3 Reglas de comparación justa</h3>
+<ol>
+<li><strong>Mismos datos:</strong> variables, preprocesamiento y particiones idénticos, generados por la misma función.</li>
+<li><strong>Presupuesto explícito:</strong> la logística probó 5 configuraciones en 1,0 s; el MLP, 25 configuraciones (327 s) y luego 30 semillas (364 s), en total 693 s, en el computador de un integrante del equipo (solo CPU).</li>
+<li><strong>Variabilidad:</strong> el MLP se reporta con media, desviación estándar, mejor y peor valor de las 30 semillas. La logística es determinista dado C.</li>
+<li><strong>Complejidad:</strong> 37 parámetros en la logística y 13.057 en el MLP.</li>
+</ol>
+<p>La diferencia entre modelos se evaluó con un <strong>bootstrap pareado</strong> sobre la prueba (Efron y Tibshirani, 1993): 1.000 remuestras con reemplazo de los créditos de prueba, la diferencia de la métrica (MLP guardado menos logística) en cada una, y un intervalo de confianza del 95 % con los percentiles 2,5 y 97,5.</p>
+
+<h3>5.4 Reproducibilidad</h3>
+<p>Todo corre con un solo comando, <code>python parte1/run.py</code>, a partir de <code>parte1/config.yaml</code>. Con <code>python parte1/run.py --demo</code> corre una versión reducida en menos de dos minutos. Las semillas están fijadas y las versiones de las librerías, documentadas.</p>
+
+<h2 id="resultados">6. Resultados</h2>
+<h3>6.1 Entrenamiento del MLP</h3>
+<p>En la semilla guardada, la pérdida de validación baja de 0,397 en la primera época a 0,394 en la quinta, oscila y alcanza su mínimo, 0,391, en la época 25. La de entrenamiento baja de forma continua, de 0,373 a 0,365, y la de prueba se mueve entre 0,377 y 0,380. La red aprende rápido lo que los datos permiten; después las mejoras son pequeñas y ruidosas y la parada temprana corta el entrenamiento. En promedio, la mejor época fue la 18 (entre la 3 y la 36).</p>
+<figure>
+<!-- <img src="img/figura-2.png" alt="Pérdida por época del MLP en entrenamiento, validación y prueba"> -->
+<figcaption>Figura 2. Pérdida (entropía cruzada) por época. Línea gruesa: semilla guardada; tenues: las otras 29. La pérdida de entrenamiento se mide sin dropout ni penalización. Elaboración propia.</figcaption>
+</figure>
+
+<h3>6.2 Discriminación y calibración</h3>
+<div class="tw"><table><caption>Tabla 8. Métricas en prueba (octubre a diciembre de 2012)</caption>
+<tr><th>Métrica</th><th>Tasa base</th><th>Regresión logística</th><th>MLP, media ± d.e. (30 semillas)</th><th>MLP, peor / mejor</th><th>MLP guardado</th></tr>
+<tr><td>AUC</td><td>0,500</td><td>0,622</td><td>0,626 ± 0,002</td><td>0,620 / 0,629</td><td>0,629</td></tr>
+<tr><td>Gini</td><td>0</td><td>0,244</td><td>0,252 ± 0,004</td><td>0,241 / 0,258</td><td>0,258</td></tr>
+<tr><td>KS</td><td>0</td><td>0,181</td><td>0,190 ± 0,005</td><td>0,178 / 0,196</td><td>0,195</td></tr>
+<tr><td>Brier</td><td>0,1137</td><td>0,1116</td><td>0,1118 ± 0,0002</td><td>0,1123 / 0,1114</td><td>0,1115</td></tr>
+<tr><td>Log-loss</td><td>0,3880</td><td>0,3781</td><td>0,3783 ± 0,0006</td><td>0,3798 / 0,3774</td><td>0,3775</td></tr>
+</table></div>
+<p class="nota">Nota. La tasa base asigna a todos los créditos la tasa de malos de entrenamiento. Elaboración propia.</p>
+<p><strong>Discriminación.</strong> La logística obtiene un AUC de 0,622 y el MLP, en promedio, 0,626; el guardado llega a 0,629. El bootstrap pareado da una diferencia de AUC de +0,007, con IC 95 % de [+0,0003; +0,013], y una diferencia de Brier de −0,00003, con IC [−0,0004; +0,0003]. <strong>La diferencia de AUC es significativa, aunque pequeña; la de Brier no lo es.</strong></p>
+<figure>
+<!-- <img src="img/figura-3.png" alt="Curva ROC de la regresión logística"> -->
+<figcaption>Figura 3. Curva ROC de la regresión logística. Validación: AUC 0,642, KS 0,203; prueba: AUC 0,622, KS 0,180.</figcaption>
+</figure>
+<figure>
+<!-- <img src="img/figura-4.png" alt="Curva ROC del MLP"> -->
+<figcaption>Figura 4. Curva ROC del MLP (semilla guardada). Validación: AUC 0,653, KS 0,225; prueba: AUC 0,629, KS 0,195.</figcaption>
+</figure>
+<p><strong>Calibración</strong> (curvas por deciles, Figuras 5 y 6):</p>
+<ul>
+<li><strong>Logística:</strong> sigue la diagonal en casi todo el rango. Su PD media en prueba (13,2 %) queda 0,2 puntos por encima de la tasa observada (13,1 %).</li>
+<li><strong>MLP:</strong> su PD media es 13,9 %, 0,9 puntos por encima. En los dos deciles de mayor riesgo sobreestima: predice 20,7 % y 26,8 % frente a 20,0 % y 21,7 % observados.</li>
+</ul>
+<p>Para una scorecard que se usará como probabilidad, la logística está algo mejor calibrada en los extremos.</p>
+<figure>
+<!-- <img src="img/figura-5.png" alt="Calibración de la regresión logística"> -->
+<figcaption>Figura 5. Curva de calibración de la regresión logística. Cada punto es un decil de PD estimada. Elaboración propia.</figcaption>
+</figure>
+<figure>
+<!-- <img src="img/figura-6.png" alt="Calibración del MLP"> -->
+<figcaption>Figura 6. Curva de calibración del MLP (semilla guardada). Elaboración propia.</figcaption>
+</figure>
+
+<h3>6.3 Variabilidad entre semillas y costo de cómputo</h3>
+<p>El MLP es estable: la desviación estándar del AUC es 0,002, pero entre la peor y la mejor semilla hay 0,009. Esa distancia es comparable a la ventaja sobre la logística, así que elegir la corrida por validación importa: con otra semilla la ventaja podría ser menor.</p>
+<p>En costo, el MLP requiere 353 veces más parámetros, 30 corridas en lugar de una y unos 12 minutos de cómputo frente a un segundo.</p>
+<div class="tw"><table><caption>Tabla 9. Costo y complejidad de cada modelo</caption>
+<tr><th>Concepto</th><th>Regresión logística</th><th>MLP</th></tr>
+<tr><td>Parámetros entrenables</td><td>37</td><td>13.057</td></tr>
+<tr><td>Configuraciones evaluadas en la búsqueda</td><td>5</td><td>25</td></tr>
+<tr><td>Corridas de la configuración final</td><td>1</td><td>30</td></tr>
+<tr><td>Tiempo total de cómputo</td><td>1,0 s</td><td>693 s</td></tr>
+<tr><td>Interpretación</td><td>coeficientes y scorecard directa</td><td>puntos por variable con SHAP</td></tr>
+</table></div>
+<p class="nota">Nota. Tiempos medidos en un mismo computador, solo con CPU. Elaboración propia.</p>
+
+<h2>Conclusión</h2>
+<div class="clave"><p>El MLP separa un poco mejor buenos de malos (+0,007 de AUC, con intervalo que apenas excluye el cero), pero no mejora el Brier, sobreestima el riesgo en los deciles más altos y cuesta mucho más. Con estos datos, la regresión logística ofrece casi el mismo poder de discriminación, mejor calibración en los extremos, interpretación directa y una scorecard sin discretizar variables.</p></div>
+
+<h2 id="refs">Referencias</h2>
+<ol class="refs">
+<li>Brier, G. W. (1950). Verification of forecasts expressed in terms of probability. <em>Monthly Weather Review, 78</em>(1), 1–3. <a href="https://doi.org/10.1175/1520-0493(1950)078%3C0001:VOFEIT%3E2.0.CO;2">https://doi.org/10.1175/1520-0493(1950)078&lt;0001&gt;2.0.CO;2</a></li>
+<li>Efron, B., &amp; Tibshirani, R. J. (1993). <em>An introduction to the bootstrap</em>. Chapman &amp; Hall.</li>
+<li>Fawcett, T. (2006). An introduction to ROC analysis. <em>Pattern Recognition Letters, 27</em>(8), 861–874. <a href="https://doi.org/10.1016/j.patrec.2005.10.010">https://doi.org/10.1016/j.patrec.2005.10.010</a></li>
+<li>Hanley, J. A., &amp; McNeil, B. J. (1982). The meaning and use of the area under a receiver operating characteristic (ROC) curve. <em>Radiology, 143</em>(1), 29–36. <a href="https://doi.org/10.1148/radiology.143.1.7063747">https://doi.org/10.1148/radiology.143.1.7063747</a></li>
+<li>Kingma, D. P., &amp; Ba, J. (2015). Adam: A method for stochastic optimization. En <em>International Conference on Learning Representations</em>. <a href="https://arxiv.org/abs/1412.6980">https://arxiv.org/abs/1412.6980</a></li>
+<li>Mann, H. B., &amp; Whitney, D. R. (1947). On a test of whether one of two random variables is stochastically larger than the other. <em>The Annals of Mathematical Statistics, 18</em>(1), 50–60. <a href="https://doi.org/10.1214/aoms/1177730491">https://doi.org/10.1214/aoms/1177730491</a></li>
+<li>Polyak, B. T. (1964). Some methods of speeding up the convergence of iteration methods. <em>USSR Computational Mathematics and Mathematical Physics, 4</em>(5), 1–17. <a href="https://doi.org/10.1016/0041-5553(64)90137-5">https://doi.org/10.1016/0041-5553(64)90137-5</a></li>
+<li>Prechelt, L. (1998). Early stopping — but when? En G. B. Orr &amp; K.-R. Müller (Eds.), <em>Neural networks: Tricks of the trade</em> (pp. 55–69). Springer.</li>
+<li>Ranadeep. (s. f.). <em>Credit risk analysis</em> [Conjunto de datos]. Kaggle. Recuperado el 24 de octubre de 2026, de <a href="https://www.kaggle.com/datasets/ranadeep/credit-risk-dataset">https://www.kaggle.com/datasets/ranadeep/credit-risk-dataset</a></li>
+<li>Siddiqi, N. (2006). <em>Credit risk scorecards: Developing and implementing intelligent credit scoring</em>. Wiley.</li>
+<li>Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., &amp; Salakhutdinov, R. (2014). Dropout: A simple way to prevent neural networks from overfitting. <em>Journal of Machine Learning Research, 15</em>, 1929–1958.</li>
+<li>Thomas, L. C., Edelman, D. B., &amp; Crook, J. N. (2002). <em>Credit scoring and its applications</em>. SIAM.</li>
+<li>Tieleman, T., &amp; Hinton, G. (2012). <em>Lecture 6.5 — RMSprop: Divide the gradient by a running average of its recent magnitude</em> [Material de curso]. Coursera: Neural Networks for Machine Learning.</li>
+</ol>
+</article>
+<!-- ============ FIN ============ -->
