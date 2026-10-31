@@ -12,9 +12,9 @@ Este blog reproduce el informe técnico por secciones, con sus tablas y figuras.
 
 ## Contenido (en orden de lectura)
 
-1. [1. Datos]({{ site.baseurl }}{% post_url 2026-10-25-entrega-2-datos %})
-2. [2 y 3. Caso de uso, análisis descriptivo e hipótesis]({{ site.baseurl }}{% post_url 2026-10-26-entrega-2-caso-de-uso-e-hipotesis %})
-3. [4. Fundamentación teórica y matemática]({{ site.baseurl }}{% post_url 2026-10-27-entrega-2-fundamentacion %})
-4. [5. Metodología experimental]({{ site.baseurl }}{% post_url 2026-10-28-entrega-2-metodologia %})
-5. [6. Resultados y conclusión]({{ site.baseurl }}{% post_url 2026-10-29-entrega-2-resultados %})
+1. [Datos]({{ site.baseurl }}{% post_url 2026-10-25-entrega-2-datos %})
+2. [Caso de uso, análisis descriptivo e hipótesis]({{ site.baseurl }}{% post_url 2026-10-26-entrega-2-caso-de-uso-e-hipotesis %})
+3. [Fundamentación teórica y matemática]({{ site.baseurl }}{% post_url 2026-10-27-entrega-2-fundamentacion %})
+4. [Metodología experimental]({{ site.baseurl }}{% post_url 2026-10-28-entrega-2-metodologia %})
+5. [Resultados y conclusión]({{ site.baseurl }}{% post_url 2026-10-29-entrega-2-resultados %})
 6. [Referencias]({{ site.baseurl }}{% post_url 2026-10-30-entrega-2-referencias %})
