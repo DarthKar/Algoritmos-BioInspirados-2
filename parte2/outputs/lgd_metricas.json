@@ -1,5 +1,97 @@
 {
   "modo": "matured",
+  "ejecucion": {
+    "modo": "completo",
+    "max_filas_por_particion": null,
+    "semilla": 42,
+    "epocas_maximas": 100,
+    "semillas_mlp": 30,
+    "batch_size": 256,
+    "paciencia_early_stopping": 8,
+    "busqueda_mlp": [
+      {
+        "capas": [
+          32
+        ],
+        "dropout": 0.0,
+        "learning_rate": 0.001
+      },
+      {
+        "capas": [
+          64
+        ],
+        "dropout": 0.0,
+        "learning_rate": 0.001
+      },
+      {
+        "capas": [
+          64,
+          32
+        ],
+        "dropout": 0.1,
+        "learning_rate": 0.001
+      },
+      {
+        "capas": [
+          128,
+          64
+        ],
+        "dropout": 0.2,
+        "learning_rate": 0.001
+      },
+      {
+        "capas": [
+          128,
+          64,
+          32
+        ],
+        "dropout": 0.2,
+        "learning_rate": 0.0005
+      },
+      {
+        "capas": [
+          256,
+          128
+        ],
+        "dropout": 0.3,
+        "learning_rate": 0.0005
+      }
+    ]
+  },
+  "artefactos_modelo": [
+    "models/lgd_preprocessor.joblib",
+    "models/lgd_linear.joblib",
+    "models/lgd_mlp_seed_42.keras",
+    "models/lgd_mlp_seed_43.keras",
+    "models/lgd_mlp_seed_44.keras",
+    "models/lgd_mlp_seed_45.keras",
+    "models/lgd_mlp_seed_46.keras",
+    "models/lgd_mlp_seed_47.keras",
+    "models/lgd_mlp_seed_48.keras",
+    "models/lgd_mlp_seed_49.keras",
+    "models/lgd_mlp_seed_50.keras",
+    "models/lgd_mlp_seed_51.keras",
+    "models/lgd_mlp_seed_52.keras",
+    "models/lgd_mlp_seed_53.keras",
+    "models/lgd_mlp_seed_54.keras",
+    "models/lgd_mlp_seed_55.keras",
+    "models/lgd_mlp_seed_56.keras",
+    "models/lgd_mlp_seed_57.keras",
+    "models/lgd_mlp_seed_58.keras",
+    "models/lgd_mlp_seed_59.keras",
+    "models/lgd_mlp_seed_60.keras",
+    "models/lgd_mlp_seed_61.keras",
+    "models/lgd_mlp_seed_62.keras",
+    "models/lgd_mlp_seed_63.keras",
+    "models/lgd_mlp_seed_64.keras",
+    "models/lgd_mlp_seed_65.keras",
+    "models/lgd_mlp_seed_66.keras",
+    "models/lgd_mlp_seed_67.keras",
+    "models/lgd_mlp_seed_68.keras",
+    "models/lgd_mlp_seed_69.keras",
+    "models/lgd_mlp_seed_70.keras",
+    "models/lgd_mlp_seed_71.keras"
+  ],
   "n_por_particion": {
     "train": 46472,
     "val": 13322,
@@ -22,7 +114,7 @@
   "modelo_referencia": {
     "tipo": "Regresión lineal",
     "n_parametros": 78,
-    "segundos_entrenamiento": 0.021105289459228516,
+    "segundos_entrenamiento": 0.019705772399902344,
     "test": {
       "mae": 0.19278561505153688,
       "rmse": 0.22857813063541685
@@ -40,11 +132,11 @@
     "funcion_perdida": "mean_squared_error",
     "funcion_salida": "sigmoid",
     "n_configuraciones": 6,
-    "segundos_busqueda": 17.213929414749146,
+    "segundos_busqueda": 18.15102791786194,
     "n_semillas": 30,
     "n_parametros": 52993,
-    "segundos_entrenamiento_semillas": 111.1567132472992,
-    "segundos_totales_busqueda_y_semillas": 128.37064266204834,
+    "segundos_entrenamiento_semillas": 118.03301501274109,
+    "segundos_totales_busqueda_y_semillas": 136.18404293060303,
     "test_por_semilla": {
       "mae": {
         "media": 0.1929325661386173,

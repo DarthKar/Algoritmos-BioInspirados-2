@@ -1,0 +1,209 @@
+{
+  "modo": "matured",
+  "ejecucion": {
+    "modo": "completo",
+    "modelo": "perceptron",
+    "max_filas_por_particion": null,
+    "semilla": 42,
+    "fit_intercept": null,
+    "positive": null,
+    "epocas_maximas": 100,
+    "semillas_mlp": 30,
+    "batch_size": 256,
+    "paciencia_early_stopping": 8,
+    "configuracion_mlp": [
+      {
+        "capas": [
+          256,
+          128
+        ],
+        "dropout": 0.3,
+        "learning_rate": 0.0005
+      }
+    ]
+  },
+  "modelo": "mlp",
+  "n_por_particion": {
+    "train": 46472,
+    "val": 13322,
+    "test": 15136
+  },
+  "n_test_con_lgd_observada": 1890,
+  "baseline_media_test": {
+    "mae": 0.1945350486853666,
+    "rmse": 0.22989518121730265
+  },
+  "artefactos_modelo": [
+    "models/lgd_preprocessor.joblib",
+    "models/lgd_mlp_seed_42.keras",
+    "models/lgd_mlp_seed_43.keras",
+    "models/lgd_mlp_seed_44.keras",
+    "models/lgd_mlp_seed_45.keras",
+    "models/lgd_mlp_seed_46.keras",
+    "models/lgd_mlp_seed_47.keras",
+    "models/lgd_mlp_seed_48.keras",
+    "models/lgd_mlp_seed_49.keras",
+    "models/lgd_mlp_seed_50.keras",
+    "models/lgd_mlp_seed_51.keras",
+    "models/lgd_mlp_seed_52.keras",
+    "models/lgd_mlp_seed_53.keras",
+    "models/lgd_mlp_seed_54.keras",
+    "models/lgd_mlp_seed_55.keras",
+    "models/lgd_mlp_seed_56.keras",
+    "models/lgd_mlp_seed_57.keras",
+    "models/lgd_mlp_seed_58.keras",
+    "models/lgd_mlp_seed_59.keras",
+    "models/lgd_mlp_seed_60.keras",
+    "models/lgd_mlp_seed_61.keras",
+    "models/lgd_mlp_seed_62.keras",
+    "models/lgd_mlp_seed_63.keras",
+    "models/lgd_mlp_seed_64.keras",
+    "models/lgd_mlp_seed_65.keras",
+    "models/lgd_mlp_seed_66.keras",
+    "models/lgd_mlp_seed_67.keras",
+    "models/lgd_mlp_seed_68.keras",
+    "models/lgd_mlp_seed_69.keras",
+    "models/lgd_mlp_seed_70.keras",
+    "models/lgd_mlp_seed_71.keras"
+  ],
+  "mlp": {
+    "test_ensamble_semillas": {
+      "mae": 0.19257242704585928,
+      "rmse": 0.22765998900794124
+    },
+    "configuracion": {
+      "unidades": [
+        256,
+        128
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.0005
+    },
+    "n_semillas": 30,
+    "n_parametros": 52993,
+    "segundos_busqueda": 7.537773847579956,
+    "segundos_entrenamiento_semillas": 111.35695791244507,
+    "test_por_semilla": [
+      {
+        "MAE": 0.19320723142603485,
+        "RMSE": 0.22869729776665335
+      },
+      {
+        "MAE": 0.19336282553646977,
+        "RMSE": 0.2291127984644386
+      },
+      {
+        "MAE": 0.193062133568807,
+        "RMSE": 0.22828324742242714
+      },
+      {
+        "MAE": 0.19286052606716353,
+        "RMSE": 0.22835256045609367
+      },
+      {
+        "MAE": 0.1933946013179904,
+        "RMSE": 0.22859638464105111
+      },
+      {
+        "MAE": 0.1926088512735687,
+        "RMSE": 0.22798978382878626
+      },
+      {
+        "MAE": 0.1928424546341801,
+        "RMSE": 0.22820027270529783
+      },
+      {
+        "MAE": 0.19296263492511487,
+        "RMSE": 0.22835502884989764
+      },
+      {
+        "MAE": 0.19294665049048138,
+        "RMSE": 0.22826348697656582
+      },
+      {
+        "MAE": 0.19269733147793533,
+        "RMSE": 0.2285947850723655
+      },
+      {
+        "MAE": 0.19305653278986754,
+        "RMSE": 0.22865483271266768
+      },
+      {
+        "MAE": 0.19307802920285216,
+        "RMSE": 0.22865779671452066
+      },
+      {
+        "MAE": 0.19274003131511133,
+        "RMSE": 0.22836324912770062
+      },
+      {
+        "MAE": 0.1930854547226827,
+        "RMSE": 0.2286684959956849
+      },
+      {
+        "MAE": 0.1929927067737976,
+        "RMSE": 0.22804408894382763
+      },
+      {
+        "MAE": 0.19313008344596977,
+        "RMSE": 0.22833010070250243
+      },
+      {
+        "MAE": 0.19316250887268116,
+        "RMSE": 0.22860891698401054
+      },
+      {
+        "MAE": 0.19280238884297307,
+        "RMSE": 0.22756777654262997
+      },
+      {
+        "MAE": 0.19315951370161036,
+        "RMSE": 0.22852324647396818
+      },
+      {
+        "MAE": 0.19215461984640594,
+        "RMSE": 0.22724303318977643
+      },
+      {
+        "MAE": 0.19266379642995216,
+        "RMSE": 0.2284678261896313
+      },
+      {
+        "MAE": 0.1932857916417547,
+        "RMSE": 0.22871704243149146
+      },
+      {
+        "MAE": 0.19273541892436225,
+        "RMSE": 0.22833390430349326
+      },
+      {
+        "MAE": 0.19271722299732377,
+        "RMSE": 0.2278745110866806
+      },
+      {
+        "MAE": 0.1928828790806161,
+        "RMSE": 0.22866400672505915
+      },
+      {
+        "MAE": 0.19250009691915632,
+        "RMSE": 0.22747565017882643
+      },
+      {
+        "MAE": 0.19336942333227608,
+        "RMSE": 0.22918572018534342
+      },
+      {
+        "MAE": 0.1929775548681535,
+        "RMSE": 0.22799351172657567
+      },
+      {
+        "MAE": 0.19282543644990727,
+        "RMSE": 0.22864115528478085
+      },
+      {
+        "MAE": 0.19271225328332015,
+        "RMSE": 0.22825854553174588
+      }
+    ]
+  }
+}
