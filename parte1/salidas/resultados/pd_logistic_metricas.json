@@ -50,35 +50,35 @@
         "C": 0.001,
         "val_logloss": 0.3913161034408304,
         "val_auc": 0.6613285917727777,
-        "segundos": 0.10125320000224747
+        "segundos": 0.0653636000060942
       },
       {
         "C": 0.01,
         "val_logloss": 0.39006252814560366,
         "val_auc": 0.6629779614640711,
-        "segundos": 0.14500269999552984
+        "segundos": 0.1017444000026444
       },
       {
         "C": 0.1,
         "val_logloss": 0.3899981289537343,
         "val_auc": 0.6629070431874287,
-        "segundos": 0.24213959999906365
+        "segundos": 0.17166069999802858
       },
       {
         "C": 1.0,
         "val_logloss": 0.39003699747749604,
         "val_auc": 0.662747650318102,
-        "segundos": 0.23412209999514744
+        "segundos": 0.17451680000522174
       },
       {
         "C": 10.0,
         "val_logloss": 0.3900325153326025,
         "val_auc": 0.6628149649298728,
-        "segundos": 0.244849399998202
+        "segundos": 0.1853574000124354
       }
     ],
     "mejor_C": 0.1,
-    "segundos_totales": 2.078143699996872
+    "segundos_totales": 1.7055735000030836
   },
   "metricas": {
     "train": {
@@ -348,5 +348,9 @@
       "coeficiente": -0.005475836,
       "odds_ratio": 0.994539129
     }
-  ]
+  ],
+  "calculos_orquestador": {
+    "intervalos_calibracion": 10,
+    "umbral_clasificacion_pd": 0.5
+  }
 }
