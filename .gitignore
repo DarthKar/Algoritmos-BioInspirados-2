@@ -18,4 +18,3 @@ data/raw/
 parte1/salidas/resultados/verificacion_*.csv
 # Salidas del modo demostración (python parte1/run.py --demo)
 parte1/salidas_demo/
-parte2/outputs_demo/

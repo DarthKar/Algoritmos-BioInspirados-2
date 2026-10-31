@@ -202,7 +202,7 @@ def entrenar(cfg, seed, datos):
     keras.utils.set_random_seed(seed)
     m = build_mlp(units, dropout, lr, Xtr.shape[1])
     h = m.fit(Xtr, ytr, validation_data=(Xva, yva),
-              epochs=CFG["EPOCHS"], batch_size=CFG["BATCH"], verbose=0,
+              epochs=config.EPOCHS, batch_size=CFG["BATCH"], verbose=0,
               callbacks=[keras.callbacks.EarlyStopping(patience=CFG["PATIENCE"],
                                                        restore_best_weights=True)])
     return m, h
@@ -231,7 +231,7 @@ def evaluar_semillas(mejor_cfg, datos):
 
     t0 = time.time()
     filas, mlp, p_mlp = [], None, None
-    for s in range(CFG["N_SEEDS"]):
+    for s in range(config.N_SEEDS):
         m, _ = entrenar(mejor_cfg, CFG["SEED"] + s, datos)
         p = m.predict(Xte, verbose=0).ravel()
         filas.append(metricas(yte, p))
@@ -248,7 +248,7 @@ def evaluar_semillas(mejor_cfg, datos):
     }, index=["media", "desv. est.", "mejor", "peor"]).round(4)
 
     print("MLP (%d semillas), config=%s, parámetros=%d, tiempo=%.1fs"
-          % (CFG["N_SEEDS"], mejor_cfg, n_par, t_sem))
+          % (config.N_SEEDS, mejor_cfg, n_par, t_sem))
     print(resumen)
     return S, mlp, p_mlp, n_par
 
