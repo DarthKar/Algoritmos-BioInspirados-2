@@ -1,7 +1,7 @@
 {
   "version": 2,
   "mode": "matured",
-  "rows": 74930,
+  "rows": 78302,
   "columns": [
     "id",
     "issue_d",
@@ -50,20 +50,21 @@
     "filas_originales": 887379,
     "columnas_originales": 74,
     "filas_con_desenlace": 268530,
-    "filas_muestra": 74959,
+    "filas_muestra": 78331,
     "plazos": [
-      36
+      36,
+      60
     ],
     "limpieza": {
-      "filas_entrada": 74959,
+      "filas_entrada": 78331,
       "filas_sin_buro_eliminadas": 29,
-      "filas_salida": 74930
+      "filas_salida": 78302
     },
     "particiones": [
       {
         "particion": "train",
-        "n": 46472,
-        "tasa_malos": 0.1277328284,
+        "n": 49844,
+        "tasa_malos": 0.1343190755,
         "desde": "2007-06-01T00:00:00.000",
         "hasta": "2012-06-01T00:00:00.000"
       },

@@ -1,8 +1,10 @@
-import os
+import json
+import argparse
 import sys
 import time
 from pathlib import Path
 
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -19,40 +21,51 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from parte1.comun.utils import RAW_LOANS_CSV
-from parte1.preparacion.dataset import DEFAULT_SPLITS
 from parte2 import config
+from parte1.preparacion.dataset import build_pd_dataset
+from parte1.preparacion.target import LOAN_STATUS_TO_TARGET
+from parte1.comun.utils import RAW_LOANS_CSV, RESULTS_DIR
 
 # ======================================================================
 # Constantes
 # ======================================================================
-CSV = RAW_LOANS_CSV
-CFG = config.CFG
+CFG = dict(config.CFG)
+CFG.setdefault("PD_MODE", "matured")
+CFG.setdefault("CACHE_VERSION", 2)
+CFG.setdefault("MLP_GRID", [
+    ((32,), 0.0, 1e-3),
+    ((64,), 0.0, 1e-3),
+    ((64, 32), 0.1, 1e-3),
+    ((128, 64), 0.2, 1e-3),
+    ((128, 64, 32), 0.2, 5e-4),
+    ((256, 128), 0.3, 5e-4),
+])
+CFG.setdefault("PD_PREDICTIONS", {
+    "logistic": RESULTS_DIR / "pd_logistic_predicciones.parquet",
+    "mlp": RESULTS_DIR / "pd_mlp_predicciones.parquet",
+})
 
 NUM = ["loan_amnt", "int_rate", "installment", "annual_inc", "dti", "delinq_2yrs",
        "inq_last_6mths", "open_acc", "pub_rec", "revol_bal", "revol_util", "total_acc"]
 CAT = ["grade", "sub_grade", "home_ownership", "verification_status", "purpose"]
-RAW = ["term", "emp_length", "issue_d"]
-AUX = ["loan_status", "funded_amnt", "total_rec_prncp", "recoveries", "collection_recovery_fee"]
 NUM_ALL = NUM + ["term_m", "emp_len"]
 FEATURES = NUM_ALL + CAT
 
-DEFAULT_PD = ["Charged Off", "Default", "Late (31-120 days)",
-              "Does not meet the credit policy. Status:Charged Off"]
-PAID = ["Fully Paid", "Does not meet the credit policy. Status:Fully Paid"]
 LGD_STATUS = ["Charged Off", "Does not meet the credit policy. Status:Charged Off"]
+PD_BAD_STATUSES = [
+    status for status, target in LOAN_STATUS_TO_TARGET.items()
+    if pd.notna(target) and target == 1
+]
+LGD_SOURCE_COLUMNS = ("funded_amnt", "total_rec_prncp", "recoveries", "collection_recovery_fee")
 
 # (unidades por capa, dropout, learning rate)
-GRID = [((32,), 0.0, 1e-3),
-        ((64,), 0.0, 1e-3),
-        ((64, 32), 0.1, 1e-3),
-        ((128, 64), 0.2, 1e-3),
-        ((128, 64, 32), 0.2, 5e-4),
-        ((256, 128), 0.3, 5e-4)]
+GRID = CFG["MLP_GRID"]
 
 COLS_SAVE = list(dict.fromkeys(
-    FEATURES + ["issue_dt", "loan_status", "default", "funded_amnt",
-                "total_rec_prncp", "EAD_obs", "rec_net", "lgd_ok", "LGD"]))
+    ["id", "issue_d", "loan_status", "target", "split"] + FEATURES +
+    list(LGD_SOURCE_COLUMNS) + ["issue_dt", "default", "EAD_obs", "rec_net",
+                                "lgd_ok", "LGD_raw", "LGD"]))
+CACHE_REQUIRED_COLUMNS = set(COLS_SAVE)
 
 
 def titulo(texto):
@@ -62,48 +75,149 @@ def titulo(texto):
 # ======================================================================
 # Datos
 # ======================================================================
-def cargar_datos(csv):
-    """Lee solo las columnas necesarias (el archivo es grande)."""
-    n_cols_total = pd.read_csv(csv, nrows=0).shape[1]
-    df = pd.read_csv(csv, usecols=NUM + CAT + RAW + AUX, low_memory=False)
-    df["issue_dt"] = pd.to_datetime(df["issue_d"], format="%b-%Y")
+def ruta_cache():
+    return Path(CFG["PROC_DIR"]) / f"lending_{CFG['PD_MODE']}_lgd.parquet"
 
-    print("Registros del archivo:", len(df), "| variables del archivo:", n_cols_total,
-          "| variables usadas:", df.shape[1] - 1)
+
+def ruta_metadata_cache():
+    return ruta_cache().with_suffix(".json")
+
+
+def validar_cache(df, metadata):
+    """Rechaza cachés incompletos o de otra versión/modo antes de modelar."""
+    if metadata.get("version") != CFG["CACHE_VERSION"]:
+        raise ValueError(
+            f"Versión de caché no compatible en {ruta_metadata_cache()}; "
+            "reconstrúyelo con --rebuild-cache y el CSV original."
+        )
+    if metadata.get("mode") != CFG["PD_MODE"]:
+        raise ValueError(f"El caché es del modo {metadata.get('mode')}, no {CFG['PD_MODE']}.")
+    missing = CACHE_REQUIRED_COLUMNS - set(df.columns)
+    if missing:
+        raise ValueError(
+            f"Al caché {ruta_cache()} le faltan columnas {sorted(missing)}; "
+            "reconstrúyelo con --rebuild-cache y el CSV original."
+        )
+    if metadata.get("rows") != len(df):
+        raise ValueError(f"El conteo de filas de {ruta_cache()} no coincide con su metadata.")
+    if df["id"].isna().any() or df["id"].duplicated().any():
+        raise ValueError(f"Los identificadores del caché {ruta_cache()} están vacíos o duplicados.")
+    if df["split"].isna().any() or not set(df["split"].unique()) <= {"train", "val", "test"}:
+        raise ValueError(f"El caché {ruta_cache()} tiene particiones inválidas.")
+
+
+def cargar_datos(rebuild_cache=False):
+    """Carga el caché local o lo crea una vez usando el constructor de Parte 1."""
+    cache = ruta_cache()
+    metadata_path = ruta_metadata_cache()
+    if cache.exists() and not rebuild_cache:
+        if not metadata_path.exists():
+            raise ValueError(
+                f"Existe {cache} sin metadata de caché. No se usará porque no se puede "
+                "garantizar su alineación; ejecuta `python parte2\\analisis.py --rebuild-cache` "
+                "con el CSV original disponible."
+            )
+        df = pd.read_parquet(cache)
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        validar_cache(df, metadata)
+        print("Caché cargado:", cache)
+        print("Creado desde:", metadata.get("source", "origen no registrado"))
+        print("Modo compartido con Parte 1:", metadata["mode"])
+        print("Registros alineados:", len(df), "| particiones:", df["split"].value_counts().to_dict())
+        df["issue_dt"] = pd.to_datetime(df["issue_dt"])
+        return df, df["LGD_raw"].copy()
+
+    if not RAW_LOANS_CSV.is_file():
+        action = "reconstruir el caché" if rebuild_cache else "crear el caché inicial"
+        raise FileNotFoundError(
+            f"No se puede {action}: falta el CSV original en {RAW_LOANS_CSV}. "
+            "Colócalo ahí para generar una vez el caché comprimido."
+        )
+
+    df, report = build_pd_dataset(
+        mode=CFG["PD_MODE"],
+        raw_path=RAW_LOANS_CSV,
+        keep_columns=LGD_SOURCE_COLUMNS,
+    )
+    required_features = set(NUM + CAT + ["term", "emp_length"])
+    missing_features = required_features - set(df.columns)
+    if missing_features:
+        raise ValueError(f"Faltan variables requeridas para LGD: {sorted(missing_features)}")
+    df["issue_dt"] = pd.to_datetime(df["issue_d"])
+    df, lgd_raw = agregar_variables(df)
+    df["LGD_raw"] = lgd_raw
+    print("Modo compartido con Parte 1:", report["modo"])
+    print("Registros originales:", report["filas_originales"], "| registros alineados:", len(df),
+          "| variables del dataset PD más auxiliares LGD:", df.shape[1])
     print("Periodo de originación:", df.issue_dt.min().date(), "->", df.issue_dt.max().date())
-    print(df.loan_status.value_counts())
-    return df
-
-
-def filtrar_resueltos(df):
-    """Conserva créditos resueltos y define la variable de incumplimiento."""
-    df = df[df.loan_status.isin(DEFAULT_PD + PAID)].copy()
-    df["default"] = df.loan_status.isin(DEFAULT_PD).astype(int)
-    if CFG.get("DEMO", False):
-        df = df.sample(frac=CFG.get("DEMO_FRAC", 1.0), random_state=CFG["SEED"]).copy()
-    return df
+    print("Particiones de Parte 1:", df["split"].value_counts().to_dict())
+    guardar_procesados(df, report)
+    return df, lgd_raw
 
 
 def agregar_variables(df):
-    """Variables de texto, EAD, recuperación neta y LGD (solo castigados con EAD > 0)."""
-    df["term_m"] = df["term"].str.extract(r"(\d+)")[0].astype(float)
-    df["emp_len"] = df["emp_length"].str.extract(r"(\d+)")[0].astype(float)
-    df.loc[df["emp_length"].str.startswith("<", na=False), "emp_len"] = 0
+    """Calcula LGD como pérdida neta observada sobre el monto financiado al origen."""
+    df = df.copy()
+    df["default"] = df["target"].astype(int)
+    df["term_m"] = pd.to_numeric(df["term"], errors="coerce")
+    df["emp_len"] = pd.to_numeric(df["emp_length"], errors="coerce")
 
-    df["EAD_obs"] = df.funded_amnt - df.total_rec_prncp
-    df["rec_net"] = df.recoveries - df.collection_recovery_fee
-    df["lgd_ok"] = df.loan_status.isin(LGD_STATUS) & (df.EAD_obs > 0)
+    funded_amnt = pd.to_numeric(df["funded_amnt"], errors="coerce")
+    df["EAD_obs"] = (funded_amnt -
+                     pd.to_numeric(df["total_rec_prncp"], errors="coerce"))
+    df["rec_net"] = (pd.to_numeric(df["recoveries"], errors="coerce") -
+                     pd.to_numeric(df["collection_recovery_fee"], errors="coerce"))
+    df["lgd_ok"] = (
+        df["loan_status"].isin(LGD_STATUS)
+        & funded_amnt.gt(0)
+        & np.isfinite(funded_amnt)
+        & df["EAD_obs"].gt(0)
+        & np.isfinite(df["EAD_obs"])
+        & np.isfinite(df["rec_net"])
+    )
 
-    lgd_raw = 1 - df.rec_net / df.EAD_obs
-    df["LGD"] = np.where(df.lgd_ok, lgd_raw.clip(0, 1), np.nan)
+    lgd_raw = pd.Series(np.nan, index=df.index, dtype=float)
+    loss_observed = df["EAD_obs"] - df["rec_net"]
+    lgd_raw.loc[df["lgd_ok"]] = (
+        loss_observed.loc[df["lgd_ok"]] / funded_amnt.loc[df["lgd_ok"]]
+    )
+    df["LGD"] = lgd_raw.clip(0, 1)
     return df, lgd_raw
+
+
+def guardar_procesados(df, report):
+    """Persiste el dataset completo para Parte 2 en Parquet comprimido Zstandard."""
+    cache = ruta_cache()
+    metadata_path = ruta_metadata_cache()
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    saved = df[COLS_SAVE].copy()
+    temp_cache = cache.with_name(f"{cache.stem}.tmp{cache.suffix}")
+    temp_metadata = metadata_path.with_name(f"{metadata_path.stem}.tmp{metadata_path.suffix}")
+    saved.to_parquet(temp_cache, index=False, compression="zstd")
+    metadata = {
+        "version": CFG["CACHE_VERSION"],
+        "mode": CFG["PD_MODE"],
+        "rows": len(saved),
+        "columns": COLS_SAVE,
+        "source": str(RAW_LOANS_CSV),
+        "source_size_bytes": RAW_LOANS_CSV.stat().st_size,
+        "source_modified_ns": RAW_LOANS_CSV.stat().st_mtime_ns,
+        "part1_report": report,
+        "compression": "zstd",
+    }
+    temp_metadata.write_text(
+        json.dumps(metadata, indent=2, ensure_ascii=False, default=str), encoding="utf-8"
+    )
+    temp_cache.replace(cache)
+    temp_metadata.replace(metadata_path)
+    print("Caché comprimido guardado:", cache)
 
 
 def resumen_lgd(df, lgd_raw):
     d = df[df.lgd_ok]
-    print("Créditos resueltos:", len(df), "| incumplidos (PD):", df.default.sum(),
+    print("Créditos resueltos:", len(df), "| casos malos según target PD:", df.default.sum(),
           "| con LGD definida:", len(d))
-    print("Incumplidos sin LGD (Default/Late/EAD<=0, censurados):",
+    print("Casos malos sin LGD observada (no Charged Off, EAD<=0 o datos incompletos):",
           int(((df.default == 1) & ~df.lgd_ok).sum()))
     print("LGD cruda < 0:", round((lgd_raw[df.lgd_ok] < 0).mean(), 3),
           "| > 1:", round((lgd_raw[df.lgd_ok] > 1).mean(), 3), "(se recortan)")
@@ -111,29 +225,21 @@ def resumen_lgd(df, lgd_raw):
     print("LGD == 1:", (d.LGD == 1).mean().round(3), "| LGD == 0:", (d.LGD == 0).mean().round(3))
 
 
-def guardar_procesados(df):
-    """La ejecución no debe depender de internet: se guarda una copia procesada."""
-    ruta = Path(CFG["PROC_DIR"]) / "lending_resueltos.csv.gz"
-    ruta.parent.mkdir(parents=True, exist_ok=True)
-    df[COLS_SAVE].to_csv(ruta, index=False)
-
-
-def split_temporal(df):
-    t = df.issue_dt
-    split_dates = DEFAULT_SPLITS[CFG["PD_MODE"]]
-    train_end = pd.Timestamp(split_dates["val_start"])
-    val_end = pd.Timestamp(split_dates["test_start"])
-    tr = df[t < train_end]
-    va = df[(t >= train_end) & (t < val_end)]
-    te = df[t >= val_end]
+def particionar_datos(df):
+    """Respeta las etiquetas train/val/test asignadas por la Parte 1."""
+    if df["split"].isna().any() or not set(df["split"].unique()) <= {"train", "val", "test"}:
+        raise ValueError("El dataset de Parte 1 contiene particiones faltantes o desconocidas.")
+    parts = {name: df[df["split"] == name].copy() for name in ("train", "val", "test")}
+    if any(part.empty for part in parts.values()):
+        raise ValueError(f"Falta al menos una partición en el dataset: {[k for k, v in parts.items() if v.empty]}")
 
     print(pd.DataFrame({
-        "n": [len(x) for x in (tr, va, te)],
-        "tasa_incumplimiento": [x.default.mean().round(4) for x in (tr, va, te)],
-        "n_con_LGD": [int(x.lgd_ok.sum()) for x in (tr, va, te)],
-        "LGD_media": [x.LGD.mean().round(3) for x in (tr, va, te)],
+        "n": [len(parts[s]) for s in ("train", "val", "test")],
+        "tasa_target_malo": [parts[s].default.mean().round(4) for s in ("train", "val", "test")],
+        "n_con_LGD": [int(parts[s].lgd_ok.sum()) for s in ("train", "val", "test")],
+        "LGD_media": [parts[s].LGD.mean().round(3) for s in ("train", "val", "test")],
     }, index=["train", "val", "test"]))
-    return tr, va, te
+    return parts
 
 
 def construir_preprocesador():
@@ -145,17 +251,31 @@ def construir_preprocesador():
     ])
 
 
-def matrices_lgd(tr, va, te):
-    """Ajusta el preprocesador solo con entrenamiento y devuelve (X, y) de LGD por partición."""
+def matrices_lgd(tr, va, te, max_rows_per_split=None, seed=None):
+    """Preprocesa y devuelve matrices, limitando filas de forma reproducible si se solicita."""
+    seed = CFG["SEED"] if seed is None else seed
+    sampled_parts = []
+    for part in (tr, va, te):
+        if max_rows_per_split is not None and len(part) > max_rows_per_split:
+            part = part.sample(n=max_rows_per_split, random_state=seed).sort_index()
+        sampled_parts.append(part.copy())
+    tr, va, te = sampled_parts
+
+    for name, part in (("train", tr), ("validación", va), ("prueba", te)):
+        if not part["lgd_ok"].any():
+            raise ValueError(f"No hay casos con LGD observada en la partición de {name}.")
     pre = construir_preprocesador()
     X = {"tr": pre.fit_transform(tr[FEATURES]),
          "va": pre.transform(va[FEATURES]),
          "te": pre.transform(te[FEATURES])}
     datos = {}
     for k, part in zip(("tr", "va", "te"), (tr, va, te)):
-        m = part.lgd_ok.values
-        datos[k] = (X[k][m], part.LGD.values[m])
+        m = part["lgd_ok"].to_numpy()
+        datos[k] = (X[k][m], part.loc[m, "LGD"].to_numpy(dtype=float))
     print("Matrices LGD:", datos["tr"][0].shape, datos["va"][0].shape, datos["te"][0].shape)
+    datos["X_all"] = X
+    datos["parts"] = {"tr": tr, "va": va, "te": te}
+    datos["preprocessor"] = pre
     return datos
 
 
@@ -172,16 +292,17 @@ def modelo_lineal(datos):
     t0 = time.time()
     lin = LinearRegression().fit(Xtr, ytr)
     t_lin = time.time() - t0
-    p_lin = lin.predict(Xte).clip(0, 1)
+    p_lin_all = lin.predict(datos["X_all"]["te"]).clip(0, 1)
     n_par = lin.coef_.size + 1
 
-    p_media = np.full_like(yte, ytr.mean())  # referencia trivial
+    p_media_all = np.full(len(p_lin_all), ytr.mean())
 
     titulo("Modelo de regresion lineal")
-    print("Media constante  MAE=%.4f RMSE=%.4f" % metricas(yte, p_media))
+    mask = datos["parts"]["te"]["lgd_ok"].to_numpy()
+    print("Media constante  MAE=%.4f RMSE=%.4f" % metricas(yte, p_media_all[mask]))
     print("Regresión lineal MAE=%.4f RMSE=%.4f | parámetros=%d | tiempo=%.2fs"
-          % (*metricas(yte, p_lin), n_par, t_lin))
-    return p_media, p_lin, n_par
+          % (*metricas(yte, p_lin_all[mask]), n_par, t_lin))
+    return p_media_all, p_lin_all, n_par, t_lin, lin
 
 
 def build_mlp(units, dropout, lr, n_in):
@@ -191,7 +312,7 @@ def build_mlp(units, dropout, lr, n_in):
         if dropout > 0:
             m.add(layers.Dropout(dropout))
     m.add(layers.Dense(1, activation="sigmoid"))
-    m.compile(optimizer=keras.optimizers.Adam(lr), loss="binary_crossentropy", metrics=["mae"])
+    m.compile(optimizer=keras.optimizers.Adam(lr), loss="mean_squared_error", metrics=["mae"])
     return m
 
 
@@ -202,7 +323,7 @@ def entrenar(cfg, seed, datos):
     keras.utils.set_random_seed(seed)
     m = build_mlp(units, dropout, lr, Xtr.shape[1])
     h = m.fit(Xtr, ytr, validation_data=(Xva, yva),
-              epochs=config.EPOCHS, batch_size=CFG["BATCH"], verbose=0,
+              epochs=CFG["EPOCHS"], batch_size=CFG["BATCH"], verbose=0,
               callbacks=[keras.callbacks.EarlyStopping(patience=CFG["PATIENCE"],
                                                        restore_best_weights=True)])
     return m, h
@@ -221,26 +342,33 @@ def buscar_configuracion(datos):
     mejor = min(resultados, key=lambda r: r[1])[0]
     print("Mejor configuración:", mejor, "| configuraciones entrenadas:", len(GRID),
           "| tiempo búsqueda: %.1fs" % (time.time() - t0))
-    return mejor
+    return mejor, time.time() - t0
 
 
-def evaluar_semillas(mejor_cfg, datos):
-    """Reentrena con varias semillas; la primera queda como modelo representativo."""
+def evaluar_semillas(mejor_cfg, datos, model_dir=None):
+    """Reentrena con varias semillas y promedia sus predicciones para el conjunto completo."""
     yte = datos["te"][1]
     Xte = datos["te"][0]
+    Xte_all = datos["X_all"]["te"]
 
     t0 = time.time()
-    filas, mlp, p_mlp = [], None, None
-    for s in range(config.N_SEEDS):
-        m, _ = entrenar(mejor_cfg, CFG["SEED"] + s, datos)
-        p = m.predict(Xte, verbose=0).ravel()
-        filas.append(metricas(yte, p))
-        if s == 0:
-            mlp, p_mlp = m, p
+    filas, predicciones, n_par, model_files = [], [], None, []
+    for s in range(CFG["N_SEEDS"]):
+        seed = CFG["SEED"] + s
+        m, _ = entrenar(mejor_cfg, seed, datos)
+        p_labeled = m.predict(Xte, verbose=0).ravel().clip(0, 1)
+        p_all = m.predict(Xte_all, verbose=0).ravel().clip(0, 1)
+        filas.append(metricas(yte, p_labeled))
+        predicciones.append(p_all)
+        n_par = m.count_params()
+        if model_dir is not None:
+            model_path = model_dir / f"lgd_mlp_seed_{seed}.keras"
+            m.save(model_path)
+            model_files.append(model_path.relative_to(Path(CFG["OUT_DIR"])).as_posix())
     t_sem = time.time() - t0
 
     S = pd.DataFrame(filas, columns=["MAE", "RMSE"])
-    n_par = mlp.count_params()
+    p_mlp_all = np.mean(predicciones, axis=0)
 
     resumen = pd.DataFrame({
         "MAE":  [S.MAE.mean(), S.MAE.std(), S.MAE.min(), S.MAE.max()],
@@ -248,9 +376,9 @@ def evaluar_semillas(mejor_cfg, datos):
     }, index=["media", "desv. est.", "mejor", "peor"]).round(4)
 
     print("MLP (%d semillas), config=%s, parámetros=%d, tiempo=%.1fs"
-          % (config.N_SEEDS, mejor_cfg, n_par, t_sem))
+          % (CFG["N_SEEDS"], mejor_cfg, n_par, t_sem))
     print(resumen)
-    return S, mlp, p_mlp, n_par
+    return S, p_mlp_all, n_par, t_sem, model_files
 
 
 # ======================================================================
@@ -276,38 +404,250 @@ def graficar_distribuciones(yte, p_lin, p_mlp):
         a.legend()
     ax[0].set_ylabel("Densidad")
     plt.tight_layout()
-    plt.savefig(os.path.join(CFG["OUT_DIR"], "lgd_distribuciones.png"), dpi=150)
-    plt.show()
+    output_dir = Path(CFG["OUT_DIR"])
+    output_dir.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_dir / "lgd_distribuciones.png", dpi=150)
+    plt.close(fig)
 
     print("Media observada: %.3f | lineal: %.3f | MLP: %.3f" % (yte.mean(), p_lin.mean(), p_mlp.mean()))
     print("Desv. observada: %.3f | lineal: %.3f | MLP: %.3f" % (yte.std(), p_lin.std(), p_mlp.std()))
 
 
+def guardar_predicciones_lgd(datos, p_lineal, p_mlp):
+    """Guarda las predicciones LGD para todos los créditos del test, no solo los castigados."""
+    test = datos["parts"]["te"]
+    if len(test) != len(p_lineal) or len(test) != len(p_mlp):
+        raise ValueError("Las predicciones LGD no corresponden a todas las filas del test.")
+    predictions = test[["id", "split", "loan_status", "target", "funded_amnt",
+                        "EAD_obs", "LGD", "lgd_ok"]].copy()
+    predictions["LGD_pred_lineal"] = p_lineal
+    predictions["LGD_pred_mlp"] = p_mlp
+    output_dir = Path(CFG["OUT_DIR"])
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = output_dir / "lgd_predicciones_test.parquet"
+    predictions.to_parquet(path, index=False)
+    print("Predicciones LGD de prueba:", path)
+    return predictions
+
+
+def calcular_perdida_esperada(pred_lgd):
+    """Calcula un proxy por crédito como PD de Parte 1 × LGD predicha × monto de origen.
+
+    No es una E[L] estándar a la fecha de default: PD incluye estados Late y LGD
+    se observa solo en Charged Off. La severidad y el monto están referidos al origen.
+    """
+    base = pred_lgd[["id", "split", "loan_status", "target", "funded_amnt",
+                     "LGD", "lgd_ok", "LGD_pred_lineal", "LGD_pred_mlp"]].copy()
+    base = base.rename(columns={"LGD": "LGD_observada"})
+    if base["id"].duplicated().any():
+        raise ValueError("Hay identificadores duplicados en las predicciones LGD.")
+    if not base["split"].eq("test").all():
+        raise ValueError("El proxy de pérdida solo se calcula para créditos del conjunto test.")
+    base["EAD_origin"] = pd.to_numeric(base.pop("funded_amnt"), errors="coerce")
+    if not np.isfinite(base["EAD_origin"]).all() or (base["EAD_origin"] < 0).any():
+        raise ValueError("funded_amnt (monto de origen) debe ser numérico y no negativo.")
+    for col in ("LGD_pred_lineal", "LGD_pred_mlp"):
+        if not np.isfinite(base[col]).all() or not base[col].between(0, 1).all():
+            raise ValueError(f"{col} debe contener valores finitos entre 0 y 1.")
+
+    for model_name, path in CFG["PD_PREDICTIONS"].items():
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"No se encontró {path}. Ejecuta primero `python run.py --etapas logistica mlp`."
+            )
+        pd_predictions = pd.read_parquet(path)
+        if not {"id", "split", "pd"} <= set(pd_predictions.columns):
+            raise ValueError(f"El archivo de PD {path} debe contener id, split y pd.")
+        pd_test = pd_predictions.loc[pd_predictions["split"] == "test", ["id", "pd"]]
+        if pd_test["id"].duplicated().any():
+            raise ValueError(f"Hay identificadores duplicados en las predicciones PD de {model_name}.")
+        if not set(base["id"]) <= set(pd_test["id"]):
+            raise ValueError(
+                f"Los ids del test de LGD no están incluidos en las predicciones "
+                f"de PD ({model_name}); "
+                "revisa que Parte 1 y Parte 2 usen el mismo modo y partición."
+            )
+        pd_test = pd_test.loc[pd_test["id"].isin(base["id"])]
+        if set(pd_test["id"]) != set(base["id"]):
+            raise ValueError(f"No se pudieron alinear todos los ids de prueba de PD ({model_name}).")
+        base = base.merge(pd_test, on="id", how="left", validate="one_to_one")
+        base = base.rename(columns={"pd": f"PD_{model_name}"})
+        if base[f"PD_{model_name}"].isna().any():
+            raise ValueError(f"Hay PD faltantes después de unir las predicciones de {model_name}.")
+        if (not np.isfinite(base[f"PD_{model_name}"]).all()
+                or not base[f"PD_{model_name}"].between(0, 1).all()):
+            raise ValueError(f"PD_{model_name} debe contener valores finitos entre 0 y 1.")
+        for lgd_name in ("lineal", "mlp"):
+            base[f"EL_proxy_{model_name}_{lgd_name}"] = (
+                base[f"PD_{model_name}"] * base[f"LGD_pred_{lgd_name}"] * base["EAD_origin"]
+            )
+
+    output_dir = Path(CFG["OUT_DIR"])
+    path = output_dir / "perdida_esperada_test.parquet"
+    base.to_parquet(path, index=False)
+    print("Proxy de pérdida de prueba:", path)
+    expected_loss = base.filter(regex=r"^EL_proxy_")
+    summary = pd.DataFrame({
+        "proxy_perdida_total_test": expected_loss.sum(),
+        "proxy_perdida_media_por_credito": expected_loss.mean(),
+    }).round(2)
+    print(summary)
+    return base
+
+
+def guardar_metricas(parts, yte, p_media, p_lineal, predicciones_mlp, seed_metrics,
+                     best_cfg, n_params_linear, n_params_mlp, linear_seconds,
+                     search_seconds, seed_seconds, run_metadata=None, model_files=None):
+    """Guarda métricas, semillas, configuración y presupuesto del experimento."""
+    test = parts["test"]
+    pred_labeled = predicciones_mlp[test["lgd_ok"].to_numpy()]
+
+    def summary(frame, column):
+        return {
+            "media": float(frame[column].mean()),
+            "desv_est": float(frame[column].std(ddof=1)),
+            "mejor": float(frame[column].min()),
+            "peor": float(frame[column].max()),
+        }
+
+    test_mask = test["lgd_ok"].to_numpy()
+    results = {
+        "modo": CFG["PD_MODE"],
+        "ejecucion": run_metadata or {},
+        "artefactos_modelo": model_files or [],
+        "n_por_particion": {name: int(len(part)) for name, part in parts.items()},
+        "n_test_con_lgd_observada": int(test["lgd_ok"].sum()),
+        "lgd_definition": (
+            "(funded_amnt - total_rec_prncp - recoveries + "
+            "collection_recovery_fee) / funded_amnt; pérdida observada acumulada "
+            "sobre el principal financiado al origen, recortada a [0, 1]"
+        ),
+        "lgd_observed_statuses": LGD_STATUS,
+        "pd_bad_statuses": PD_BAD_STATUSES,
+        "ead_loss_projection": "funded_amnt (monto financiado en originación)",
+        "loss_projection_interpretation": (
+            "Proxy indicativo, no pérdida esperada estándar a la fecha de default: "
+            "el target PD incluye estados Late (31-120 days), la LGD observada solo "
+            "incluye Charged Off, y las recuperaciones pueden estar censuradas."
+        ),
+        "modelo_referencia": {
+            "tipo": "Regresión lineal",
+            "n_parametros": int(n_params_linear),
+            "segundos_entrenamiento": float(linear_seconds),
+            "test": dict(zip(("mae", "rmse"), map(float, metricas(yte, p_lineal[test_mask])))),
+        },
+        "mlp": {
+            "configuracion": {
+                "unidades": list(best_cfg[0]),
+                "dropout": best_cfg[1],
+                "learning_rate": best_cfg[2],
+            },
+            "funcion_perdida": "mean_squared_error",
+            "funcion_salida": "sigmoid",
+            "n_configuraciones": len(GRID),
+            "segundos_busqueda": float(search_seconds),
+            "n_semillas": int(CFG["N_SEEDS"]),
+            "n_parametros": int(n_params_mlp),
+            "segundos_entrenamiento_semillas": float(seed_seconds),
+            "segundos_totales_busqueda_y_semillas": float(search_seconds + seed_seconds),
+            "test_por_semilla": {
+                "mae": summary(seed_metrics, "MAE"),
+                "rmse": summary(seed_metrics, "RMSE"),
+            },
+            "test_ensamble_semillas": dict(
+                zip(("mae", "rmse"), map(float, metricas(yte, pred_labeled)))
+            ),
+        },
+        "referencia_media_constante_test": dict(
+            zip(("mae", "rmse"), map(float, metricas(yte, p_media[test_mask])))
+        ),
+    }
+    output_dir = Path(CFG["OUT_DIR"])
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "lgd_metricas.json").write_text(
+        json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    seed_metrics.to_csv(output_dir / "lgd_mlp_semillas.csv", index=False)
+    return results
+
+
 # ======================================================================
 # Pipeline principal
 # ======================================================================
-def main():
-    df = cargar_datos(CSV)
+def ejecutar_analisis(rebuild_cache=False, max_rows_per_split=None, run_metadata=None,
+                      save_models=True):
+    df, lgd_cruda = cargar_datos(rebuild_cache=rebuild_cache)
 
-    titulo("Analisis Estadisco")
-    df = filtrar_resueltos(df)
-    df, lgd_raw = agregar_variables(df)
-    resumen_lgd(df, lgd_raw)
-    guardar_procesados(df)
+    titulo("Analisis estadistico")
+    resumen_lgd(df, lgd_cruda)
 
     titulo("Datos del entrenamiento")
-    tr, va, te = split_temporal(df)
-    datos = matrices_lgd(tr, va, te)
+    particiones = particionar_datos(df)
+    matrices = matrices_lgd(
+        particiones["train"], particiones["val"], particiones["test"],
+        max_rows_per_split=max_rows_per_split,
+        seed=CFG["SEED"],
+    )
 
-    p_media, p_lin, n_par_lin = modelo_lineal(datos)
-    mejor_cfg = buscar_configuracion(datos)
+    output_dir = Path(CFG["OUT_DIR"])
+    model_dir = output_dir / "models"
+    model_files = []
+    if save_models:
+        model_dir.mkdir(parents=True, exist_ok=True)
+
+    pred_media_todas, pred_lineal_todas, n_parametros_lineal, tiempo_lineal, modelo_lineal_fit = modelo_lineal(matrices)
+    if save_models:
+        preprocessor_path = model_dir / "lgd_preprocessor.joblib"
+        linear_path = model_dir / "lgd_linear.joblib"
+        joblib.dump(matrices["preprocessor"], preprocessor_path)
+        joblib.dump(modelo_lineal_fit, linear_path)
+        model_files.extend([
+            preprocessor_path.relative_to(output_dir).as_posix(),
+            linear_path.relative_to(output_dir).as_posix(),
+        ])
+    configuracion_mejor, tiempo_busqueda = buscar_configuracion(matrices)
 
     titulo("Evaluacion del modelo")
-    S, mlp, p_mlp, n_par_mlp = evaluar_semillas(mejor_cfg, datos)
+    metricas_semillas, pred_mlp_todas, n_parametros_mlp, tiempo_semillas, mlp_files = evaluar_semillas(
+        configuracion_mejor, matrices, model_dir=model_dir if save_models else None
+    )
+    model_files.extend(mlp_files)
 
-    yte = datos["te"][1]
-    tabla_comparativa(yte, p_media, p_lin, S, n_par_lin, n_par_mlp)
-    graficar_distribuciones(yte, p_lin, p_mlp)
+    lgd_test_observada = matrices["te"][1]
+    particiones_modeladas = {
+        "train": matrices["parts"]["tr"],
+        "val": matrices["parts"]["va"],
+        "test": matrices["parts"]["te"],
+    }
+    mascara_lgd_test = particiones_modeladas["test"]["lgd_ok"].to_numpy()
+    pred_media = pred_media_todas[mascara_lgd_test]
+    pred_lineal = pred_lineal_todas[mascara_lgd_test]
+    pred_mlp = pred_mlp_todas[mascara_lgd_test]
+    tabla_comparativa(
+        lgd_test_observada, pred_media, pred_lineal, metricas_semillas,
+        n_parametros_lineal, n_parametros_mlp
+    )
+    graficar_distribuciones(lgd_test_observada, pred_lineal, pred_mlp)
+
+    predicciones_lgd = guardar_predicciones_lgd(matrices, pred_lineal_todas, pred_mlp_todas)
+    guardar_metricas(
+        particiones_modeladas, lgd_test_observada, pred_media_todas, pred_lineal_todas,
+        pred_mlp_todas, metricas_semillas, configuracion_mejor,
+        n_parametros_lineal, n_parametros_mlp, tiempo_lineal, tiempo_busqueda,
+        tiempo_semillas, run_metadata=run_metadata, model_files=model_files
+    )
+    titulo("Proxy de pérdida = PD × severidad × monto financiado al origen")
+    calcular_perdida_esperada(predicciones_lgd)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Entrena los modelos LGD y calcula pérdida esperada.")
+    parser.add_argument(
+        "--rebuild-cache",
+        action="store_true",
+        help="reconstruye el caché desde data/raw/loan.csv en vez de cargarlo",
+    )
+    ejecutar_analisis(rebuild_cache=parser.parse_args().rebuild_cache)
 
 
 if __name__ == "__main__":

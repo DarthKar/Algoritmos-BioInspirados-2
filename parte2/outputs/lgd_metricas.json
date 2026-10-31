@@ -1,63 +1,6 @@
 {
   "modo": "matured",
-  "ejecucion": {
-    "modo": "completo",
-    "max_filas_por_particion": null,
-    "semilla": 42,
-    "epocas_maximas": 100,
-    "semillas_mlp": 30,
-    "batch_size": 256,
-    "paciencia_early_stopping": 8,
-    "busqueda_mlp": [
-      {
-        "capas": [
-          32
-        ],
-        "dropout": 0.0,
-        "learning_rate": 0.001
-      },
-      {
-        "capas": [
-          64
-        ],
-        "dropout": 0.0,
-        "learning_rate": 0.001
-      },
-      {
-        "capas": [
-          64,
-          32
-        ],
-        "dropout": 0.1,
-        "learning_rate": 0.001
-      },
-      {
-        "capas": [
-          128,
-          64
-        ],
-        "dropout": 0.2,
-        "learning_rate": 0.001
-      },
-      {
-        "capas": [
-          128,
-          64,
-          32
-        ],
-        "dropout": 0.2,
-        "learning_rate": 0.0005
-      },
-      {
-        "capas": [
-          256,
-          128
-        ],
-        "dropout": 0.3,
-        "learning_rate": 0.0005
-      }
-    ]
-  },
+  "ejecucion": {},
   "artefactos_modelo": [
     "models/lgd_preprocessor.joblib",
     "models/lgd_linear.joblib",
@@ -93,7 +36,7 @@
     "models/lgd_mlp_seed_71.keras"
   ],
   "n_por_particion": {
-    "train": 46472,
+    "train": 49844,
     "val": 13322,
     "test": 15136
   },
@@ -114,10 +57,10 @@
   "modelo_referencia": {
     "tipo": "Regresión lineal",
     "n_parametros": 78,
-    "segundos_entrenamiento": 0.019705772399902344,
+    "segundos_entrenamiento": 0.023600339889526367,
     "test": {
-      "mae": 0.19278561505153688,
-      "rmse": 0.22857813063541685
+      "mae": 0.19255322251209714,
+      "rmse": 0.22824618641930583
     }
   },
   "mlp": {
@@ -132,32 +75,32 @@
     "funcion_perdida": "mean_squared_error",
     "funcion_salida": "sigmoid",
     "n_configuraciones": 6,
-    "segundos_busqueda": 18.15102791786194,
+    "segundos_busqueda": 16.151633501052856,
     "n_semillas": 30,
     "n_parametros": 52993,
-    "segundos_entrenamiento_semillas": 118.03301501274109,
-    "segundos_totales_busqueda_y_semillas": 136.18404293060303,
+    "segundos_entrenamiento_semillas": 111.20067620277405,
+    "segundos_totales_busqueda_y_semillas": 127.3523097038269,
     "test_por_semilla": {
       "mae": {
-        "media": 0.1929325661386173,
-        "desv_est": 0.000278921622671351,
-        "mejor": 0.19215461984640594,
-        "peor": 0.1933946013179904
+        "media": 0.1929332735903931,
+        "desv_est": 0.0004573146189067131,
+        "mejor": 0.1918163373764927,
+        "peor": 0.1939906213230824
       },
       "rmse": {
-        "media": 0.2283573019071498,
-        "desv_est": 0.0004339033832512379,
-        "mejor": 0.22724303318977643,
-        "peor": 0.22918572018534342
+        "media": 0.228305451663041,
+        "desv_est": 0.0005784342265103384,
+        "mejor": 0.22696739804793548,
+        "peor": 0.22964225861381343
       }
     },
     "test_ensamble_semillas": {
-      "mae": 0.19257242704585928,
-      "rmse": 0.22765998900794124
+      "mae": 0.19249935329311257,
+      "rmse": 0.2275403652195084
     }
   },
   "referencia_media_constante_test": {
-    "mae": 0.1945350486853666,
-    "rmse": 0.22989518121730265
+    "mae": 0.19493855183688813,
+    "rmse": 0.23083089802007875
   }
 }
