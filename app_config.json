@@ -22,8 +22,8 @@
     "base_odds": 7,
     "pdo": 20
   },
-  "report_url": "",
-  "video_url": "",
+  "report_url": "https://darthkar.github.io/Algoritmos-BioInspirados-2/",
+  "video_url": "https://drive.google.com/file/d/1Th1TKJc_hWQuPnwGxKbjqTdV4OFQoQAp/view?usp=sharing",
   "labels": {
     "loan_amnt": "Monto del préstamo (USD)",
     "term": "Plazo del crédito",
