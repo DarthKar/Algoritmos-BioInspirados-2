@@ -55,12 +55,12 @@ REPLACED = [
     "revol_bal",                 # colineal exacta: revol_limit = revol_bal / (revol_util/100)
 ]
 
-# Evaluación de riesgo de la propia Lending Club. Para el inversionista es
-# información legítima, pero son redundantes entre sí: corr(int_rate, sub_grade)
-# = 0,97, installment es función de monto, tasa y plazo, e int_rate además cambia
-# con la política de precios de cada año. Por defecto entra solo sub_grade_num.
+# Evaluación de riesgo de la propia Lending Club (salidas de su modelo de riesgo).
+# Por defecto no entra ninguna: el modelo no debe alimentarse de otro modelo, y un
+# solicitante no conoce su calificación antes de pedir el crédito. Se pueden activar
+# pasando lc_features (p. ej. ("sub_grade_num",)) para análisis de sensibilidad.
 LC_RISK_ASSESSMENT = ["grade", "sub_grade", "sub_grade_num", "int_rate", "installment"]
-DEFAULT_LC_FEATURES = ("sub_grade_num",)
+DEFAULT_LC_FEATURES: tuple[str, ...] = ()
 
 # Geografía: proxy de características protegidas y muchas categorías pequeñas
 GEOGRAPHIC = ["addr_state"]

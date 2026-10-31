@@ -192,135 +192,128 @@
   "shap_importancia": [
     {
       "variable": "annual_inc",
-      "mlp_shap_abs": 0.2811044321,
-      "lr_shap_abs": 0.2518058217,
+      "mlp_shap_abs": 0.2655049499,
+      "lr_shap_abs": 0.2473332349,
       "rango_mlp": 1,
-      "rango_lr": 1
-    },
-    {
-      "variable": "sub_grade_num",
-      "mlp_shap_abs": 0.2249566237,
-      "lr_shap_abs": 0.1765255341,
-      "rango_mlp": 2,
       "rango_lr": 2
     },
     {
-      "variable": "inq_last_6mths",
-      "mlp_shap_abs": 0.1503500007,
-      "lr_shap_abs": 0.1184780306,
-      "rango_mlp": 3,
-      "rango_lr": 4
-    },
-    {
-      "variable": "purpose",
-      "mlp_shap_abs": 0.1274130419,
-      "lr_shap_abs": 0.1044479875,
-      "rango_mlp": 4,
-      "rango_lr": 5
-    },
-    {
       "variable": "revol_util",
-      "mlp_shap_abs": 0.1086915346,
-      "lr_shap_abs": 0.1563594558,
-      "rango_mlp": 5,
+      "mlp_shap_abs": 0.2292496543,
+      "lr_shap_abs": 0.2661629644,
+      "rango_mlp": 2,
+      "rango_lr": 1
+    },
+    {
+      "variable": "inq_last_6mths",
+      "mlp_shap_abs": 0.1976793126,
+      "lr_shap_abs": 0.1651627942,
+      "rango_mlp": 3,
       "rango_lr": 3
     },
     {
       "variable": "loan_amnt",
-      "mlp_shap_abs": 0.1026734211,
-      "lr_shap_abs": 0.0876941424,
-      "rango_mlp": 6,
-      "rango_lr": 7
+      "mlp_shap_abs": 0.1762518836,
+      "lr_shap_abs": 0.1438927138,
+      "rango_mlp": 4,
+      "rango_lr": 4
+    },
+    {
+      "variable": "purpose",
+      "mlp_shap_abs": 0.1479724953,
+      "lr_shap_abs": 0.1182135897,
+      "rango_mlp": 5,
+      "rango_lr": 5
     },
     {
       "variable": "open_acc",
-      "mlp_shap_abs": 0.0595248381,
-      "lr_shap_abs": 0.0532140687,
-      "rango_mlp": 7,
-      "rango_lr": 9
-    },
-    {
-      "variable": "dti",
-      "mlp_shap_abs": 0.0518288458,
-      "lr_shap_abs": 0.0251306074,
-      "rango_mlp": 8,
-      "rango_lr": 13
-    },
-    {
-      "variable": "mths_since_last_delinq",
-      "mlp_shap_abs": 0.0514541894,
-      "lr_shap_abs": 0.0562181733,
-      "rango_mlp": 9,
-      "rango_lr": 8
-    },
-    {
-      "variable": "credit_history_months",
-      "mlp_shap_abs": 0.0513663571,
-      "lr_shap_abs": 0.0205991461,
-      "rango_mlp": 10,
-      "rango_lr": 15
-    },
-    {
-      "variable": "emp_length",
-      "mlp_shap_abs": 0.0417332761,
-      "lr_shap_abs": 0.0908842059,
-      "rango_mlp": 11,
+      "mlp_shap_abs": 0.1099064526,
+      "lr_shap_abs": 0.1068604789,
+      "rango_mlp": 6,
       "rango_lr": 6
     },
     {
-      "variable": "revol_limit",
-      "mlp_shap_abs": 0.0359287034,
-      "lr_shap_abs": 0.0115009133,
-      "rango_mlp": 12,
-      "rango_lr": 19
+      "variable": "credit_history_months",
+      "mlp_shap_abs": 0.063464319,
+      "lr_shap_abs": 0.0360088317,
+      "rango_mlp": 7,
+      "rango_lr": 12
     },
     {
-      "variable": "delinq_2yrs",
-      "mlp_shap_abs": 0.0259495052,
-      "lr_shap_abs": 0.017220908,
-      "rango_mlp": 13,
+      "variable": "dti",
+      "mlp_shap_abs": 0.0602684602,
+      "lr_shap_abs": 0.0184569764,
+      "rango_mlp": 8,
       "rango_lr": 17
     },
     {
+      "variable": "revol_limit",
+      "mlp_shap_abs": 0.0601907562,
+      "lr_shap_abs": 0.0384295171,
+      "rango_mlp": 9,
+      "rango_lr": 10
+    },
+    {
+      "variable": "total_acc",
+      "mlp_shap_abs": 0.0499199484,
+      "lr_shap_abs": 0.0472225129,
+      "rango_mlp": 10,
+      "rango_lr": 9
+    },
+    {
+      "variable": "emp_length",
+      "mlp_shap_abs": 0.0436887071,
+      "lr_shap_abs": 0.0839136731,
+      "rango_mlp": 11,
+      "rango_lr": 7
+    },
+    {
+      "variable": "delinq_2yrs",
+      "mlp_shap_abs": 0.0369503005,
+      "lr_shap_abs": 0.0343838667,
+      "rango_mlp": 12,
+      "rango_lr": 13
+    },
+    {
+      "variable": "never_delinquent",
+      "mlp_shap_abs": 0.0218642979,
+      "lr_shap_abs": 0.0796498228,
+      "rango_mlp": 13,
+      "rango_lr": 8
+    },
+    {
       "variable": "home_ownership",
-      "mlp_shap_abs": 0.0193338676,
-      "lr_shap_abs": 0.0266668945,
+      "mlp_shap_abs": 0.0210194178,
+      "lr_shap_abs": 0.0379563665,
       "rango_mlp": 14,
       "rango_lr": 11
     },
     {
       "variable": "verification_status",
-      "mlp_shap_abs": 0.0133183993,
-      "lr_shap_abs": 0.0256720928,
+      "mlp_shap_abs": 0.0154159581,
+      "lr_shap_abs": 0.0275616887,
       "rango_mlp": 15,
-      "rango_lr": 12
-    },
-    {
-      "variable": "total_acc",
-      "mlp_shap_abs": 0.0067222937,
-      "lr_shap_abs": 0.0124373577,
-      "rango_mlp": 16,
-      "rango_lr": 18
-    },
-    {
-      "variable": "never_delinquent",
-      "mlp_shap_abs": 0.0050207958,
-      "lr_shap_abs": 0.0400151071,
-      "rango_mlp": 17,
-      "rango_lr": 10
-    },
-    {
-      "variable": "pub_rec",
-      "mlp_shap_abs": 0.0036488759,
-      "lr_shap_abs": 0.0209336089,
-      "rango_mlp": 18,
-      "rango_lr": 14
+      "rango_lr": 15
     },
     {
       "variable": "term",
-      "mlp_shap_abs": 0.0036388244,
-      "lr_shap_abs": 0.0184249874,
-      "rango_mlp": 19,
+      "mlp_shap_abs": 0.0147768934,
+      "lr_shap_abs": 0.0314553067,
+      "rango_mlp": 16,
+      "rango_lr": 14
+    },
+    {
+      "variable": "mths_since_last_delinq",
+      "mlp_shap_abs": 0.010660066,
+      "lr_shap_abs": 0.0163057319,
+      "rango_mlp": 17,
+      "rango_lr": 18
+    },
+    {
+      "variable": "pub_rec",
+      "mlp_shap_abs": 0.0051103457,
+      "lr_shap_abs": 0.0268319087,
+      "rango_mlp": 18,
       "rango_lr": 16
     }
   ],
@@ -336,372 +329,719 @@
       "tasa_malos_train": 0.1343190755156087,
       "odds_train": 6.4449589245705745
     },
-    "puntos_base": 466.34840938901243,
+    "n_explicados": 2000,
+    "n_fondo": 100,
+    "modelo": "pd_mlp",
+    "puntos_base": 600.4115657530335,
+    "error_aditividad_max": 5.423544735094765e-06,
+    "auc_test_con_puntaje": 0.628725803182325,
     "percentiles_puntaje": {
       "train": [
-        551.1,
-        590.5,
-        603.1,
-        614.8,
-        640.5
+        551.4,
+        586.9,
+        600.2,
+        614.1,
+        650.1
       ],
       "val": [
-        568.0,
-        592.2,
-        602.0,
-        612.2,
-        638.1
+        564.5,
+        588.2,
+        598.8,
+        610.3,
+        644.2
       ],
       "test": [
-        566.5,
-        592.2,
-        602.3,
-        612.3,
-        637.6
+        565.0,
+        587.9,
+        598.6,
+        609.9,
+        641.9
       ]
     },
-    "auc_test_con_puntaje": 0.6380314623891699,
-    "tabla": [
-      {
-        "variable": "annual_inc",
-        "puntos_por_unidad": 17.4675456603,
-        "desv_est": 0.5435911804,
-        "media": 10.94813604,
-        "impacto_1sd": 9.4952037648
-      },
-      {
-        "variable": "sub_grade_num",
-        "puntos_por_unidad": -1.3805882507,
-        "desv_est": 6.2492541036,
-        "media": 9.8329187064,
-        "impacto_1sd": 8.6276467911
-      },
-      {
-        "variable": "revol_util",
-        "puntos_por_unidad": -0.2120513377,
-        "desv_est": 27.9056980134,
-        "media": 50.8317602921,
-        "impacto_1sd": 5.9174405945
-      },
-      {
-        "variable": "inq_last_6mths",
-        "puntos_por_unidad": -3.9209588759,
-        "desv_est": 1.4542117041,
-        "media": 1.011255116,
-        "impacto_1sd": 5.7019042888
-      },
-      {
-        "variable": "purpose_small_business",
-        "puntos_por_unidad": -20.3175266912,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 4.0291398852
-      },
-      {
-        "variable": "loan_amnt",
-        "puntos_por_unidad": -0.0004557955,
-        "desv_est": 6713.0770580232,
-        "media": 10358.3299895674,
-        "impacto_1sd": 3.0597900173
-      },
-      {
-        "variable": "purpose_credit_card",
-        "puntos_por_unidad": 7.7709141278,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 2.8337346743
-      },
-      {
-        "variable": "term",
-        "puntos_por_unidad": -0.4430272987,
-        "desv_est": 6.0275083277,
-        "media": 37.6236257122,
-        "impacto_1sd": 2.6703507326
-      },
-      {
-        "variable": "missingindicator_revol_limit",
-        "puntos_por_unidad": -16.2570661367,
-        "desv_est": 0.1474936662,
-        "media": 0.0222494182,
-        "impacto_1sd": 2.3978142865
-      },
-      {
-        "variable": "emp_length",
-        "puntos_por_unidad": -0.6300057343,
-        "desv_est": 3.5054688347,
-        "media": 4.9159176631,
-        "impacto_1sd": 2.2084654674
-      },
-      {
-        "variable": "missingindicator_emp_length",
-        "puntos_por_unidad": -12.7036011001,
-        "desv_est": 0.1687899933,
-        "media": 0.0293515769,
-        "impacto_1sd": 2.1442407451
-      },
-      {
-        "variable": "open_acc",
-        "puntos_por_unidad": -0.4589594259,
-        "desv_est": 4.4531277217,
-        "media": 9.4467739347,
-        "impacto_1sd": 2.0438049424
-      },
-      {
-        "variable": "purpose_other",
-        "puntos_por_unidad": -6.6035666669,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 1.9338502515
-      },
-      {
-        "variable": "mths_since_last_delinq",
-        "puntos_por_unidad": -0.0215457902,
-        "desv_est": 87.7475161686,
-        "media": 114.8170090683,
-        "impacto_1sd": 1.890589574
-      },
-      {
-        "variable": "pub_rec",
-        "puntos_por_unidad": -7.7437983917,
-        "desv_est": 0.228743161,
-        "media": 0.0498756119,
-        "impacto_1sd": 1.771340922
-      },
-      {
-        "variable": "purpose_medical",
-        "puntos_por_unidad": -9.6042755759,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 1.2484827848
-      },
-      {
-        "variable": "never_delinquent",
-        "puntos_por_unidad": 2.2492050597,
-        "desv_est": 0.4738038179,
-        "media": 0.6597183212,
-        "impacto_1sd": 1.0656819446
-      },
-      {
-        "variable": "purpose_major_purchase",
-        "puntos_por_unidad": 4.6835733177,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 1.0201400655
-      },
-      {
-        "variable": "purpose_moving",
-        "puntos_por_unidad": -6.6453309075,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.8036704864
-      },
-      {
-        "variable": "purpose_vacation",
-        "puntos_por_unidad": -8.0519179116,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.7920002328
-      },
-      {
-        "variable": "home_ownership_RENT",
-        "puntos_por_unidad": -1.538269616,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.7691277191
-      },
-      {
-        "variable": "verification_status_Verified",
-        "puntos_por_unidad": 1.7090915088,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.7601314528
-      },
-      {
-        "variable": "purpose_wedding",
-        "puntos_por_unidad": 4.957950715,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.7437156259
-      },
-      {
-        "variable": "credit_history_months",
-        "puntos_por_unidad": 0.0088473172,
-        "desv_est": 81.9134897183,
-        "media": 162.1837533103,
-        "impacto_1sd": 0.7247146249
-      },
-      {
-        "variable": "dti",
-        "puntos_por_unidad": -0.0984783685,
-        "desv_est": 6.7859692499,
-        "media": 13.6449408153,
-        "impacto_1sd": 0.6682711803
-      },
-      {
-        "variable": "purpose_educational",
-        "puntos_por_unidad": -7.1791486206,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.6577736022
-      },
-      {
-        "variable": "delinq_2yrs",
-        "puntos_por_unidad": -1.2358407504,
-        "desv_est": 0.508815945,
-        "media": 0.1455340663,
-        "impacto_1sd": 0.6288154793
-      },
-      {
-        "variable": "total_acc",
-        "puntos_por_unidad": 0.0448336271,
-        "desv_est": 11.3015651869,
-        "media": 21.7262458872,
-        "impacto_1sd": 0.5066901596
-      },
-      {
-        "variable": "purpose_infrequent_sklearn",
-        "puntos_por_unidad": -10.1269877899,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.4921530325
-      },
-      {
-        "variable": "purpose_home_improvement",
-        "puntos_por_unidad": -1.6219376895,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.4115713893
-      },
-      {
-        "variable": "purpose_house",
-        "puntos_por_unidad": -3.7800257316,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.3664784156
-      },
-      {
-        "variable": "home_ownership_infrequent_sklearn",
-        "puntos_por_unidad": -6.8884822024,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.3632604298
-      },
-      {
-        "variable": "purpose_debt_consolidation",
-        "puntos_por_unidad": 0.6627978065,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.3308336386
-      },
-      {
-        "variable": "verification_status_Source Verified",
-        "puntos_por_unidad": 0.7323503278,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.3230643812
-      },
-      {
-        "variable": "revol_limit",
-        "puntos_por_unidad": 0.3058056535,
-        "desv_est": 0.9607991219,
-        "media": 9.8666125525,
-        "impacto_1sd": 0.2938178033
-      },
-      {
-        "variable": "missingindicator_revol_util",
-        "puntos_por_unidad": 3.971845139,
-        "desv_est": 0.0397798062,
-        "media": 0.001584945,
-        "impacto_1sd": 0.1579992297
-      },
-      {
-        "variable": "home_ownership_OWN",
-        "puntos_por_unidad": -0.5422918141,
-        "desv_est": 1.0,
-        "media": 0.0,
-        "impacto_1sd": 0.1456866172
-      }
-    ],
     "bandas_test": [
       {
         "banda": 1,
         "n": 1514,
-        "score_min": 545.4893763783,
-        "score_max": 583.1399527818,
-        "pd_media": 0.2510510063,
-        "tasa_malos": 0.2291941876
+        "score_min": 534.914643663,
+        "score_max": 579.2739932645,
+        "pd_media": 0.2683436067,
+        "tasa_malos": 0.2166446499
       },
       {
         "banda": 2,
         "n": 1514,
-        "score_min": 583.145672337,
-        "score_max": 589.7877647469,
-        "pd_media": 0.1848850929,
-        "tasa_malos": 0.1935270806
+        "score_min": 579.2755217203,
+        "score_max": 585.5161203417,
+        "pd_media": 0.2069067543,
+        "tasa_malos": 0.1994715984
       },
       {
         "banda": 3,
         "n": 1513,
-        "score_min": 589.7890199736,
-        "score_max": 594.4812721018,
-        "pd_media": 0.1578946972,
-        "tasa_malos": 0.1718440185
+        "score_min": 585.5206350023,
+        "score_max": 590.2735080649,
+        "pd_media": 0.1783915731,
+        "tasa_malos": 0.162590879
       },
       {
         "banda": 4,
         "n": 1514,
-        "score_min": 594.4830230263,
-        "score_max": 598.5200409943,
-        "pd_media": 0.138529007,
-        "tasa_malos": 0.1552179657
+        "score_min": 590.2810095498,
+        "score_max": 594.5393521036,
+        "pd_media": 0.1565275374,
+        "tasa_malos": 0.1618229855
       },
       {
         "banda": 5,
         "n": 1513,
-        "score_min": 598.5236728712,
-        "score_max": 602.2950450547,
-        "pd_media": 0.1235760196,
-        "tasa_malos": 0.1368142763
+        "score_min": 594.552450988,
+        "score_max": 598.6391339641,
+        "pd_media": 0.1387401384,
+        "tasa_malos": 0.1321877065
       },
       {
         "banda": 6,
         "n": 1514,
-        "score_min": 602.3084208967,
-        "score_max": 606.0135738272,
-        "pd_media": 0.1100876827,
-        "tasa_malos": 0.1162483487
+        "score_min": 598.6443642993,
+        "score_max": 602.8608650194,
+        "pd_media": 0.1222813599,
+        "tasa_malos": 0.1215323646
       },
       {
         "banda": 7,
         "n": 1513,
-        "score_min": 606.0156875502,
-        "score_max": 610.0556282629,
-        "pd_media": 0.0976875751,
-        "tasa_malos": 0.1090548579
+        "score_min": 602.8702766509,
+        "score_max": 607.3742600946,
+        "pd_media": 0.1069383856,
+        "tasa_malos": 0.0945142102
       },
       {
         "banda": 8,
         "n": 1514,
-        "score_min": 610.0558546669,
-        "score_max": 614.9210417409,
-        "pd_media": 0.0851177216,
-        "tasa_malos": 0.0799207398
+        "score_min": 607.375973849,
+        "score_max": 612.7871873043,
+        "pd_media": 0.0919408612,
+        "tasa_malos": 0.0891677675
       },
       {
         "banda": 9,
         "n": 1513,
-        "score_min": 614.9232547915,
-        "score_max": 621.7592876024,
-        "pd_media": 0.0710383345,
-        "tasa_malos": 0.0621282221
+        "score_min": 612.7879499875,
+        "score_max": 620.8574096307,
+        "pd_media": 0.0749268242,
+        "tasa_malos": 0.0746860542
       },
       {
         "banda": 10,
         "n": 1514,
-        "score_min": 621.7669779514,
-        "score_max": 661.1366587554,
-        "pd_media": 0.0509972415,
-        "tasa_malos": 0.0541611625
+        "score_min": 620.8605544927,
+        "score_max": 668.4786703175,
+        "pd_media": 0.0491936019,
+        "tasa_malos": 0.0554821664
+      }
+    ],
+    "tabla_tramos": [
+      {
+        "variable": "loan_amnt",
+        "tramo": "500 a 5,000",
+        "n": 432,
+        "puntos_medios": 6.2890578015
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "5,100 a 8,000",
+        "n": 417,
+        "puntos_medios": 3.1533922179
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "8,050 a 10,625",
+        "n": 354,
+        "puntos_medios": 0.4207035871
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "10,750 a 15,000",
+        "n": 400,
+        "puntos_medios": -2.703323919
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "15,050 a 35,000",
+        "n": 397,
+        "puntos_medios": -10.5555817428
+      },
+      {
+        "variable": "term",
+        "tramo": "36",
+        "n": 1916,
+        "puntos_medios": 1.6832128145
+      },
+      {
+        "variable": "term",
+        "tramo": "60",
+        "n": 84,
+        "puntos_medios": -22.0877356384
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "0 a 2",
+        "n": 552,
+        "puntos_medios": 1.4840116876
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "3 a 4",
+        "n": 333,
+        "puntos_medios": 1.0872674361
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "5 a 6",
+        "n": 291,
+        "puntos_medios": 0.2778976183
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "7 a 10",
+        "n": 755,
+        "puntos_medios": -1.892517347
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "faltante",
+        "n": 69,
+        "puntos_medios": -4.6128037493
+      },
+      {
+        "variable": "dti",
+        "tramo": "0 a 8.06",
+        "n": 400,
+        "puntos_medios": 1.7642309157
+      },
+      {
+        "variable": "dti",
+        "tramo": "8.09 a 12.6",
+        "n": 401,
+        "puntos_medios": 0.7501781106
+      },
+      {
+        "variable": "dti",
+        "tramo": "12.6 a 17",
+        "n": 399,
+        "puntos_medios": -0.07075972
+      },
+      {
+        "variable": "dti",
+        "tramo": "17 a 21.3",
+        "n": 400,
+        "puntos_medios": -1.1226051758
+      },
+      {
+        "variable": "dti",
+        "tramo": "21.3 a 34.9",
+        "n": 400,
+        "puntos_medios": -3.6284287461
+      },
+      {
+        "variable": "delinq_2yrs",
+        "tramo": "0 a 9",
+        "n": 2000,
+        "puntos_medios": 0.0219774883
+      },
+      {
+        "variable": "inq_last_6mths",
+        "tramo": "0 a 1",
+        "n": 1556,
+        "puntos_medios": 5.0232109025
+      },
+      {
+        "variable": "inq_last_6mths",
+        "tramo": "2 a 2",
+        "n": 250,
+        "puntos_medios": -6.7440500925
+      },
+      {
+        "variable": "inq_last_6mths",
+        "tramo": "3 a 15",
+        "n": 194,
+        "puntos_medios": -17.0809001022
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "1 a 37",
+        "n": 413,
+        "puntos_medios": -1.1817624029
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "38 a 68",
+        "n": 389,
+        "puntos_medios": -0.6082592537
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "69 a 120",
+        "n": 403,
+        "puntos_medios": -0.1000198986
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "121 a 177",
+        "n": 400,
+        "puntos_medios": 0.527047727
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "178 a 547",
+        "n": 395,
+        "puntos_medios": 0.7699790854
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "2 a 6",
+        "n": 475,
+        "puntos_medios": 5.6668157587
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "7 a 8",
+        "n": 386,
+        "puntos_medios": 2.4429301237
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "9 a 10",
+        "n": 371,
+        "puntos_medios": 0.1029987807
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "11 a 13",
+        "n": 387,
+        "puntos_medios": -2.6485814722
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "14 a 38",
+        "n": 381,
+        "puntos_medios": -8.0959076971
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "0.0",
+        "n": 1904,
+        "puntos_medios": 0.6604780775
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "1.0",
+        "n": 91,
+        "puntos_medios": -9.2247205392
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "2.0",
+        "n": 4,
+        "puntos_medios": -7.3655131939
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "3.0",
+        "n": 1,
+        "puntos_medios": -1.7635704136
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "2 a 13",
+        "n": 432,
+        "puntos_medios": -3.2398030869
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "14 a 18",
+        "n": 384,
+        "puntos_medios": -0.7687336526
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "19 a 24",
+        "n": 421,
+        "puntos_medios": 0.7675763588
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "25 a 31",
+        "n": 391,
+        "puntos_medios": 2.2555073973
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "32 a 69",
+        "n": 372,
+        "puntos_medios": 3.4455859675
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "8 a 98",
+        "n": 402,
+        "puntos_medios": -3.208202029
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "99 a 134",
+        "n": 398,
+        "puntos_medios": -1.3937451351
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "135 a 169",
+        "n": 405,
+        "puntos_medios": -0.0691854181
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "170 a 216",
+        "n": 400,
+        "puntos_medios": 1.4652920383
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "217 a 566",
+        "n": 395,
+        "puntos_medios": 3.5172249238
+      },
+      {
+        "variable": "never_delinquent",
+        "tramo": "0",
+        "n": 762,
+        "puntos_medios": -1.4266894483
+      },
+      {
+        "variable": "never_delinquent",
+        "tramo": "1",
+        "n": 1238,
+        "puntos_medios": 0.6104084604
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "0 a 28",
+        "n": 400,
+        "puntos_medios": 13.5285918409
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "28.1 a 47.5",
+        "n": 400,
+        "puntos_medios": 5.2181014577
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "47.6 a 62.7",
+        "n": 401,
+        "puntos_medios": -0.46449411
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "62.8 a 78.4",
+        "n": 398,
+        "puntos_medios": -6.0956757559
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "78.5 a 104",
+        "n": 400,
+        "puntos_medios": -12.9809259345
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "faltante",
+        "n": 1,
+        "puntos_medios": -9.7851764435
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "2,000 a 36,000",
+        "n": 412,
+        "puntos_medios": -14.3861056819
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "36,396 a 50,000",
+        "n": 434,
+        "puntos_medios": -5.2800104635
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "50,004 a 64,000",
+        "n": 357,
+        "puntos_medios": -0.1816667108
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "64,170 a 87,000",
+        "n": 399,
+        "puntos_medios": 5.1157425968
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "87,079 a 1,440,000",
+        "n": 398,
+        "puntos_medios": 13.8496149597
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "0 a 10,292",
+        "n": 395,
+        "puntos_medios": -2.864414984
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "10,294 a 16,906",
+        "n": 394,
+        "puntos_medios": 0.2074934737
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "16,911 a 24,485",
+        "n": 395,
+        "puntos_medios": 1.2167430694
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "24,588 a 38,223",
+        "n": 394,
+        "puntos_medios": 1.7586822257
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "38,227 a 6,272,698",
+        "n": 395,
+        "puntos_medios": 1.1032562928
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "faltante",
+        "n": 27,
+        "puntos_medios": -18.4352276382
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "MORTGAGE",
+        "n": 885,
+        "puntos_medios": 1.6259000136
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "OTHER",
+        "n": 4,
+        "puntos_medios": -13.6877609337
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "OWN",
+        "n": 180,
+        "puntos_medios": 0.1600517734
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "RENT",
+        "n": 931,
+        "puntos_medios": -0.8532012066
+      },
+      {
+        "variable": "verification_status",
+        "tramo": "Not Verified",
+        "n": 947,
+        "puntos_medios": -1.3584315802
+      },
+      {
+        "variable": "verification_status",
+        "tramo": "Source Verified",
+        "n": 454,
+        "puntos_medios": 0.1737993226
+      },
+      {
+        "variable": "verification_status",
+        "tramo": "Verified",
+        "n": 599,
+        "puntos_medios": 0.9538563188
+      },
+      {
+        "variable": "purpose",
+        "tramo": "car",
+        "n": 60,
+        "puntos_medios": -2.9364969802
+      },
+      {
+        "variable": "purpose",
+        "tramo": "credit_card",
+        "n": 331,
+        "puntos_medios": 8.6460678368
+      },
+      {
+        "variable": "purpose",
+        "tramo": "debt_consolidation",
+        "n": 1057,
+        "puntos_medios": -0.5363199119
+      },
+      {
+        "variable": "purpose",
+        "tramo": "educational",
+        "n": 12,
+        "puntos_medios": -9.5372310965
+      },
+      {
+        "variable": "purpose",
+        "tramo": "home_improvement",
+        "n": 125,
+        "puntos_medios": -0.9026215936
+      },
+      {
+        "variable": "purpose",
+        "tramo": "house",
+        "n": 17,
+        "puntos_medios": -4.0712712871
+      },
+      {
+        "variable": "purpose",
+        "tramo": "major_purchase",
+        "n": 100,
+        "puntos_medios": 5.3710412988
+      },
+      {
+        "variable": "purpose",
+        "tramo": "medical",
+        "n": 27,
+        "puntos_medios": -10.9069438272
+      },
+      {
+        "variable": "purpose",
+        "tramo": "moving",
+        "n": 18,
+        "puntos_medios": -8.2146063071
+      },
+      {
+        "variable": "purpose",
+        "tramo": "other",
+        "n": 138,
+        "puntos_medios": -6.2020494259
+      },
+      {
+        "variable": "purpose",
+        "tramo": "renewable_energy",
+        "n": 3,
+        "puntos_medios": -15.4438160386
+      },
+      {
+        "variable": "purpose",
+        "tramo": "small_business",
+        "n": 62,
+        "puntos_medios": -20.5403798286
+      },
+      {
+        "variable": "purpose",
+        "tramo": "vacation",
+        "n": 13,
+        "puntos_medios": -7.510374293
+      },
+      {
+        "variable": "purpose",
+        "tramo": "wedding",
+        "n": 37,
+        "puntos_medios": 6.9984367952
+      }
+    ],
+    "importancia_puntos": [
+      {
+        "variable": "annual_inc",
+        "mlp": 8.0882390767,
+        "logistica": 7.2112883125
+      },
+      {
+        "variable": "revol_util",
+        "mlp": 7.8437774315,
+        "logistica": 7.9218204304
+      },
+      {
+        "variable": "inq_last_6mths",
+        "mlp": 6.4079116536,
+        "logistica": 4.9978578687
+      },
+      {
+        "variable": "loan_amnt",
+        "mlp": 4.7368944354,
+        "logistica": 3.7106110006
+      },
+      {
+        "variable": "open_acc",
+        "mlp": 3.9812479541,
+        "logistica": 3.2091404251
+      },
+      {
+        "variable": "purpose",
+        "mlp": 3.824793674,
+        "logistica": 3.7935691313
+      },
+      {
+        "variable": "term",
+        "mlp": 2.5402027732,
+        "logistica": 1.9263078553
+      },
+      {
+        "variable": "total_acc",
+        "mlp": 2.120099204,
+        "logistica": 1.4602155276
+      },
+      {
+        "variable": "revol_limit",
+        "mlp": 2.0992938678,
+        "logistica": 1.3318224288
+      },
+      {
+        "variable": "credit_history_months",
+        "mlp": 2.0024525797,
+        "logistica": 0.9292666865
+      },
+      {
+        "variable": "emp_length",
+        "mlp": 1.6984605378,
+        "logistica": 2.1234576864
+      },
+      {
+        "variable": "dti",
+        "mlp": 1.5168736541,
+        "logistica": 0.4486662903
+      },
+      {
+        "variable": "delinq_2yrs",
+        "mlp": 1.2388809942,
+        "logistica": 0.734334795
+      },
+      {
+        "variable": "home_ownership",
+        "mlp": 1.2045889207,
+        "logistica": 1.0335187577
+      },
+      {
+        "variable": "verification_status",
+        "mlp": 1.1352096946,
+        "logistica": 0.8067078366
+      },
+      {
+        "variable": "pub_rec",
+        "mlp": 1.0659831294,
+        "logistica": 1.0445815203
+      },
+      {
+        "variable": "never_delinquent",
+        "mlp": 1.0417181226,
+        "logistica": 2.0147524753
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "mlp": 0.795845536,
+        "logistica": 0.4380038871
       }
     ]
   },
@@ -711,14 +1051,14 @@
       "criterio_umbral": "0.5",
       "split": "val",
       "umbral": 0.5,
-      "accuracy": 0.8578291548,
+      "accuracy": 0.8576790272,
       "precision": 0.0,
       "sensibilidad": 0.0,
-      "especificidad": 1.0,
+      "especificidad": 0.9998249912,
       "f1": 0.0,
-      "tasa_rechazo": 0.0,
-      "vn": 11428,
-      "fp": 0,
+      "tasa_rechazo": 0.0001501276,
+      "vn": 11426,
+      "fp": 2,
       "fn": 1894,
       "vp": 0
     },
@@ -728,47 +1068,47 @@
       "split": "test",
       "umbral": 0.5,
       "accuracy": 0.8691860465,
-      "precision": 0.0,
-      "sensibilidad": 0.0,
-      "especificidad": 1.0,
-      "f1": 0.0,
-      "tasa_rechazo": 0.0,
-      "vn": 13156,
-      "fp": 0,
-      "fn": 1980,
-      "vp": 0
+      "precision": 0.5,
+      "sensibilidad": 0.0005050505,
+      "especificidad": 0.9999239891,
+      "f1": 0.0010090817,
+      "tasa_rechazo": 0.0001321353,
+      "vn": 13155,
+      "fp": 1,
+      "fn": 1979,
+      "vp": 1
     },
     {
       "modelo": "pd_logistic",
       "criterio_umbral": "max F1 en validación",
       "split": "val",
-      "umbral": 0.1391308768,
-      "accuracy": 0.6645398589,
-      "precision": 0.2238901994,
-      "sensibilidad": 0.5512143611,
-      "especificidad": 0.6833216661,
-      "f1": 0.3184383102,
-      "tasa_rechazo": 0.3500225191,
-      "vn": 7809,
-      "fp": 3619,
-      "fn": 850,
-      "vp": 1044
+      "umbral": 0.1393032572,
+      "accuracy": 0.635340039,
+      "precision": 0.2067669173,
+      "sensibilidad": 0.5517423442,
+      "especificidad": 0.6491949597,
+      "f1": 0.3008059873,
+      "tasa_rechazo": 0.3793724666,
+      "vn": 7419,
+      "fp": 4009,
+      "fn": 849,
+      "vp": 1045
     },
     {
       "modelo": "pd_logistic",
       "criterio_umbral": "max F1 en validación",
       "split": "test",
-      "umbral": 0.1391308768,
-      "accuracy": 0.6592230444,
-      "precision": 0.1946579554,
-      "sensibilidad": 0.5116161616,
-      "especificidad": 0.6814381271,
-      "f1": 0.2820155902,
-      "tasa_rechazo": 0.3438160677,
-      "vn": 8965,
-      "fp": 4191,
-      "fn": 967,
-      "vp": 1013
+      "umbral": 0.1393032572,
+      "accuracy": 0.6173361522,
+      "precision": 0.1784750337,
+      "sensibilidad": 0.5343434343,
+      "especificidad": 0.629826695,
+      "f1": 0.2675771371,
+      "tasa_rechazo": 0.3916490486,
+      "vn": 8286,
+      "fp": 4870,
+      "fn": 922,
+      "vp": 1058
     },
     {
       "modelo": "pd_mlp",
@@ -806,33 +1146,33 @@
       "modelo": "pd_mlp",
       "criterio_umbral": "max F1 en validación",
       "split": "val",
-      "umbral": 0.1547206491,
-      "accuracy": 0.6551568834,
-      "precision": 0.2243772969,
-      "sensibilidad": 0.5802534319,
-      "especificidad": 0.6675708785,
-      "f1": 0.3236160188,
-      "tasa_rechazo": 0.3676625131,
-      "vn": 7629,
-      "fp": 3799,
-      "fn": 795,
-      "vp": 1099
+      "umbral": 0.1563670784,
+      "accuracy": 0.663714157,
+      "precision": 0.2195227766,
+      "sensibilidad": 0.5343189018,
+      "especificidad": 0.685159258,
+      "f1": 0.3111931119,
+      "tasa_rechazo": 0.3460441375,
+      "vn": 7830,
+      "fp": 3598,
+      "fn": 882,
+      "vp": 1012
     },
     {
       "modelo": "pd_mlp",
       "criterio_umbral": "max F1 en validación",
       "split": "test",
-      "umbral": 0.1547206491,
-      "accuracy": 0.6596194503,
-      "precision": 0.2006417516,
-      "sensibilidad": 0.5368686869,
-      "especificidad": 0.6780936455,
-      "f1": 0.2921132179,
-      "tasa_rechazo": 0.3500264271,
-      "vn": 8921,
-      "fp": 4235,
-      "fn": 917,
-      "vp": 1063
+      "umbral": 0.1563670784,
+      "accuracy": 0.6518234672,
+      "precision": 0.1889183056,
+      "sensibilidad": 0.5045454545,
+      "especificidad": 0.6739890544,
+      "f1": 0.2749036874,
+      "tasa_rechazo": 0.3493657505,
+      "vn": 8867,
+      "fp": 4289,
+      "fn": 981,
+      "vp": 999
     },
     {
       "modelo": "referencia_todos_buenos",
@@ -859,11 +1199,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.0592881787,
       "eda_tasa_grupo_alto": 0.2276184268,
-      "delta_pd_lr_pp": 4.0079423325,
-      "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": 5.7847961783,
-      "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 2
+      "delta_pd_lr_pp": null,
+      "veredicto_lr": "Fuera del modelo",
+      "delta_pd_mlp_pp": null,
+      "veredicto_mlp": "Fuera del modelo",
+      "mejor_rango_shap_mlp": null
     },
     {
       "id": "H2",
@@ -872,11 +1212,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.0947516026,
       "eda_tasa_grupo_alto": 0.1804253603,
-      "delta_pd_lr_pp": 3.6849800985,
+      "delta_pd_lr_pp": 6.3179478281,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": 3.0120745301,
+      "delta_pd_mlp_pp": 6.0624860227,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 5
+      "mejor_rango_shap_mlp": 2.0
     },
     {
       "id": "H3",
@@ -885,11 +1225,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1799274012,
       "eda_tasa_grupo_alto": 0.0983979216,
-      "delta_pd_lr_pp": -4.5722278197,
+      "delta_pd_lr_pp": -4.5284818857,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": -5.4131068289,
+      "delta_pd_mlp_pp": -5.3553834558,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 1
+      "mejor_rango_shap_mlp": 1.0
     },
     {
       "id": "H4",
@@ -898,11 +1238,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1176344028,
       "eda_tasa_grupo_alto": 0.2250922509,
-      "delta_pd_lr_pp": 2.9690295664,
+      "delta_pd_lr_pp": 4.1687274647,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": 3.9955928922,
+      "delta_pd_mlp_pp": 5.4353415966,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 3
+      "mejor_rango_shap_mlp": 3.0
     },
     {
       "id": "H5",
@@ -911,11 +1251,11 @@
       "veredicto_eda": "Sin evidencia suficiente",
       "eda_tasa_grupo_bajo": 0.1408934708,
       "eda_tasa_grupo_alto": 0.1402485975,
-      "delta_pd_lr_pp": 1.5442678391,
+      "delta_pd_lr_pp": 2.541895937,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": 2.5796622038,
+      "delta_pd_mlp_pp": 3.6758854985,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 6
+      "mejor_rango_shap_mlp": 4.0
     },
     {
       "id": "H6",
@@ -924,11 +1264,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1152420082,
       "eda_tasa_grupo_alto": 0.1531052473,
-      "delta_pd_lr_pp": 0.3917780702,
+      "delta_pd_lr_pp": 0.2899291209,
       "veredicto_lr": "Efecto despreciable",
-      "delta_pd_mlp_pp": 0.4931628704,
-      "veredicto_mlp": "Efecto despreciable",
-      "mejor_rango_shap_mlp": 8
+      "delta_pd_mlp_pp": 0.7054060698,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 8.0
     },
     {
       "id": "H7",
@@ -937,11 +1277,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1275158306,
       "eda_tasa_grupo_alto": 0.1735705555,
-      "delta_pd_lr_pp": 0.1411199256,
-      "veredicto_lr": "Efecto despreciable",
-      "delta_pd_mlp_pp": -0.1159057021,
-      "veredicto_mlp": "Efecto despreciable",
-      "mejor_rango_shap_mlp": 9
+      "delta_pd_lr_pp": 2.359190842,
+      "veredicto_lr": "Confirmada",
+      "delta_pd_mlp_pp": 3.2409623265,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 12.0
     },
     {
       "id": "H8",
@@ -950,11 +1290,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1516663341,
       "eda_tasa_grupo_alto": 0.1191510864,
-      "delta_pd_lr_pp": 0.1748209238,
+      "delta_pd_lr_pp": -0.423658006,
       "veredicto_lr": "Efecto despreciable",
-      "delta_pd_mlp_pp": -0.3450885415,
-      "veredicto_mlp": "Efecto despreciable",
-      "mejor_rango_shap_mlp": 10
+      "delta_pd_mlp_pp": -1.5269905329,
+      "veredicto_mlp": "Confirmada",
+      "mejor_rango_shap_mlp": 7.0
     },
     {
       "id": "H9",
@@ -963,11 +1303,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1323246729,
       "eda_tasa_grupo_alto": 0.2002734108,
-      "delta_pd_lr_pp": 5.4385078449,
+      "delta_pd_lr_pp": 5.3385940074,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": 2.7869179845,
+      "delta_pd_mlp_pp": 3.0082434416,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 11
+      "mejor_rango_shap_mlp": 11.0
     },
     {
       "id": "H10",
@@ -976,11 +1316,11 @@
       "veredicto_eda": "Sin evidencia suficiente",
       "eda_tasa_grupo_bajo": 0.1348753379,
       "eda_tasa_grupo_alto": 0.1342932883,
-      "delta_pd_lr_pp": 1.6727855184,
+      "delta_pd_lr_pp": 1.52346296,
       "veredicto_lr": "Contraria",
-      "delta_pd_mlp_pp": 1.7414659262,
+      "delta_pd_mlp_pp": 1.740039885,
       "veredicto_mlp": "Contraria",
-      "mejor_rango_shap_mlp": 11
+      "mejor_rango_shap_mlp": 11.0
     },
     {
       "id": "H11",
@@ -989,11 +1329,11 @@
       "veredicto_eda": "Sin evidencia suficiente",
       "eda_tasa_grupo_bajo": 0.1358190233,
       "eda_tasa_grupo_alto": 0.1330215154,
-      "delta_pd_lr_pp": -0.6457929601,
+      "delta_pd_lr_pp": -0.5991810806,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": -0.8027330041,
+      "delta_pd_mlp_pp": -0.7500812411,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 15
+      "mejor_rango_shap_mlp": 15.0
     },
     {
       "id": "H12",
@@ -1002,11 +1342,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1300209205,
       "eda_tasa_grupo_alto": 0.2348336595,
-      "delta_pd_lr_pp": 9.8358330967,
+      "delta_pd_lr_pp": 11.6196553311,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": 8.8955491781,
+      "delta_pd_mlp_pp": 9.9445566535,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 4
+      "mejor_rango_shap_mlp": 5.0
     },
     {
       "id": "H13",
@@ -1015,11 +1355,11 @@
       "veredicto_eda": "Confirmada",
       "eda_tasa_grupo_bajo": 0.1277328284,
       "eda_tasa_grupo_alto": 0.225088968,
-      "delta_pd_lr_pp": 4.473165241,
+      "delta_pd_lr_pp": 8.2666832326,
       "veredicto_lr": "Confirmada",
-      "delta_pd_mlp_pp": 7.0631742477,
+      "delta_pd_mlp_pp": 11.3395228982,
       "veredicto_mlp": "Confirmada",
-      "mejor_rango_shap_mlp": 19
+      "mejor_rango_shap_mlp": 16.0
     }
   ],
   "comparacion": {
@@ -1027,50 +1367,50 @@
       {
         "metrica": "auc",
         "referencia_tasa_base": 0.5,
-        "logistica": 0.6380314624,
-        "mlp_media_semillas": 0.6412970167,
-        "mlp_std_semillas": 0.0019842931,
-        "mlp_modelo_guardado": 0.6451058356,
+        "logistica": 0.6222185368,
+        "mlp_media_semillas": 0.6257865335,
+        "mlp_std_semillas": 0.0021681427,
+        "mlp_modelo_guardado": 0.6287258032,
         "mejora_brier_vs_base_logistica": null,
         "mejora_brier_vs_base_mlp_media_semillas": null
       },
       {
         "metrica": "gini",
         "referencia_tasa_base": 0.0,
-        "logistica": 0.2760629248,
-        "mlp_media_semillas": 0.2825940335,
-        "mlp_std_semillas": 0.0039685862,
-        "mlp_modelo_guardado": 0.2902116713,
+        "logistica": 0.2444370737,
+        "mlp_media_semillas": 0.251573067,
+        "mlp_std_semillas": 0.0043362853,
+        "mlp_modelo_guardado": 0.2574516064,
         "mejora_brier_vs_base_logistica": null,
         "mejora_brier_vs_base_mlp_media_semillas": null
       },
       {
         "metrica": "ks",
         "referencia_tasa_base": 0.0,
-        "logistica": 0.2059947299,
-        "mlp_media_semillas": 0.2140871367,
-        "mlp_std_semillas": 0.0048997259,
-        "mlp_modelo_guardado": 0.2199520286,
+        "logistica": 0.1804888348,
+        "mlp_media_semillas": 0.1897111584,
+        "mlp_std_semillas": 0.0047624614,
+        "mlp_modelo_guardado": 0.1954342759,
         "mejora_brier_vs_base_logistica": null,
         "mejora_brier_vs_base_mlp_media_semillas": null
       },
       {
         "metrica": "brier",
         "referencia_tasa_base": 0.1137139489,
-        "logistica": 0.1110098157,
-        "mlp_media_semillas": 0.1110501428,
-        "mlp_std_semillas": 0.0002232071,
-        "mlp_modelo_guardado": 0.1106174588,
-        "mejora_brier_vs_base_logistica": 0.0237801362,
-        "mejora_brier_vs_base_mlp_media_semillas": 0.0234254999
+        "logistica": 0.111550158,
+        "mlp_media_semillas": 0.1117548073,
+        "mlp_std_semillas": 0.0002343807,
+        "mlp_modelo_guardado": 0.1115233302,
+        "mejora_brier_vs_base_logistica": 0.0190283684,
+        "mejora_brier_vs_base_mlp_media_semillas": 0.0172286833
       },
       {
         "metrica": "log_loss",
         "referencia_tasa_base": 0.3879842981,
-        "logistica": 0.3755243273,
-        "mlp_media_semillas": 0.3752571503,
-        "mlp_std_semillas": 0.0006504496,
-        "mlp_modelo_guardado": 0.3738519549,
+        "logistica": 0.3781378982,
+        "mlp_media_semillas": 0.3783286969,
+        "mlp_std_semillas": 0.0006436976,
+        "mlp_modelo_guardado": 0.3774577677,
         "mejora_brier_vs_base_logistica": null,
         "mejora_brier_vs_base_mlp_media_semillas": null
       }
@@ -1078,8 +1418,8 @@
     "costos": [
       {
         "concepto": "parametros",
-        "logistica": 38,
-        "mlp": 13185
+        "logistica": 37,
+        "mlp": 13057
       },
       {
         "concepto": "configuraciones_evaluadas",
@@ -1093,29 +1433,29 @@
       },
       {
         "concepto": "segundos_totales",
-        "logistica": 2.0781437,
-        "mlp": 963.4431524
+        "logistica": 1.0499292,
+        "mlp": 693.119832
       },
       {
         "concepto": "interpretabilidad",
-        "logistica": "coeficientes y scorecard directa",
-        "mlp": "SHAP (aproximado)"
+        "logistica": "coeficientes; puntos exactos por unidad",
+        "mlp": "puntos por variable con SHAP"
       }
     ],
     "bootstrap": {
       "n_boot": 1000,
       "dif_auc_mlp_menos_lr": {
-        "media": 0.007115815654570811,
+        "media": 0.006553126323622035,
         "ic95": [
-          0.001960158434028772,
-          0.012315480295849853
+          0.00030029410063654456,
+          0.012570053273860364
         ]
       },
       "dif_brier_mlp_menos_lr": {
-        "media": -0.0004026912457426356,
+        "media": -3.43791896923136e-05,
         "ic95": [
-          -0.0007738324715393229,
-          -4.735087751907324e-05
+          -0.0004255062443868706,
+          0.00033324367848144555
         ]
       },
       "nota": "El bootstrap recoge la variabilidad de la muestra de test, no la de las semillas."
@@ -1286,17 +1626,896 @@
       "mediana": 20265.9574468085,
       "p99": 255907.2718631164,
       "maximo": 44140000.0
-    },
-    {
-      "variable": "sub_grade_num",
-      "faltantes": 0.0,
-      "ceros": 0.0,
-      "negativos": 0,
-      "minimo": 1.0,
-      "p1": 1.0,
-      "mediana": 9.0,
-      "p99": 29.0,
-      "maximo": 35.0
     }
-  ]
+  ],
+  "scorecard_logistica": {
+    "parametros": {
+      "base_score": 600,
+      "base_odds": 7,
+      "pdo": 20,
+      "factor": 28.85390081777927,
+      "offset": 543.8529015588479
+    },
+    "justificacion_base_odds": {
+      "tasa_malos_train": 0.1343190755156087,
+      "odds_train": 6.4449589245705745
+    },
+    "n_explicados": 2000,
+    "n_fondo": 100,
+    "modelo": "pd_logistic",
+    "puntos_base": 601.8505779387726,
+    "error_aditividad_max": 2.2737367544323206e-13,
+    "auc_test_con_puntaje": 0.6222185368430427,
+    "percentiles_puntaje": {
+      "train": [
+        554.2,
+        590.6,
+        602.0,
+        613.4,
+        641.6
+      ],
+      "val": [
+        568.5,
+        591.7,
+        600.3,
+        609.9,
+        636.2
+      ],
+      "test": [
+        568.2,
+        591.3,
+        600.0,
+        609.3,
+        635.3
+      ]
+    },
+    "bandas_test": [
+      {
+        "banda": 1,
+        "n": 1514,
+        "score_min": 541.5370543498,
+        "score_max": 583.3082009447,
+        "pd_media": 0.2448571823,
+        "tasa_malos": 0.2252311757
+      },
+      {
+        "banda": 2,
+        "n": 1514,
+        "score_min": 583.3103728098,
+        "score_max": 589.1167791686,
+        "pd_media": 0.1860896917,
+        "tasa_malos": 0.1889035667
+      },
+      {
+        "banda": 3,
+        "n": 1513,
+        "score_min": 589.1178687695,
+        "score_max": 593.1841995455,
+        "pd_media": 0.1623483661,
+        "tasa_malos": 0.1672174488
+      },
+      {
+        "banda": 4,
+        "n": 1514,
+        "score_min": 593.1849472941,
+        "score_max": 596.7236265155,
+        "pd_media": 0.145373564,
+        "tasa_malos": 0.1321003963
+      },
+      {
+        "banda": 5,
+        "n": 1513,
+        "score_min": 596.7290750241,
+        "score_max": 600.0273724443,
+        "pd_media": 0.1314657653,
+        "tasa_malos": 0.141440846
+      },
+      {
+        "banda": 6,
+        "n": 1514,
+        "score_min": 600.0306566302,
+        "score_max": 603.4327455472,
+        "pd_media": 0.1185778265,
+        "tasa_malos": 0.1215323646
+      },
+      {
+        "banda": 7,
+        "n": 1513,
+        "score_min": 603.4344564284,
+        "score_max": 607.2779379792,
+        "pd_media": 0.1061338545,
+        "tasa_malos": 0.110376735
+      },
+      {
+        "banda": 8,
+        "n": 1514,
+        "score_min": 607.2788497608,
+        "score_max": 611.83155195,
+        "pd_media": 0.0935692726,
+        "tasa_malos": 0.0898282695
+      },
+      {
+        "banda": 9,
+        "n": 1513,
+        "score_min": 611.833707526,
+        "score_max": 618.1809096807,
+        "pd_media": 0.079154171,
+        "tasa_malos": 0.0667547918
+      },
+      {
+        "banda": 10,
+        "n": 1514,
+        "score_min": 618.1854303913,
+        "score_max": 658.9909478717,
+        "pd_media": 0.0565426452,
+        "tasa_malos": 0.0647291942
+      }
+    ],
+    "tabla_por_unidad": [
+      {
+        "variable": "revol_util",
+        "puntos_por_unidad": -0.3609644993,
+        "desv_est": 27.9056980134,
+        "media": 50.8317602921,
+        "impacto_1sd": 10.0729663101
+      },
+      {
+        "variable": "annual_inc",
+        "puntos_por_unidad": 17.1572862976,
+        "desv_est": 0.5435911804,
+        "media": 10.94813604,
+        "impacto_1sd": 9.3265495116
+      },
+      {
+        "variable": "inq_last_6mths",
+        "puntos_por_unidad": -5.4659629344,
+        "desv_est": 1.4542117041,
+        "media": 1.011255116,
+        "impacto_1sd": 7.9486672736
+      },
+      {
+        "variable": "purpose_small_business",
+        "puntos_por_unidad": -25.6157788093,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 5.0798287439
+      },
+      {
+        "variable": "loan_amnt",
+        "puntos_por_unidad": -0.0007478908,
+        "desv_est": 6713.0770580232,
+        "media": 10358.3299895674,
+        "impacto_1sd": 5.0206487841
+      },
+      {
+        "variable": "term",
+        "puntos_por_unidad": -0.7563402498,
+        "desv_est": 6.0275083277,
+        "media": 37.6236257122,
+        "impacto_1sd": 4.558847154
+      },
+      {
+        "variable": "open_acc",
+        "puntos_por_unidad": -0.9216476999,
+        "desv_est": 4.4531277217,
+        "media": 9.4467739347,
+        "impacto_1sd": 4.104214922
+      },
+      {
+        "variable": "missingindicator_revol_limit",
+        "puntos_por_unidad": -23.5227391369,
+        "desv_est": 0.1474936662,
+        "media": 0.0222494182,
+        "impacto_1sd": 3.4694550348
+      },
+      {
+        "variable": "purpose_other",
+        "puntos_por_unidad": -9.871871789,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 2.8909713046
+      },
+      {
+        "variable": "purpose_credit_card",
+        "puntos_por_unidad": 6.3242685771,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 2.306202187
+      },
+      {
+        "variable": "pub_rec",
+        "puntos_por_unidad": -9.9257080989,
+        "desv_est": 0.228743161,
+        "media": 0.0498756119,
+        "impacto_1sd": 2.2704378454
+      },
+      {
+        "variable": "never_delinquent",
+        "puntos_por_unidad": 4.4770287439,
+        "desv_est": 0.4738038179,
+        "media": 0.6597183212,
+        "impacto_1sd": 2.1212333118
+      },
+      {
+        "variable": "missingindicator_emp_length",
+        "puntos_por_unidad": -12.3838542493,
+        "desv_est": 0.1687899933,
+        "media": 0.0293515769,
+        "impacto_1sd": 2.0902706763
+      },
+      {
+        "variable": "emp_length",
+        "puntos_por_unidad": -0.5697587669,
+        "desv_est": 3.5054688347,
+        "media": 4.9159176631,
+        "impacto_1sd": 1.9972716008
+      },
+      {
+        "variable": "total_acc",
+        "puntos_por_unidad": 0.1702255888,
+        "desv_est": 11.3015651869,
+        "media": 21.7262458872,
+        "impacto_1sd": 1.923815588
+      },
+      {
+        "variable": "purpose_medical",
+        "puntos_por_unidad": -13.3086137113,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.7300185711
+      },
+      {
+        "variable": "revol_limit",
+        "puntos_por_unidad": 1.5177028429,
+        "desv_est": 0.9607991219,
+        "media": 9.8666125525,
+        "impacto_1sd": 1.4582075587
+      },
+      {
+        "variable": "purpose_educational",
+        "puntos_por_unidad": -13.9130950883,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.2747565426
+      },
+      {
+        "variable": "credit_history_months",
+        "puntos_por_unidad": 0.0154657652,
+        "desv_est": 81.9134897183,
+        "media": 162.1837533103,
+        "impacto_1sd": 1.2668547963
+      },
+      {
+        "variable": "delinq_2yrs",
+        "puntos_por_unidad": -2.4675228326,
+        "desv_est": 0.508815945,
+        "media": 0.1455340663,
+        "impacto_1sd": 1.2555149619
+      },
+      {
+        "variable": "purpose_moving",
+        "puntos_por_unidad": -10.1480367054,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.2272793798
+      },
+      {
+        "variable": "purpose_vacation",
+        "puntos_por_unidad": -12.0894960631,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.1891432329
+      },
+      {
+        "variable": "home_ownership_RENT",
+        "puntos_por_unidad": -2.2245601501,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.1122698236
+      },
+      {
+        "variable": "purpose_home_improvement",
+        "puntos_por_unidad": -4.2211589688,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 1.0711313219
+      },
+      {
+        "variable": "purpose_debt_consolidation",
+        "puntos_por_unidad": -1.7553363459,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.8761711409
+      },
+      {
+        "variable": "home_ownership_infrequent_sklearn",
+        "puntos_por_unidad": -16.063953133,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.8471239888
+      },
+      {
+        "variable": "verification_status_Source Verified",
+        "puntos_por_unidad": 1.7514743341,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.7726342852
+      },
+      {
+        "variable": "purpose_infrequent_sklearn",
+        "puntos_por_unidad": -15.369680106,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.7469382634
+      },
+      {
+        "variable": "verification_status_Verified",
+        "puntos_por_unidad": 1.5630105885,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.695160852
+      },
+      {
+        "variable": "purpose_major_purchase",
+        "puntos_por_unidad": 2.6819024671,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.5841514529
+      },
+      {
+        "variable": "purpose_house",
+        "puntos_por_unidad": -5.9585761292,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.5776917127
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "puntos_por_unidad": -0.0062492226,
+        "desv_est": 87.7475161686,
+        "media": 114.8170090683,
+        "impacto_1sd": 0.5483537605
+      },
+      {
+        "variable": "dti",
+        "puntos_por_unidad": -0.0723266609,
+        "desv_est": 6.7859692499,
+        "media": 13.6449408153,
+        "impacto_1sd": 0.490806497
+      },
+      {
+        "variable": "purpose_wedding",
+        "puntos_por_unidad": 2.7602956628,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.4140571649
+      },
+      {
+        "variable": "home_ownership_OWN",
+        "puntos_por_unidad": -1.4166498737,
+        "desv_est": 1.0,
+        "media": 0.0,
+        "impacto_1sd": 0.3805827831
+      },
+      {
+        "variable": "missingindicator_revol_util",
+        "puntos_por_unidad": -1.9745551845,
+        "desv_est": 0.0397798062,
+        "media": 0.001584945,
+        "impacto_1sd": 0.0785474225
+      }
+    ],
+    "tabla_tramos": [
+      {
+        "variable": "loan_amnt",
+        "tramo": "500 a 5,000",
+        "n": 432,
+        "puntos_medios": 4.9707629265
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "5,100 a 8,000",
+        "n": 417,
+        "puntos_medios": 2.581441158
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "8,050 a 10,625",
+        "n": 354,
+        "puntos_medios": 0.4726564422
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "10,750 a 15,000",
+        "n": 400,
+        "puntos_medios": -1.9155821358
+      },
+      {
+        "variable": "loan_amnt",
+        "tramo": "15,050 a 35,000",
+        "n": 397,
+        "puntos_medios": -8.2039310206
+      },
+      {
+        "variable": "term",
+        "tramo": "36",
+        "n": 1916,
+        "puntos_medios": 1.2706516196
+      },
+      {
+        "variable": "term",
+        "tramo": "60",
+        "n": 84,
+        "puntos_medios": -16.8815143747
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "0 a 2",
+        "n": 552,
+        "puntos_medios": 2.4776825823
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "3 a 4",
+        "n": 333,
+        "puntos_medios": 1.1039550657
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "5 a 6",
+        "n": 291,
+        "puntos_medios": -0.0001785454
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "7 a 10",
+        "n": 755,
+        "puntos_medios": -2.1619865345
+      },
+      {
+        "variable": "emp_length",
+        "tramo": "faltante",
+        "n": 69,
+        "puntos_medios": -11.5793219589
+      },
+      {
+        "variable": "dti",
+        "tramo": "0 a 8.06",
+        "n": 400,
+        "puntos_medios": 0.647097595
+      },
+      {
+        "variable": "dti",
+        "tramo": "8.09 a 12.6",
+        "n": 401,
+        "puntos_medios": 0.2321472263
+      },
+      {
+        "variable": "dti",
+        "tramo": "12.6 a 17",
+        "n": 399,
+        "puntos_medios": -0.0812309249
+      },
+      {
+        "variable": "dti",
+        "tramo": "17 a 21.3",
+        "n": 400,
+        "puntos_medios": -0.3973048138
+      },
+      {
+        "variable": "dti",
+        "tramo": "21.3 a 34.9",
+        "n": 400,
+        "puntos_medios": -0.8668892763
+      },
+      {
+        "variable": "delinq_2yrs",
+        "tramo": "0 a 9",
+        "n": 2000,
+        "puntos_medios": -0.0814282535
+      },
+      {
+        "variable": "inq_last_6mths",
+        "tramo": "0 a 1",
+        "n": 1556,
+        "puntos_medios": 3.8161976179
+      },
+      {
+        "variable": "inq_last_6mths",
+        "tramo": "2 a 2",
+        "n": 250,
+        "puntos_medios": -5.1380051584
+      },
+      {
+        "variable": "inq_last_6mths",
+        "tramo": "3 a 15",
+        "n": 194,
+        "puntos_medios": -14.2949018269
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "1 a 37",
+        "n": 413,
+        "puntos_medios": 0.6543759197
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "38 a 68",
+        "n": 389,
+        "puntos_medios": 0.4601069655
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "69 a 120",
+        "n": 403,
+        "puntos_medios": 0.2190909211
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "121 a 177",
+        "n": 400,
+        "puntos_medios": -0.1288121007
+      },
+      {
+        "variable": "mths_since_last_delinq",
+        "tramo": "178 a 547",
+        "n": 395,
+        "puntos_medios": -0.7233894403
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "2 a 6",
+        "n": 475,
+        "puntos_medios": 4.4321552809
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "7 a 8",
+        "n": 386,
+        "puntos_medios": 1.9631096007
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "9 a 10",
+        "n": 371,
+        "puntos_medios": 0.1086351858
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "11 a 13",
+        "n": 387,
+        "puntos_medios": -2.0914258231
+      },
+      {
+        "variable": "open_acc",
+        "tramo": "14 a 38",
+        "n": 381,
+        "puntos_medios": -6.7610962513
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "0.0",
+        "n": 1904,
+        "puntos_medios": 0.5955424859
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "1.0",
+        "n": 91,
+        "puntos_medios": -9.330165613
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "2.0",
+        "n": 4,
+        "puntos_medios": -19.255873712
+      },
+      {
+        "variable": "pub_rec",
+        "tramo": "3.0",
+        "n": 1,
+        "puntos_medios": -29.1815818109
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "2 a 13",
+        "n": 432,
+        "puntos_medios": -2.0202782678
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "14 a 18",
+        "n": 384,
+        "puntos_medios": -0.9291302735
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "19 a 24",
+        "n": 421,
+        "puntos_medios": -0.0292092554
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "25 a 31",
+        "n": 391,
+        "puntos_medios": 1.0753207039
+      },
+      {
+        "variable": "total_acc",
+        "tramo": "32 a 69",
+        "n": 372,
+        "puntos_medios": 3.1159153391
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "8 a 98",
+        "n": 402,
+        "puntos_medios": -1.3956060267
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "99 a 134",
+        "n": 398,
+        "puntos_medios": -0.6999680968
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "135 a 169",
+        "n": 405,
+        "puntos_medios": -0.1973355262
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "170 a 216",
+        "n": 400,
+        "puntos_medios": 0.4451047216
+      },
+      {
+        "variable": "credit_history_months",
+        "tramo": "217 a 566",
+        "n": 395,
+        "puntos_medios": 1.915272528
+      },
+      {
+        "variable": "never_delinquent",
+        "tramo": "0",
+        "n": 762,
+        "puntos_medios": -3.1786904081
+      },
+      {
+        "variable": "never_delinquent",
+        "tramo": "1",
+        "n": 1238,
+        "puntos_medios": 1.2983383357
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "0 a 28",
+        "n": 400,
+        "puntos_medios": 13.9309736436
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "28.1 a 47.5",
+        "n": 400,
+        "puntos_medios": 5.0953748717
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "47.6 a 62.7",
+        "n": 401,
+        "puntos_medios": -0.906635703
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "62.8 a 78.4",
+        "n": 398,
+        "puntos_medios": -6.3363000784
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "78.5 a 104",
+        "n": 400,
+        "puntos_medios": -12.739790796
+      },
+      {
+        "variable": "revol_util",
+        "tramo": "faltante",
+        "n": 1,
+        "puntos_medios": -1.972028433
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "2,000 a 36,000",
+        "n": 412,
+        "puntos_medios": -12.8136973799
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "36,396 a 50,000",
+        "n": 434,
+        "puntos_medios": -4.8074716448
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "50,004 a 64,000",
+        "n": 357,
+        "puntos_medios": -0.3497287015
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "64,170 a 87,000",
+        "n": 399,
+        "puntos_medios": 4.3177736189
+      },
+      {
+        "variable": "annual_inc",
+        "tramo": "87,079 a 1,440,000",
+        "n": 398,
+        "puntos_medios": 12.4923240143
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "0 a 10,292",
+        "n": 395,
+        "puntos_medios": -1.7020368265
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "10,294 a 16,906",
+        "n": 394,
+        "puntos_medios": -0.3979171774
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "16,911 a 24,485",
+        "n": 395,
+        "puntos_medios": 0.2431225219
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "24,588 a 38,223",
+        "n": 394,
+        "puntos_medios": 0.8504605364
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "38,227 a 6,272,698",
+        "n": 395,
+        "puntos_medios": 1.9565091614
+      },
+      {
+        "variable": "revol_limit",
+        "tramo": "faltante",
+        "n": 27,
+        "puntos_medios": -23.2934211785
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "MORTGAGE",
+        "n": 885,
+        "puntos_medios": 1.4055685838
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "OTHER",
+        "n": 4,
+        "puntos_medios": -14.6583845492
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "OWN",
+        "n": 180,
+        "puntos_medios": -0.01108129
+      },
+      {
+        "variable": "home_ownership",
+        "tramo": "RENT",
+        "n": 931,
+        "puntos_medios": -0.8189915664
+      },
+      {
+        "variable": "verification_status",
+        "tramo": "Not Verified",
+        "n": 947,
+        "puntos_medios": -1.1131794053
+      },
+      {
+        "variable": "verification_status",
+        "tramo": "Source Verified",
+        "n": 454,
+        "puntos_medios": 0.6382949288
+      },
+      {
+        "variable": "verification_status",
+        "tramo": "Verified",
+        "n": 599,
+        "puntos_medios": 0.4498311833
+      },
+      {
+        "variable": "purpose",
+        "tramo": "car",
+        "n": 60,
+        "puntos_medios": 2.1258210046
+      },
+      {
+        "variable": "purpose",
+        "tramo": "credit_card",
+        "n": 331,
+        "puntos_medios": 8.4500895817
+      },
+      {
+        "variable": "purpose",
+        "tramo": "debt_consolidation",
+        "n": 1057,
+        "puntos_medios": 0.3704846588
+      },
+      {
+        "variable": "purpose",
+        "tramo": "educational",
+        "n": 12,
+        "puntos_medios": -11.7872740837
+      },
+      {
+        "variable": "purpose",
+        "tramo": "home_improvement",
+        "n": 125,
+        "puntos_medios": -2.0953379642
+      },
+      {
+        "variable": "purpose",
+        "tramo": "house",
+        "n": 17,
+        "puntos_medios": -3.8327551246
+      },
+      {
+        "variable": "purpose",
+        "tramo": "major_purchase",
+        "n": 100,
+        "puntos_medios": 4.8077234717
+      },
+      {
+        "variable": "purpose",
+        "tramo": "medical",
+        "n": 27,
+        "puntos_medios": -11.1827927067
+      },
+      {
+        "variable": "purpose",
+        "tramo": "moving",
+        "n": 18,
+        "puntos_medios": -8.0222157008
+      },
+      {
+        "variable": "purpose",
+        "tramo": "other",
+        "n": 138,
+        "puntos_medios": -7.7460507844
+      },
+      {
+        "variable": "purpose",
+        "tramo": "renewable_energy",
+        "n": 3,
+        "puntos_medios": -13.2438591014
+      },
+      {
+        "variable": "purpose",
+        "tramo": "small_business",
+        "n": 62,
+        "puntos_medios": -23.4899578047
+      },
+      {
+        "variable": "purpose",
+        "tramo": "vacation",
+        "n": 13,
+        "puntos_medios": -9.9636750585
+      },
+      {
+        "variable": "purpose",
+        "tramo": "wedding",
+        "n": 37,
+        "puntos_medios": 4.8861166674
+      }
+    ]
+  }
 }

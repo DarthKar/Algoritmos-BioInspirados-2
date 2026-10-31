@@ -171,6 +171,39 @@ def plot_distribution(ref, score, label):
     st.altair_chart((hist + position).properties(height=260, title=label), use_container_width=True)
 
 
+
+# Muestra de 50 créditos de entrenamiento: referencia fija para calcular los puntos por variable.
+@st.cache_data(show_spinner=False)
+def shap_background(path):
+    d = load_data(path)
+    d = d[d["split"] == "train"] if "split" in d else d
+    return d.sample(min(50, len(d)), random_state=42)
+
+
+# Puntos de la scorecard que aporta cada variable al perfil (SHAP convertido a puntos).
+def score_breakdown(model, entry, background, params):
+    from parte1.puntaje.shap_points import points_by_variable
+    base, points = points_by_variable(model, pd.DataFrame([entry]), background, params)
+    return base, points.iloc[0]
+
+
+# Barras horizontales: qué variables suman y cuáles restan puntos.
+def plot_breakdown(points, labels, entry):
+    import altair as alt
+    df = pd.DataFrame({"Variable": [labels.get(v, v) for v in points.index], "Puntos": points.to_numpy(),
+                       "Valor": [str(entry.get(v, "")) for v in points.index]})
+    df = df.reindex(df["Puntos"].abs().sort_values(ascending=False).index)
+    effects = ["Suma puntos (menos riesgo)", "Resta puntos (más riesgo)"]
+    df["Efecto"] = np.where(df["Puntos"] >= 0, effects[0], effects[1])
+    chart = alt.Chart(df).mark_bar().encode(
+        x=alt.X("Puntos:Q", title="Puntos frente a un perfil promedio"),
+        y=alt.Y("Variable:N", sort=None, title=None),
+        color=alt.Color("Efecto:N", scale=alt.Scale(domain=effects, range=["#1baf7a", "#e34948"]),
+                        legend=alt.Legend(orient="bottom", title=None)),
+        tooltip=["Variable", "Valor", alt.Tooltip("Puntos:Q", format="+.1f")])
+    st.altair_chart(chart.properties(height=max(220, 22 * len(df))), use_container_width=True)
+
+
 def main():
     cfg = load_registry()
     st.title("📊 ¿Me prestas? | Simulador de riesgo crediticio")
@@ -295,6 +328,18 @@ def main():
                 st.caption(f"Línea roja: puntaje de este perfil. Referencia: {result['split']} (n={len(result['ref']):,}); percentil con empates incluidos (≤).")
             else:
                 st.warning("No hay predicciones históricas para graficar percentiles.")
+            if data_file is not None and data_file.exists():
+                st.subheader("¿De dónde sale tu puntaje?")
+                try:
+                    with st.spinner("Calculando los puntos por variable…"):
+                        base_pts, pts = score_breakdown(loaded[selected], {c: current[c] for c in model_columns[selected]},
+                                                        shap_background(str(data_file)), params)
+                    plot_breakdown(pts, labels, current)
+                    st.caption(f"Puntaje = {base_pts:.1f} puntos base {pts.sum():+.1f} puntos de las variables = "
+                               f"{base_pts + pts.sum():.1f}. Cada barra indica cuántos puntos suma o resta esa característica "
+                               "frente a un perfil promedio de entrenamiento (valores SHAP del modelo convertidos a puntos).")
+                except Exception as e:
+                    st.warning(f"No fue posible calcular los puntos por variable: {e}")
             st.subheader("Comparación para el mismo perfil")
             if len(results) > 1:
                 rows = [{"Modelo": name, "Probabilidad de incumplimiento (%)": round(res["pd"]*100, 4),

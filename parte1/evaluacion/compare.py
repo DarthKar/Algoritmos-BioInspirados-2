@@ -52,7 +52,7 @@ def run_comparison(n_boot: int = 1000, save: bool = True) -> dict:
         {"concepto": "configuraciones_evaluadas", "logistica": lr["busqueda"]["n_configuraciones"], "mlp": mlp["busqueda"]["n_configuraciones"]},
         {"concepto": "semillas", "logistica": 1, "mlp": mlp["semillas"]["n"]},
         {"concepto": "segundos_totales", "logistica": lr["busqueda"]["segundos_totales"], "mlp": mlp["segundos_totales"]},
-        {"concepto": "interpretabilidad", "logistica": "coeficientes y scorecard directa", "mlp": "SHAP (aproximado)"},
+        {"concepto": "interpretabilidad", "logistica": "coeficientes; puntos exactos por unidad", "mlp": "puntos por variable con SHAP"},
     ])
 
     # Bootstrap pareado sobre test: MLP guardado menos logística

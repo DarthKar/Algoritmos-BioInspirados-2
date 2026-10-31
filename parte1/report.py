@@ -18,6 +18,7 @@ def md_table(rows: list[dict], columns: dict[str, str], fmt: dict[str, str] | No
         cells = []
         for key in columns:
             v = r.get(key, "")
+            v = "—" if v is None else v
             cells.append(format(v, fmt[key]) if key in fmt and isinstance(v, (int, float)) else str(v))
         body += "| " + " | ".join(cells) + " |\n"
     return head + body
@@ -34,6 +35,8 @@ def run_report() -> str:
     eda = {h["id"]: h for h in read_analysis("eda_hipotesis")}
     contrast = read_analysis("hipotesis_vs_modelos")
     comp, sc = read_analysis("comparacion"), read_analysis("scorecard")
+    sc_lr = read_analysis("scorecard_logistica")
+    top5 = [r["variable"] for r in sc["importancia_puntos"][:5]]
     n_seeds = mlp["semillas"]["n"]
 
     hyp_rows = [{**c, "auc": eda[c["id"]]["auc_univariado"], "p": eda[c["id"]]["p_valor"],
@@ -48,7 +51,7 @@ def run_report() -> str:
 
     md = f"""# Resumen de resultados, Parte 1 (generado automáticamente)
 
-No editar a mano: lo reescribe `python run.py`. Las conclusiones redactadas están en `parte1/documentos/eda_y_conclusiones.md`. Las rutas de figuras son relativas a `parte1/salidas/`.
+No editar a mano: lo reescribe `python run.py`. Las rutas de figuras son relativas a `parte1/salidas/`.
 
 ## 1. Datos
 
@@ -98,9 +101,17 @@ Figura: `figuras/pd_mlp_shap.png`.
 {md_table(read_analysis("shap_importancia"), {"variable": "Variable", "mlp_shap_abs": "MLP", "rango_mlp": "Rango MLP",
                                               "lr_shap_abs": "Logística", "rango_lr": "Rango LR"},
           {"mlp_shap_abs": ".3f", "lr_shap_abs": ".3f"})}
-## 6. Scorecard (desde la logística)
+## 6. Scorecard del MLP (con la de la logística como comparación)
 
-Puntaje base {p['base_score']:g} con odds {p['base_odds']:g}:1 y PDO {p['pdo']:g}: score = {p['offset']:.2f} + {p['factor']:.2f} · ln(odds buenos/malos). AUC en prueba con el puntaje: {sc['auc_test_con_puntaje']:.4f}.
+Puntaje base {p['base_score']:g} con odds {p['base_odds']:g}:1 y PDO {p['pdo']:g}: puntaje = {p['offset']:.2f} + {p['factor']:.2f} · ln(odds buenos/malos). Los puntos por variable salen de SHAP sobre el logit: cada variable aporta −factor · φ puntos (`parte1/puntaje/shap_points.py`). Puntos base del MLP: {sc['puntos_base']:.1f}; error máximo de aditividad: {sc['error_aditividad_max']:.1e} puntos en {sc['n_explicados']:,} créditos. AUC en prueba con el puntaje: MLP {sc['auc_test_con_puntaje']:.4f}, logística {sc_lr['auc_test_con_puntaje']:.4f}.
+
+Puntos medios absolutos por variable (cuánto mueve cada variable el puntaje, en promedio):
+
+{md_table(sc["importancia_puntos"], {"variable": "Variable", "mlp": "MLP", "logistica": "Logística"}, {"mlp": ".2f", "logistica": ".2f"})}
+Puntos medios del MLP por tramo de las cinco variables más importantes:
+
+{md_table([r for r in sc["tabla_tramos"] if r["variable"] in top5], {"variable": "Variable", "tramo": "Tramo", "n": "Créditos", "puntos_medios": "Puntos medios"}, {"puntos_medios": "+.1f"})}
+Bandas en prueba con el puntaje del MLP:
 
 {md_table(sc["bandas_test"], {"banda": "Banda (1 = más riesgo)", "n": "Créditos", "score_min": "Puntaje mín.",
                                "score_max": "Puntaje máx.", "pd_media": "PD media", "tasa_malos": "Tasa observada"},

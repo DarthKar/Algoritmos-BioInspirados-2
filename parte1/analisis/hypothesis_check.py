@@ -78,6 +78,7 @@ def run_hypothesis_check(mode: str = "matured", save: bool = True) -> pd.DataFra
     eda = pd.DataFrame(read_analysis("eda_hipotesis")).set_index("id")
     shap_rank = pd.DataFrame(read_analysis("shap_importancia")).set_index("variable")["rango_mlp"]
 
+    inputs = {c for n, _, cols in pre_mlp.transformers_ if n not in ("remainder", "drop") for c in cols}
     rows = []
     for s in scenarios(train):
         low, high = _apply(train, s["bajo"]), _apply(train, s["alto"])
@@ -85,11 +86,12 @@ def run_hypothesis_check(mode: str = "matured", save: bool = True) -> pd.DataFra
                "veredicto_eda": eda.loc[s["id"], "veredicto"],
                "eda_tasa_grupo_bajo": eda.loc[s["id"], "tasa_menor_grupo"],
                "eda_tasa_grupo_alto": eda.loc[s["id"], "tasa_mayor_grupo"]}
+        in_model = any(v in inputs for v in s["shap"])   # p. ej. la subcalificación ya no entra al modelo
         for name, f in models.items():
-            delta = 100 * float(np.mean(f(high)) - np.mean(f(low)))
+            delta = 100 * float(np.mean(f(high)) - np.mean(f(low))) if in_model else None
             row[f"delta_pd_{name}_pp"] = delta
-            row[f"veredicto_{name}"] = _verdict(delta, s["esperado"])
-        row["mejor_rango_shap_mlp"] = int(min(shap_rank.get(v, 99) for v in s["shap"]))
+            row[f"veredicto_{name}"] = _verdict(delta, s["esperado"]) if in_model else "Fuera del modelo"
+        row["mejor_rango_shap_mlp"] = int(min(shap_rank.get(v, 99) for v in s["shap"])) if in_model else None
         rows.append(row)
     table = pd.DataFrame(rows)
 

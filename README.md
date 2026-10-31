@@ -168,6 +168,9 @@ python parte1\run.py --etapas logistica mlp
 python parte1\run.py --listar
 ```
 
+`python parte1\orquestador.py` abre un menú para hacer lo mismo sin escribir comandos y para consultar
+los resultados, incluidos los mejores hiperparámetros de la red.
+
 `--demo` usa un presupuesto pequeño y guarda sus salidas en
 `parte1/salidas_demo/`. El experimento completo incluye EDA, regresión
 logística, búsqueda de MLP, semillas, figuras, interpretabilidad, scorecard y
@@ -189,7 +192,7 @@ Etapas disponibles:
 | `mlp` | Busca hiperparámetros o entrena una configuración fija y guarda el modelo. |
 | `figuras` | Genera curvas ROC, calibración y pérdidas desde resultados guardados. |
 | `interpretabilidad` | Calcula SHAP para la logística y el MLP. |
-| `scorecard` | Genera puntajes y bandas de riesgo desde la logística guardada. |
+| `scorecard` | Genera la scorecard del MLP (puntos por variable con SHAP), la de la logística como comparación y las bandas de riesgo. |
 | `clasificacion` | Calcula métricas de clasificación por umbral. |
 | `hipotesis` | Mide el efecto de escenarios sobre las PD de los modelos guardados. |
 | `comparacion` | Compara los modelos con métricas y bootstrap. |
@@ -219,13 +222,16 @@ solo puede reducir el número de modelos existentes usados en el ensamble.
 El informe legible de resultados está en
 `parte1/salidas/resultados/pd_resumen.md`. El archivo
 `parte1/salidas/resultados/pd_analisis.json` reúne resultados de EDA,
-hipótesis, comparación, scorecard y SHAP. En
-`parte1/documentos/eda_y_conclusiones.md` se encuentran las conclusiones
-redactadas.
+hipótesis, comparación, scorecard y SHAP.
 
 La variable objetivo representa incumplimiento según los estados de préstamo
 definidos por la Parte 1. El preprocesamiento se ajusta con entrenamiento; la
 partición temporal evita mezclar datos futuros al entrenar.
+
+Los modelos de PD no usan las evaluaciones de riesgo de Lending Club
+(subcalificación, calificación, tasa de interés ni cuota): son salidas del
+modelo de riesgo de la plataforma, y un solicitante no las conoce al pedir el
+crédito.
 
 ### Parte 2: LGD y pérdida
 
@@ -272,6 +278,7 @@ la scorecard. La interfaz incluye:
 
 - formulario con campos, unidades y valores de referencia;
 - PD, puntaje y percentil para cada modelo disponible;
+- de dónde sale el puntaje: los puntos que suma o resta cada característica;
 - comparación de logística y MLP para el mismo perfil;
 - simulación descriptiva de cambios en las características.
 
@@ -326,6 +333,7 @@ scripts/                     Verificaciones de la aplicación
 data/raw/                    loan.csv y diccionario opcionales, no versionados
 parte1/
   run.py                     Etapas de preparación, entrenamiento y análisis PD
+  orquestador.py             Menú interactivo de la Parte 1 (correr etapas y ver resultados)
   config.yaml                Configuración del experimento PD
   modelos/                   Definición, entrenamiento e inferencia de PD
   preparacion/               Limpieza, dataset, particiones y variables
@@ -334,7 +342,6 @@ parte1/
   puntaje/                   Conversión PD a puntaje y scorecard
   datos/procesados/          Datasets utilizados por los modelos
   salidas/                   Modelos, resultados y figuras
-  documentos/                Caso de uso y conclusiones
 parte2/
   analisis.py                Entrenamiento y análisis LGD
   config.py                  Configuración del experimento LGD

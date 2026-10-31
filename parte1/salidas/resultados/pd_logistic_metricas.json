@@ -1,9 +1,7 @@
 {
   "config": {
     "mode": "matured",
-    "lc_features": [
-      "sub_grade_num"
-    ],
+    "lc_features": [],
     "use_geography": false,
     "c_grid": [
       0.001,
@@ -32,321 +30,315 @@
     "total_acc",
     "credit_history_months",
     "never_delinquent",
-    "revol_limit",
-    "sub_grade_num"
+    "revol_limit"
   ],
   "variables_categoricas": [
     "home_ownership",
     "verification_status",
     "purpose"
   ],
-  "n_columnas_X": 37,
-  "n_parametros": 38,
+  "n_columnas_X": 36,
+  "n_parametros": 37,
   "busqueda": {
     "n_configuraciones": 5,
     "criterio": "log-loss en validación",
     "resultados": [
       {
         "C": 0.001,
-        "val_logloss": 0.3913161034408304,
-        "val_auc": 0.6613285917727777,
-        "segundos": 0.0653636000060942
+        "val_logloss": 0.39584313076039296,
+        "val_auc": 0.6381774936159692,
+        "segundos": 0.05544160000135889
       },
       {
         "C": 0.01,
-        "val_logloss": 0.39006252814560366,
-        "val_auc": 0.6629779614640711,
-        "segundos": 0.1017444000026444
+        "val_logloss": 0.3942383753485056,
+        "val_auc": 0.6417136590726051,
+        "segundos": 0.08278969999992114
       },
       {
         "C": 0.1,
-        "val_logloss": 0.3899981289537343,
-        "val_auc": 0.6629070431874287,
-        "segundos": 0.17166069999802858
+        "val_logloss": 0.39418866087390614,
+        "val_auc": 0.6416653792034902,
+        "segundos": 0.11102530000061961
       },
       {
         "C": 1.0,
-        "val_logloss": 0.39003699747749604,
-        "val_auc": 0.662747650318102,
-        "segundos": 0.17451680000522174
+        "val_logloss": 0.3941570634865746,
+        "val_auc": 0.6419263677017009,
+        "segundos": 0.11854069999935746
       },
       {
         "C": 10.0,
-        "val_logloss": 0.3900325153326025,
-        "val_auc": 0.6628149649298728,
-        "segundos": 0.1853574000124354
+        "val_logloss": 0.3941899236242376,
+        "val_auc": 0.641887281798092,
+        "segundos": 0.14067570000042906
       }
     ],
-    "mejor_C": 0.1,
-    "segundos_totales": 1.7055735000030836
+    "mejor_C": 1.0,
+    "segundos_totales": 1.0499292000004061
   },
   "metricas": {
     "train": {
-      "auc": 0.6869482132626528,
-      "gini": 0.3738964265253055,
-      "ks": 0.27009701226160926,
-      "brier": 0.11001883531641062,
-      "log_loss": 0.36871358743832,
-      "pd_media": 0.13433664456370625,
+      "auc": 0.6742937211975295,
+      "gini": 0.348587442395059,
+      "ks": 0.24900845604886046,
+      "brier": 0.11063722706719734,
+      "log_loss": 0.3716277107016919,
+      "pd_media": 0.13436613655233953,
       "tasa_observada": 0.1343190755156087,
-      "diferencia": 1.756904809754878e-05,
+      "diferencia": 4.706103673082773e-05,
       "n": 49844
     },
     "val": {
-      "auc": 0.6629070431874287,
-      "gini": 0.3258140863748573,
-      "ks": 0.24212839469851,
-      "brier": 0.11750918879615507,
-      "log_loss": 0.3899981289537343,
-      "pd_media": 0.1270394635245608,
+      "auc": 0.6419263677017009,
+      "gini": 0.2838527354034017,
+      "ks": 0.20322442996489842,
+      "brier": 0.11849944560082316,
+      "log_loss": 0.3941570634865746,
+      "pd_media": 0.13078335649422318,
       "tasa_observada": 0.14217084521843568,
-      "diferencia": -0.015131381693874874,
+      "diferencia": -0.011387488724212497,
       "n": 13322
     },
     "test": {
-      "auc": 0.6380314623891699,
-      "gini": 0.2760629247783397,
-      "ks": 0.2059947299077734,
-      "brier": 0.11100981574445415,
-      "log_loss": 0.3755243273106681,
-      "pd_media": 0.1270902796431672,
+      "auc": 0.6222185368430427,
+      "gini": 0.24443707368608547,
+      "ks": 0.1804888348366609,
+      "brier": 0.11155015803298793,
+      "log_loss": 0.37813789817709953,
+      "pd_media": 0.13241457314865845,
       "tasa_observada": 0.1308139534883721,
-      "diferencia": -0.0037236738452049167,
+      "diferencia": 0.001600619660286351,
       "n": 15136
     }
   },
   "calibracion_test": [
     {
-      "prob_predicha": 0.05099724153206952,
-      "tasa_observada": 0.05416116248348745
+      "prob_predicha": 0.05654264516889451,
+      "tasa_observada": 0.06472919418758256
     },
     {
-      "prob_predicha": 0.07104325678082306,
-      "tasa_observada": 0.062087186261558784
+      "prob_predicha": 0.07915908446829187,
+      "tasa_observada": 0.0667107001321004
     },
     {
-      "prob_predicha": 0.08512210176266437,
-      "tasa_observada": 0.07997356245869135
+      "prob_predicha": 0.09357388338151268,
+      "tasa_observada": 0.0898876404494382
     },
     {
-      "prob_predicha": 0.09769169679964902,
-      "tasa_observada": 0.10898282694848084
+      "prob_predicha": 0.10613809732033777,
+      "tasa_observada": 0.11030383091149273
     },
     {
-      "prob_predicha": 0.11009175406053033,
-      "tasa_observada": 0.1163251817580965
+      "prob_predicha": 0.11858180555038421,
+      "tasa_observada": 0.12161269001982816
     },
     {
-      "prob_predicha": 0.12358073743550059,
-      "tasa_observada": 0.13672391017173052
+      "prob_predicha": 0.13147005301361245,
+      "tasa_observada": 0.14200792602377807
     },
     {
-      "prob_predicha": 0.13853416910745203,
-      "tasa_observada": 0.1553205551883675
+      "prob_predicha": 0.145378465585169,
+      "tasa_observada": 0.13152676801057503
     },
     {
-      "prob_predicha": 0.15790210182091102,
-      "tasa_observada": 0.17239101717305153
+      "prob_predicha": 0.16235500387759383,
+      "tasa_observada": 0.16710700132100395
     },
     {
-      "prob_predicha": 0.18489552235246776,
-      "tasa_observada": 0.19299405155320556
+      "prob_predicha": 0.18609874107517957,
+      "tasa_observada": 0.1890284203569068
     },
     {
-      "prob_predicha": 0.25105100634414246,
-      "tasa_observada": 0.22919418758256274
+      "prob_predicha": 0.2448571822985793,
+      "tasa_observada": 0.22523117569352707
     }
   ],
   "coeficientes": [
     {
       "variable": "(intercepto)",
-      "coeficiente": -2.0236139174,
-      "odds_ratio": 0.1321769244
+      "coeficiente": -2.1032922673,
+      "odds_ratio": 0.1220539319
     },
     {
       "variable": "purpose_small_business",
-      "coeficiente": 0.7041518171,
-      "odds_ratio": 2.0221308206
-    },
-    {
-      "variable": "purpose_infrequent_sklearn",
-      "coeficiente": 0.3509746517,
-      "odds_ratio": 1.4204513194
-    },
-    {
-      "variable": "purpose_medical",
-      "coeficiente": 0.3328588268,
-      "odds_ratio": 1.394950355
-    },
-    {
-      "variable": "annual_inc",
-      "coeficiente": -0.3290786859,
-      "odds_ratio": 0.7195863932
-    },
-    {
-      "variable": "sub_grade_num",
-      "coeficiente": 0.2990114524,
-      "odds_ratio": 1.3485250672
-    },
-    {
-      "variable": "purpose_vacation",
-      "coeficiente": 0.2790582099,
-      "odds_ratio": 1.3218842884
-    },
-    {
-      "variable": "purpose_credit_card",
-      "coeficiente": -0.2693193609,
-      "odds_ratio": 0.7638992571
-    },
-    {
-      "variable": "purpose_educational",
-      "coeficiente": 0.2488103313,
-      "odds_ratio": 1.2824987601
+      "coeficiente": 0.887775243,
+      "odds_ratio": 2.4297181014
     },
     {
       "variable": "home_ownership_infrequent_sklearn",
-      "coeficiente": 0.2387366008,
-      "odds_ratio": 1.2696440694
+      "coeficiente": 0.5567341911,
+      "odds_ratio": 1.7449644643
+    },
+    {
+      "variable": "purpose_infrequent_sklearn",
+      "coeficiente": 0.5326725216,
+      "odds_ratio": 1.7034788145
+    },
+    {
+      "variable": "purpose_educational",
+      "coeficiente": 0.4821911317,
+      "odds_ratio": 1.6196193163
+    },
+    {
+      "variable": "purpose_medical",
+      "coeficiente": 0.4612414036,
+      "odds_ratio": 1.5860416812
+    },
+    {
+      "variable": "purpose_vacation",
+      "coeficiente": 0.4189900055,
+      "odds_ratio": 1.5204251589
     },
     {
       "variable": "purpose_moving",
-      "coeficiente": 0.2303096191,
-      "odds_ratio": 1.2589897569
-    },
-    {
-      "variable": "purpose_other",
-      "coeficiente": 0.2288621808,
-      "odds_ratio": 1.2571687651
+      "coeficiente": 0.3517041515,
+      "odds_ratio": 1.4214879165
     },
     {
       "variable": "revol_util",
-      "coeficiente": 0.2050828632,
-      "odds_ratio": 1.2276267858
+      "coeficiente": 0.3491024099,
+      "odds_ratio": 1.4177943791
+    },
+    {
+      "variable": "purpose_other",
+      "coeficiente": 0.3421330049,
+      "odds_ratio": 1.4079475489
+    },
+    {
+      "variable": "annual_inc",
+      "coeficiente": -0.3232335749,
+      "odds_ratio": 0.723804772
     },
     {
       "variable": "inq_last_6mths",
-      "coeficiente": 0.1976129441,
-      "odds_ratio": 1.2184906785
+      "coeficiente": 0.2754798155,
+      "odds_ratio": 1.3171625183
     },
     {
-      "variable": "purpose_wedding",
-      "coeficiente": -0.171829478,
-      "odds_ratio": 0.8421227614
-    },
-    {
-      "variable": "purpose_major_purchase",
-      "coeficiente": -0.162320282,
-      "odds_ratio": 0.8501688671
+      "variable": "purpose_credit_card",
+      "coeficiente": -0.2191824467,
+      "odds_ratio": 0.8031751682
     },
     {
       "variable": "purpose_house",
-      "coeficiente": 0.1310057089,
-      "odds_ratio": 1.1399742893
+      "coeficiente": 0.2065085122,
+      "odds_ratio": 1.2293781989
     },
     {
       "variable": "loan_amnt",
-      "coeficiente": 0.1060442412,
-      "odds_ratio": 1.1118710659
+      "coeficiente": 0.1740024275,
+      "odds_ratio": 1.1900584546
     },
     {
       "variable": "term",
-      "coeficiente": 0.0925473041,
-      "odds_ratio": 1.0969650312
-    },
-    {
-      "variable": "missingindicator_revol_limit",
-      "coeficiente": 0.0831019106,
-      "odds_ratio": 1.0866525443
-    },
-    {
-      "variable": "emp_length",
-      "coeficiente": 0.0765395806,
-      "odds_ratio": 1.0795449185
-    },
-    {
-      "variable": "missingindicator_emp_length",
-      "coeficiente": 0.0743137213,
-      "odds_ratio": 1.0771446758
-    },
-    {
-      "variable": "open_acc",
-      "coeficiente": 0.0708328817,
-      "odds_ratio": 1.0734018258
-    },
-    {
-      "variable": "mths_since_last_delinq",
-      "coeficiente": 0.0655228416,
-      "odds_ratio": 1.0677171254
-    },
-    {
-      "variable": "pub_rec",
-      "coeficiente": 0.0613899983,
-      "odds_ratio": 1.0633135238
-    },
-    {
-      "variable": "verification_status_Verified",
-      "coeficiente": -0.059232598,
-      "odds_ratio": 0.9424875229
+      "coeficiente": 0.1579976026,
+      "odds_ratio": 1.1711633869
     },
     {
       "variable": "purpose_home_improvement",
-      "coeficiente": 0.0562120768,
-      "odds_ratio": 1.0578219995
+      "coeficiente": 0.1462942219,
+      "odds_ratio": 1.1575367106
+    },
+    {
+      "variable": "open_acc",
+      "coeficiente": 0.1422412501,
+      "odds_ratio": 1.1528547413
+    },
+    {
+      "variable": "missingindicator_revol_limit",
+      "coeficiente": 0.1202421488,
+      "odds_ratio": 1.1277699066
+    },
+    {
+      "variable": "purpose_wedding",
+      "coeficiente": -0.0956645578,
+      "odds_ratio": 0.9087688043
+    },
+    {
+      "variable": "purpose_major_purchase",
+      "coeficiente": -0.0929476567,
+      "odds_ratio": 0.9112411964
+    },
+    {
+      "variable": "pub_rec",
+      "coeficiente": 0.0786873796,
+      "odds_ratio": 1.0818660558
     },
     {
       "variable": "home_ownership_RENT",
-      "coeficiente": 0.0533123624,
-      "odds_ratio": 1.0547590607
+      "coeficiente": 0.0770973798,
+      "odds_ratio": 1.0801472558
     },
     {
       "variable": "never_delinquent",
-      "coeficiente": -0.0369337218,
-      "odds_ratio": 0.9637400082
+      "coeficiente": -0.0735163445,
+      "odds_ratio": 0.9291209597
     },
     {
-      "variable": "verification_status_Source Verified",
-      "coeficiente": -0.0253813282,
-      "odds_ratio": 0.9749380697
+      "variable": "missingindicator_emp_length",
+      "coeficiente": 0.0724432613,
+      "odds_ratio": 1.0751318028
     },
     {
-      "variable": "credit_history_months",
-      "coeficiente": -0.0251166949,
-      "odds_ratio": 0.9751961049
-    },
-    {
-      "variable": "dti",
-      "coeficiente": 0.0231605142,
-      "odds_ratio": 1.0234308016
-    },
-    {
-      "variable": "purpose_debt_consolidation",
-      "coeficiente": -0.0229708215,
-      "odds_ratio": 0.9772909992
-    },
-    {
-      "variable": "delinq_2yrs",
-      "coeficiente": 0.0217930838,
-      "odds_ratio": 1.0220322876
-    },
-    {
-      "variable": "home_ownership_OWN",
-      "coeficiente": 0.0187944021,
-      "odds_ratio": 1.0189721286
+      "variable": "emp_length",
+      "coeficiente": 0.0692201589,
+      "odds_ratio": 1.0716721214
     },
     {
       "variable": "total_acc",
-      "coeficiente": -0.0175605428,
-      "odds_ratio": 0.982592745
+      "coeficiente": -0.0666743675,
+      "odds_ratio": 0.9354997808
+    },
+    {
+      "variable": "purpose_debt_consolidation",
+      "coeficiente": 0.060835322,
+      "odds_ratio": 1.0627238925
+    },
+    {
+      "variable": "verification_status_Source Verified",
+      "coeficiente": -0.0607014748,
+      "odds_ratio": 0.9411041411
+    },
+    {
+      "variable": "verification_status_Verified",
+      "coeficiente": -0.0541698191,
+      "odds_ratio": 0.9472712281
     },
     {
       "variable": "revol_limit",
-      "coeficiente": -0.0101829491,
-      "odds_ratio": 0.9898687216
+      "coeficiente": -0.0505376229,
+      "odds_ratio": 0.9507181592
+    },
+    {
+      "variable": "home_ownership_OWN",
+      "coeficiente": 0.0490973433,
+      "odds_ratio": 1.0503225876
+    },
+    {
+      "variable": "credit_history_months",
+      "coeficiente": -0.0439058415,
+      "odds_ratio": 0.9570440671
+    },
+    {
+      "variable": "delinq_2yrs",
+      "coeficiente": 0.0435128328,
+      "odds_ratio": 1.0444733977
+    },
+    {
+      "variable": "mths_since_last_delinq",
+      "coeficiente": 0.0190044932,
+      "odds_ratio": 1.019186228
+    },
+    {
+      "variable": "dti",
+      "coeficiente": 0.017010057,
+      "odds_ratio": 1.0171555518
     },
     {
       "variable": "missingindicator_revol_util",
-      "coeficiente": -0.005475836,
-      "odds_ratio": 0.994539129
+      "coeficiente": 0.0027222462,
+      "odds_ratio": 1.0027259549
     }
   ],
   "calculos_orquestador": {
