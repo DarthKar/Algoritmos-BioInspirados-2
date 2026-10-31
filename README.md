@@ -1,222 +1,346 @@
-# ¿Me prestas? Redes neuronales para riesgo de crédito
+# ¿Me prestas? Riesgo de crédito con redes neuronales y algoritmos bioinspirados
 
-Trabajo 2 del curso *Redes neuronales y algoritmos bioinspirados* (Universidad Nacional de Colombia, Facultad de Minas, 2026-02). Usa créditos de consumo de Lending Club para responder dos preguntas:
+Proyecto académico sobre créditos de Lending Club. Estudia dos componentes del
+riesgo:
 
-- **Parte 1, probabilidad de incumplimiento (PD):** qué tan probable es que un crédito no se pague. Es un problema de clasificación binaria; se compara una regresión logística con un perceptrón multicapa (MLP) y se construye una scorecard.
-- **Parte 2, pérdida dado incumplimiento (LGD):** qué fracción se pierde cuando un crédito no se paga. Es un problema de regresión. *En construcción*, en `parte2/`.
+- **Probabilidad de incumplimiento (PD):** clasificación binaria. Compara una
+  regresión logística con un perceptrón multicapa (MLP) y construye una
+  scorecard.
+- **Pérdida dado incumplimiento (LGD):** regresión de la severidad observada,
+  con un modelo lineal y un ensamble MLP. A partir de PD, LGD y monto financiado
+  se calcula además un proxy indicativo de pérdida por crédito.
 
-Hay además una aplicación web (Streamlit) donde una persona ingresa sus datos y obtiene su PD, su puntaje y su percentil.
-
-**Enlaces:** reporte técnico (pendiente) · aplicación publicada (pendiente) · video promocional (pendiente)
+La aplicación Streamlit permite explorar la PD de un perfil con los modelos
+guardados. Los resultados son un ejercicio retrospectivo y **no deben usarse
+para aprobar o denegar créditos**.
 
 ## Contenido
 
-1. [Instalación](#1-instalación)
-2. [Datos](#2-datos)
-3. [Ejecutar el experimento](#3-ejecutar-el-experimento)
-4. [Cambiar parámetros](#4-cambiar-parámetros)
-5. [Aplicación web](#5-aplicación-web)
-6. [Resultados](#6-resultados)
-7. [Reproducibilidad](#7-reproducibilidad)
-8. [Estructura del repositorio](#8-estructura-del-repositorio)
+1. [Requisitos e instalación](#1-requisitos-e-instalación)
+2. [Datos y particiones](#2-datos-y-particiones)
+3. [Recalcular resultados con modelos existentes](#3-recalcular-resultados-con-modelos-existentes)
+4. [Entrenar o cambiar modelos](#4-entrenar-o-cambiar-modelos)
+5. [Resultados y metodología](#5-resultados-y-metodología)
+6. [Aplicación web](#6-aplicación-web)
+7. [Publicación y verificaciones](#7-publicación-y-verificaciones)
+8. [Estructura de archivos](#8-estructura-de-archivos)
 
-## 1. Instalación
+## 1. Requisitos e instalación
 
-Se probó con Python 3.14.7 en Windows 11, solo con CPU (no se necesita GPU).
+El proyecto se probó en Windows con Python 3.14 y CPU. La instalación principal
+incluye las dependencias de la Parte 1 y de la aplicación:
 
-```bash
-git clone https://github.com/DarthKar/Algoritmos-BioInspirados-2.git
-cd Algoritmos-BioInspirados-2
-python -m venv .venv
-```
-
-Activa el entorno: `.venv\Scripts\activate` en Windows o `source .venv/bin/activate` en Linux y macOS. Después instala las dependencias, que tienen versiones fijas en `requirements.txt`:
-
-```bash
+```powershell
+py -3.14 -m venv .venv
+.\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-Eso basta para la Parte 1 y la app. La Parte 2 usa además TensorFlow, que se instala aparte:
+En Linux o macOS:
 
 ```bash
-python -m pip install -r parte2/requirements.txt
+python3.14 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-En Python 3.14 la única versión publicada de TensorFlow es una versión candidata (2.22.0rc0); por eso queda fijada en `parte2/requirements.txt`.
+Para ejecutar la Parte 2 instala además sus dependencias, incluido TensorFlow:
 
-En Linux, `pip` instala por defecto la versión de PyTorch con CUDA, que pesa varios GB. Si no tienes GPU, instala antes la versión para CPU:
+```powershell
+python -m pip install -r parte2\requirements.txt
+```
+
+`parte2/requirements.txt` incorpora las dependencias de la raíz y fija las
+versiones de TensorFlow/Keras usadas por los modelos serializados. En Windows
+con CPU no se necesita GPU. En Linux, si no se usa GPU, se puede instalar la
+versión CPU de PyTorch antes de los requisitos del proyecto:
 
 ```bash
 python -m pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
 ```
 
-## 2. Datos
+## 2. Datos y particiones
 
-**No necesitas descargar nada para correr el experimento.** El repositorio ya trae los datos procesados que usan los modelos (`parte1/datos/procesados/pd_matured.parquet`, 3 MB) y los modelos entrenados (`parte1/salidas/modelos/`).
+El repositorio incluye los datos procesados y los modelos requeridos para
+reproducir inferencias y análisis sin descargar el CSV original:
 
-El archivo original no está en el repositorio: `loan.csv` pesa 442 MB y GitHub no admite archivos de más de 100 MB. Para regenerar los datos procesados desde cero:
+- PD: `parte1/datos/procesados/pd_matured.parquet`.
+- LGD: `parte2/data/processed/lending_matured_lgd.parquet`.
+- Modelos PD y LGD: `parte1/salidas/modelos/` y `parte2/outputs/models/`.
 
-1. Descarga el conjunto *Credit Risk Analysis* de Kaggle: https://www.kaggle.com/datasets/ranadeep/credit-risk-dataset. El nuestro se descargó el **24 de octubre de 2026**.
-2. Copia `loan.csv` y `LCDataDictionary.xlsx` en `data/raw/` (carpeta compartida con la Parte 2).
-3. Ejecuta `python parte1/run.py --etapas datos`.
+El archivo original `loan.csv` (aprox. 442 MB) no está incluido. Para volver a
+construir el dataset PD se puede descargar el conjunto *Credit Risk Analysis*
+de [Kaggle](https://www.kaggle.com/datasets/ranadeep/credit-risk-dataset),
+colocar `loan.csv` y `LCDataDictionary.xlsx` en `data/raw/` y ejecutar:
 
-Esa etapa aplica, en orden:
-1. Construye la variable objetivo desde `loan_status`, según la tabla del enunciado.
-2. Selecciona la muestra: créditos que ya habían terminado su plazo en enero de 2016, la fecha de corte del archivo.
-3. Aplica una limpieza fija.
-4. Hace la partición temporal por fecha de originación.
-
-El resultado son 78.302 créditos:
-- 74.930 a 36 meses, originados entre 2007-06 y 2012-12.
-- 3.372 a 60 meses, todos de 2010. Lending Club ofrece este plazo desde mayo de 2010, y los originados después aún no habían vencido en el corte.
-
-Entrenamiento va hasta 2012-06, validación es 2012 T3 y prueba es 2012 T4. Por eso los créditos a 60 meses quedan todos en entrenamiento: el efecto del plazo no se puede validar fuera de tiempo. El detalle y la justificación están en `parte1/documentos/caso_de_uso.md`.
-
-## 3. Ejecutar el experimento
-
-### Sin comandos: el orquestador
-
-```bash
-python parte1/orquestador.py
+```powershell
+python parte1\run.py --etapas datos
 ```
 
-Abre un menú en la consola desde el que se hace todo lo de la Parte 1 sin escribir comandos:
+La muestra `matured` contiene 78.302 créditos originados entre junio de 2007 y
+diciembre de 2012. La partición es temporal: entrenamiento hasta junio de 2012,
+validación en 2012 T3 y prueba en 2012 T4. La Parte 2 usa la misma muestra,
+limpieza e identificadores para alinear los datos y las predicciones por
+crédito.
 
-1. ver el estado del proyecto (datos, modelos y resultados disponibles);
-2. correr la demostración (menos de 2 minutos);
-3. correr el experimento completo;
-4. correr etapas específicas;
-5. ver o cambiar parámetros para la sesión (scorecard, semillas, arquitectura fija…);
-6. ver resultados en tablas: métricas, **mejores hiperparámetros de la red** y ranking de la búsqueda, hipótesis, scorecard, umbrales y SHAP;
-7. abrir la aplicación web;
-8. verificar la aplicación;
-9. abrir una figura.
+Para la Parte 2, el caché alineado y sus metadatos ya están en
+`parte2/data/processed/`. Reconstruirlo desde `loan.csv` es una operación
+distinta del recálculo de resultados; el orquestador de la raíz no reconstruye
+el caché.
 
-La salida de cada etapa se imprime en vivo, y el orquestador muestra el comando equivalente de `run.py`.
+> **Privacidad y distribución:** antes de publicar el repositorio, revisa que
+> los datos procesados y cualquier dato histórico puedan compartirse. Un
+> `.gitignore` no elimina archivos que ya estén en el historial Git.
 
-### Con comandos
+## 3. Recalcular resultados con modelos existentes
 
-Todo se lanza con un solo comando:
+Desde la raíz, ejecuta:
 
-| Comando | Qué hace | Tiempo aprox. |
-|---|---|---|
-| `python parte1/run.py --demo` | Demostración: todas las etapas con un presupuesto pequeño (MLP con la mejor arquitectura ya encontrada, 3 semillas, 20 épocas). Escribe en `parte1/salidas_demo/` y no toca los resultados oficiales. | 1 a 1,5 min |
-| `python parte1/run.py` | Experimento completo: datos, EDA, logística, búsqueda del MLP con 25 configuraciones, 30 semillas, figuras, SHAP, scorecard e informe. | 15–35 min según la máquina |
-| `python parte1/run.py --etapas scorecard informe` | Solo las etapas indicadas, a partir de lo que ya está guardado. | segundos |
-| `python parte1/run.py --listar` | Lista las etapas disponibles. | — |
+```powershell
+python orquestador.py
+```
 
-Etapas, en orden:
+El orquestador abre un menú para ajustar parámetros de cálculo y luego:
 
-| Etapa | Qué produce |
+1. Carga la regresión logística y la MLP PD guardadas y calcula de nuevo las
+   predicciones y métricas en train, validación y prueba.
+2. Carga la regresión lineal y los modelos MLP LGD ya entrenados, recalcula las
+   predicciones y las métricas de prueba.
+3. Une las predicciones por `id` y calcula los proxies de pérdida esperada.
+4. Guarda las predicciones, métricas y resultados actualizados en las carpetas
+   de salida.
+
+Esta ruta **no entrena modelos ni ejecuta búsquedas de hiperparámetros**. El
+tiempo depende del equipo y de los valores elegidos; al final informa cuánto
+duró y avisa si supera dos minutos.
+
+El menú permite cambiar los siguientes parámetros:
+
+| Parámetro | Valor inicial | Efecto |
+|---|---:|---|
+| Modelos MLP LGD del ensamble | Todos los modelos guardados (30 en la configuración actual) | Limitar el promedio a los primeros N modelos guardados. Menos modelos suelen reducir el tiempo de predicción. |
+| Tamaño del lote | 8192 | Número de filas por lote de inferencia; modifica el uso de memoria y puede afectar el tiempo. |
+| Intervalos de calibración PD | 10 | Número de grupos usados al recalcular las tablas de calibración. |
+| Umbral de clasificación PD | 0,5 | Umbral que determina la clase para las métricas de accuracy, F1 y matriz de confusión. |
+
+Pulsa Enter para conservar el valor actual y `0` para iniciar los cálculos.
+Los valores de entrenamiento —por ejemplo, learning rate, arquitectura, dropout,
+número de épocas o paciencia— no se pueden cambiar desde este menú: determinan
+los pesos de una red. El orquestador usa los pesos de los artefactos disponibles.
+Para usar otros hiperparámetros debe existir un modelo previamente entrenado y
+guardado con ellos.
+
+También se puede recalcular cada parte por separado:
+
+```powershell
+python orquestador.py --solo parte1
+python orquestador.py --solo parte2
+```
+
+`--solo parte2` usa las predicciones PD que ya estén guardadas. Si se selecciona
+un ensamble LGD más pequeño, el cálculo usa las primeras N semillas ordenadas y
+actualiza la métrica del ensamble con esa selección. El menú es interactivo;
+si el proceso se ejecuta sin una consola interactiva, se usan los valores
+predeterminados.
+
+Salidas principales del recálculo:
+
+- `parte1/salidas/resultados/pd_logistic_predicciones.parquet`
+- `parte1/salidas/resultados/pd_mlp_predicciones.parquet`
+- `parte1/salidas/resultados/pd_logistic_metricas.json`
+- `parte1/salidas/resultados/pd_mlp_metricas.json`
+- `parte2/outputs/lgd_predicciones_test.parquet`
+- `parte2/outputs/lgd_metricas.json`
+- `parte2/outputs/perdida_esperada_test.parquet`
+
+## 4. Entrenar o cambiar modelos
+
+El recálculo de la sección anterior no cambia los modelos. Para entrenar de
+nuevo, usa explícitamente los comandos de cada parte; pueden tardar más de dos
+minutos y sobrescribir artefactos de salida.
+
+### Parte 1: PD
+
+```powershell
+python parte1\run.py --demo
+python parte1\run.py
+python parte1\run.py --etapas logistica mlp
+python parte1\run.py --listar
+```
+
+`--demo` usa un presupuesto pequeño y guarda sus salidas en
+`parte1/salidas_demo/`. El experimento completo incluye EDA, regresión
+logística, búsqueda de MLP, semillas, figuras, interpretabilidad, scorecard y
+reporte. Para ajustar parámetros de entrenamiento, usa `parte1/config.yaml` o
+`--set`, por ejemplo:
+
+```powershell
+python parte1\run.py --etapas mlp --set mlp.n_seeds=5 mlp.max_epochs=50
+python parte1\run.py --etapas mlp --set mlp.fixed.hidden=[32] mlp.fixed.lr=0.01
+```
+
+Etapas disponibles:
+
+| Etapa | Trabajo |
 |---|---|
-| `datos` | `parte1/datos/procesados/pd_matured.parquet`. Se salta si no está `data/raw/loan.csv`. |
-| `eda` | Contraste de las 13 hipótesis en entrenamiento y figuras del EDA. |
-| `logistica` | Regresión logística con L2; elige C por log-loss en validación. |
-| `mlp` | Búsqueda aleatoria de arquitectura e hiperparámetros, y la mejor configuración entrenada con 30 semillas. |
-| `figuras` | Curvas ROC, de calibración y de pérdida por época. |
-| `interpretabilidad` | SHAP sobre el MLP y la logística. |
-| `scorecard` | Puntajes, tabla de puntos y bandas de riesgo. |
-| `clasificacion` | Accuracy, F1 y matriz de confusión con dos umbrales. |
-| `hipotesis` | Efecto de cada hipótesis en los modelos, controlando el resto de variables. |
-| `comparacion` | Logística contra MLP: métricas, costos y bootstrap de la diferencia. |
-| `informe` | `parte1/salidas/resultados/pd_resumen.md`, con todas las tablas. |
+| `datos` | Construye el dataset procesado desde el CSV original, si está disponible. |
+| `eda` | Contrasta las hipótesis y genera análisis descriptivos. |
+| `logistica` | Entrena la regresión logística y elige C con validación. |
+| `mlp` | Busca hiperparámetros o entrena una configuración fija y guarda el modelo. |
+| `figuras` | Genera curvas ROC, calibración y pérdidas desde resultados guardados. |
+| `interpretabilidad` | Calcula SHAP para la logística y el MLP. |
+| `scorecard` | Genera puntajes y bandas de riesgo desde la logística guardada. |
+| `clasificacion` | Calcula métricas de clasificación por umbral. |
+| `hipotesis` | Mide el efecto de escenarios sobre las PD de los modelos guardados. |
+| `comparacion` | Compara los modelos con métricas y bootstrap. |
+| `informe` | Genera `parte1/salidas/resultados/pd_resumen.md`. |
 
-## 4. Cambiar parámetros
+### Parte 2: LGD
 
-Los parámetros están en [`parte1/config.yaml`](parte1/config.yaml): plazos incluidos, semilla, rejilla de C, número de configuraciones y semillas del MLP, épocas, paciencia, parámetros de la scorecard y de SHAP, y réplicas del bootstrap. Se pueden editar ahí o cambiar desde la línea de comandos con `--set`, sin tocar el código:
+El comando `python parte2/analisis.py` ejecuta el análisis de LGD y **entrena**
+los modelos definidos en `parte2/config.py`; no es el comando de recálculo
+rápido. Úsalo solo cuando se busque entrenar de nuevo o reconstruir resultados
+del experimento:
 
-```bash
-python parte1/run.py --demo --set mlp.fixed.lr=0.05 mlp.fixed.hidden=[32] mlp.n_seeds=5
+```powershell
+python parte2\analisis.py
 ```
 
-Más ejemplos:
-- `python parte1/run.py --set mlp.n_trials=50 mlp.max_epochs=200` amplía la búsqueda.
-- `python parte1/run.py --etapas scorecard informe --set scorecard.pdo=40 scorecard.base_score=700` cambia la escala de la scorecard sin reentrenar. Sin `--demo` se sobrescriben las salidas; para volver a los resultados oficiales usa `git checkout parte1/salidas/`.
-- `python parte1/run.py --etapas mlp figuras --set mlp.fixed.dropout=0.5 mlp.fixed.optimizer=adam mlp.fixed.lr=0.001` entrena una arquitectura fija sin búsqueda.
+La configuración del entrenamiento de LGD incluye arquitectura, dropout,
+learning rate, épocas, tamaño de lote, paciencia, semillas y la cuadrícula de
+arquitecturas. Cambiar esos valores exige entrenar un nuevo modelo. El
+orquestador de la raíz no los modifica ni selecciona variantes por hiperparámetro;
+solo puede reducir el número de modelos existentes usados en el ensamble.
 
-Con `mlp.fixed` el MLP se salta la búsqueda y entrena esa configuración. Los campos posibles son `hidden`, `activation`, `dropout`, `l2`, `optimizer`, `lr`, `momentum` y `batch_size`; lo que no se indique toma el valor por defecto de `MLPConfig` en `parte1/modelos/core.py`.
+## 5. Resultados y metodología
 
-## 5. Aplicación web
+### Parte 1: PD
 
-```bash
+El informe legible de resultados está en
+`parte1/salidas/resultados/pd_resumen.md`. El archivo
+`parte1/salidas/resultados/pd_analisis.json` reúne resultados de EDA,
+hipótesis, comparación, scorecard y SHAP. En
+`parte1/documentos/eda_y_conclusiones.md` se encuentran las conclusiones
+redactadas.
+
+La variable objetivo representa incumplimiento según los estados de préstamo
+definidos por la Parte 1. El preprocesamiento se ajusta con entrenamiento; la
+partición temporal evita mezclar datos futuros al entrenar.
+
+### Parte 2: LGD y pérdida
+
+La LGD observada se limita a préstamos `Charged Off` con monto financiado
+positivo, exposición observada positiva y datos de recuperación disponibles.
+Se calcula como:
+
+```text
+EAD_obs = funded_amnt - total_rec_prncp
+rec_net = recoveries - collection_recovery_fee
+LGD = clip((EAD_obs - rec_net) / funded_amnt, 0, 1)
+```
+
+Es una pérdida acumulada observada como fracción del principal financiado al
+origen; no es una LGD estándar sobre el saldo exacto en la fecha de default.
+Las recuperaciones pueden estar censuradas por la fecha de corte y el recorte a
+`[0, 1]` limita los valores extremos.
+
+Para cada crédito de prueba, el proxy se calcula como:
+
+```text
+PD predicha × LGD predicha × funded_amnt
+```
+
+La PD y la LGD se unen por `id`. La predicción LGD usa la regresión lineal o el
+promedio de predicciones de los modelos MLP seleccionados; no usa la LGD
+observada del crédito de prueba. `funded_amnt` corresponde al monto de origen,
+no al saldo expuesto al incumplimiento. Además, el objetivo PD incluye estados
+`Late (31-120 days)` mientras que la LGD observada solo incluye préstamos
+castigados. Por estas diferencias, el resultado es un **proxy indicativo**, no
+una medida estándar ni una estimación validada contra pérdidas realizadas.
+
+## 6. Aplicación web
+
+Desde la raíz del proyecto:
+
+```powershell
 streamlit run app.py
 ```
 
-La app carga los modelos guardados en `parte1/salidas/modelos/` y nunca reentrena. Para cada perfil muestra:
-- la PD;
-- el puntaje de la scorecard;
-- el percentil frente a los créditos de entrenamiento;
-- cómo cambiarían esos valores si se modifica alguna característica.
+La aplicación carga artefactos guardados y no entrena. En `app_config.json` se
+definen los modelos disponibles, los datos de referencia y la configuración de
+la scorecard. La interfaz incluye:
 
-Los modelos disponibles y la escala de la scorecard se configuran en `app_config.json`. Más detalles en `README_APP.md`, `README_INTERFAZ.md` y `README_DESPLIEGUE_DE_APP.md`.
+- formulario con campos, unidades y valores de referencia;
+- PD, puntaje y percentil para cada modelo disponible;
+- comparación de logística y MLP para el mismo perfil;
+- simulación descriptiva de cambios en las características.
 
-Para comprobar que la app reproduce las predicciones guardadas y que la scorecard es correcta:
+Los percentiles se calculan frente a las predicciones históricas de la partición
+de referencia del modelo; no representan percentiles nacionales. La
+comparación de escenarios no establece causalidad. Los perfiles viven en el
+estado de sesión de Streamlit y no se guardan en una base de datos.
 
-```bash
-python scripts/verificar_predicciones_historicas.py
-python scripts/verificar_scorecard_percentiles.py
+El simulador no recalcula automáticamente variables derivadas a partir de otras.
+Si se modifican las características o el preprocesamiento del modelo, hay que
+actualizar el adaptador de inferencia y validar los valores del formulario
+contra el diccionario de Lending Club. Los artefactos serializados deben
+provenir del proyecto y de fuentes confiables.
+
+## 7. Publicación y verificaciones
+
+La entrada local es `app.py`; la entrada alternativa para despliegue es
+`web/app.py`. Los requisitos de la raíz están en `requirements.txt`; no hay un
+archivo `web/requirements.txt` separado en esta versión del proyecto.
+
+Antes de publicar:
+
+1. Revisa los archivos, dependencias y artefactos incluidos.
+2. Comprueba la compatibilidad de Python y de las bibliotecas con las que se
+   serializaron los modelos.
+3. Revisa la privacidad y autorización para distribuir los datos procesados.
+4. Configura `report_url` y `video_url` en `app_config.json` cuando existan
+   enlaces públicos.
+5. Despliega `web/app.py` y prueba ambos modelos, las gráficas y el simulador
+   desde una sesión externa.
+
+Verificaciones disponibles desde la raíz:
+
+```powershell
+python scripts\verificar_despliegue.py
+python scripts\verificar_integracion_web.py
+python scripts\verificar_predicciones_historicas.py
+python scripts\verificar_scorecard_percentiles.py
 ```
 
-## 6. Resultados
+El chequeo de despliegue es estructural; no sustituye una prueba remota ni la
+revisión de privacidad. Antes de actualizar un modelo, cambia de forma
+coordinada el checkpoint, el preprocesador y las predicciones históricas, y
+ejecuta las verificaciones de integración.
 
-Partición de prueba (2012 T4, 15.136 créditos). Tablas completas en [`parte1/salidas/resultados/pd_resumen.md`](parte1/salidas/resultados/pd_resumen.md); conclusiones en [`parte1/documentos/eda_y_conclusiones.md`](parte1/documentos/eda_y_conclusiones.md).
+## 8. Estructura de archivos
 
-| Métrica | Tasa base | Regresión logística | MLP (media ± d.e., 30 semillas) | MLP guardado |
-|---|---|---|---|---|
-| AUC | 0,500 | 0,638 | 0,641 ± 0,002 | 0,645 |
-| Gini | 0 | 0,276 | 0,283 ± 0,004 | 0,290 |
-| KS | 0 | 0,206 | 0,214 ± 0,005 | 0,220 |
-| Brier | 0,1137 | 0,1110 | 0,1111 ± 0,0002 | 0,1106 |
-| Parámetros entrenables | — | 38 | 13.185 | 13.185 |
-
-- **La red aporta poco:** el MLP guardado mejora el AUC en 0,007 frente a la logística (IC 95 % [+0,002; +0,012]); en promedio sobre las 30 semillas la mejora es 0,003, y la calibración no mejora.
-- **El límite lo pone la información disponible**, no el tipo de modelo.
-- **Variables que más pesan en ambos:** ingreso, subcalificación de Lending Club, consultas recientes, propósito del crédito y utilización del crédito rotativo.
-- **Plazo de 60 meses:** a igual perfil sube la PD entre 4,5 y 7,1 pp según el modelo, pero ese efecto se estima con una sola cohorte (2010).
-
-Salidas del experimento, en `parte1/salidas/`:
-
-| Carpeta | Contenido |
-|---|---|
-| `modelos/` | `pd_logistic.joblib` (preprocesador y logística), `pd_mlp.pt` (red), `pd_mlp_preprocessor.joblib`. |
-| `resultados/` | `pd_resumen.md` (legible), `pd_analisis.json` (EDA, SHAP, scorecard, comparación), `pd_*_metricas.json` (métricas, búsqueda y semillas de cada modelo), `pd_*_predicciones.parquet` (los usa la app), `pd_mlp_historial.csv` (pérdida por época). |
-| `figuras/` | Figuras del reporte; todas se regeneran con `python parte1/run.py --etapas eda figuras interpretabilidad clasificacion`. |
-
-## 7. Reproducibilidad
-
-- **Semillas fijas:**
-  - `semilla: 42` en `parte1/config.yaml` controla la logística, la búsqueda aleatoria del MLP, la muestra de clientes de SHAP y el bootstrap.
-  - La partición no es aleatoria: es temporal, por fecha de originación.
-  - Las 30 corridas finales del MLP usan las semillas 0 a 29.
-  - El modelo guardado es la semilla con menor log-loss en validación.
-- **Versiones fijas** en `requirements.txt`.
-- **Sin fuga de información:** el preprocesamiento (imputación, transformaciones, escalado, one-hot) se ajusta solo con entrenamiento.
-- **Determinismo entre máquinas:** en una misma máquina el entrenamiento en CPU es determinista. Entre máquinas distintas, el AUC puede variar en el orden de 10⁻⁴ por diferencias de punto flotante; la media de las 30 semillas se reproduce igual.
-
-## 8. Estructura del repositorio
-
+```text
+app.py, app_config.json      Aplicación local y configuración de modelos
+web/app.py                   Entrada alternativa para despliegue
+scripts/                     Verificaciones de la aplicación
+data/raw/                    loan.csv y diccionario opcionales, no versionados
+parte1/
+  run.py                     Etapas de preparación, entrenamiento y análisis PD
+  config.yaml                Configuración del experimento PD
+  modelos/                   Definición, entrenamiento e inferencia de PD
+  preparacion/               Limpieza, dataset, particiones y variables
+  evaluacion/                Métricas, comparación y figuras
+  analisis/                  EDA, SHAP e hipótesis
+  puntaje/                   Conversión PD a puntaje y scorecard
+  datos/procesados/          Datasets utilizados por los modelos
+  salidas/                   Modelos, resultados y figuras
+  documentos/                Caso de uso y conclusiones
+parte2/
+  analisis.py                Entrenamiento y análisis LGD
+  config.py                  Configuración del experimento LGD
+  requirements.txt           TensorFlow/Keras además de los requisitos raíz
+  data/processed/            Caché LGD alineado con Parte 1
+  outputs/                   Modelos, métricas, predicciones y proxy
+orquestador.py               Recálculo PD/LGD/proxy con modelos guardados
+README.md                    Guía única del proyecto
 ```
-app.py, app_config.json     aplicación web, compartida por ambas partes (web/app.py: entrada para Streamlit Cloud)
-scripts/                    verificaciones de la app
-data/raw/                   loan.csv y diccionario (no versionados), compartidos por ambas partes
-parte1/                     Parte 1: probabilidad de incumplimiento
-  run.py                    comando único del experimento
-  config.yaml               parámetros (editables o con --set)
-  comun/                    rutas, semillas y estilo de figuras
-  preparacion/              lectura, variable objetivo, muestra, limpieza, partición y preprocesamiento
-  modelos/                  regresión logística y MLP (definición, entrenamiento y experimentos)
-  evaluacion/               métricas, umbrales, comparación y figuras de evaluación
-  analisis/                 EDA e hipótesis, SHAP y contraste de hipótesis con los modelos
-  puntaje/                  transformación PD → puntaje y scorecard de la logística
-  report.py                 informe automático (salidas/resultados/pd_resumen.md)
-  inference.py              carga de modelos para la app
-  datos/procesados/         datos procesados que usan los modelos
-  salidas/                  modelos, resultados y figuras regenerables
-  documentos/               caso de uso, conclusiones y reporte técnico
-parte2/                     Parte 2: pérdida dado incumplimiento (LGD), en construcción
-  analisis.py, config.py    experimento (python parte2/analisis.py) y sus parámetros
-  requirements.txt          dependencias propias (TensorFlow)
-  data/processed/, outputs/ datos procesados y figuras de la Parte 2
-```
-
-Cada función del código tiene un comentario corto que dice qué hace.
