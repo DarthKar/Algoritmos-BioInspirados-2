@@ -1,0 +1,106 @@
+{
+  "modo": "matured",
+  "ejecucion": {},
+  "artefactos_modelo": [
+    "models/lgd_preprocessor.joblib",
+    "models/lgd_linear.joblib",
+    "models/lgd_mlp_seed_42.keras",
+    "models/lgd_mlp_seed_43.keras",
+    "models/lgd_mlp_seed_44.keras",
+    "models/lgd_mlp_seed_45.keras",
+    "models/lgd_mlp_seed_46.keras",
+    "models/lgd_mlp_seed_47.keras",
+    "models/lgd_mlp_seed_48.keras",
+    "models/lgd_mlp_seed_49.keras",
+    "models/lgd_mlp_seed_50.keras",
+    "models/lgd_mlp_seed_51.keras",
+    "models/lgd_mlp_seed_52.keras",
+    "models/lgd_mlp_seed_53.keras",
+    "models/lgd_mlp_seed_54.keras",
+    "models/lgd_mlp_seed_55.keras",
+    "models/lgd_mlp_seed_56.keras",
+    "models/lgd_mlp_seed_57.keras",
+    "models/lgd_mlp_seed_58.keras",
+    "models/lgd_mlp_seed_59.keras",
+    "models/lgd_mlp_seed_60.keras",
+    "models/lgd_mlp_seed_61.keras",
+    "models/lgd_mlp_seed_62.keras",
+    "models/lgd_mlp_seed_63.keras",
+    "models/lgd_mlp_seed_64.keras",
+    "models/lgd_mlp_seed_65.keras",
+    "models/lgd_mlp_seed_66.keras",
+    "models/lgd_mlp_seed_67.keras",
+    "models/lgd_mlp_seed_68.keras",
+    "models/lgd_mlp_seed_69.keras",
+    "models/lgd_mlp_seed_70.keras",
+    "models/lgd_mlp_seed_71.keras"
+  ],
+  "n_por_particion": {
+    "train": 49844,
+    "val": 13322,
+    "test": 15136
+  },
+  "n_test_con_lgd_observada": 1890,
+  "lgd_definition": "(funded_amnt - total_rec_prncp - recoveries + collection_recovery_fee) / funded_amnt; pérdida observada acumulada sobre el principal financiado al origen, recortada a [0, 1]",
+  "lgd_observed_statuses": [
+    "Charged Off",
+    "Does not meet the credit policy. Status:Charged Off"
+  ],
+  "pd_bad_statuses": [
+    "Charged Off",
+    "Default",
+    "Late (31-120 days)",
+    "Does not meet the credit policy. Status:Charged Off"
+  ],
+  "ead_loss_projection": "funded_amnt (monto financiado en originación)",
+  "loss_projection_interpretation": "Proxy indicativo, no pérdida esperada estándar a la fecha de default: el target PD incluye estados Late (31-120 days), la LGD observada solo incluye Charged Off, y las recuperaciones pueden estar censuradas.",
+  "modelo_referencia": {
+    "tipo": "Regresión lineal",
+    "n_parametros": 78,
+    "segundos_entrenamiento": 0.02579045295715332,
+    "test": {
+      "mae": 0.19255322251209714,
+      "rmse": 0.22824618641930583
+    }
+  },
+  "mlp": {
+    "configuracion": {
+      "unidades": [
+        256,
+        128
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.0005
+    },
+    "funcion_perdida": "mean_squared_error",
+    "funcion_salida": "sigmoid",
+    "n_configuraciones": 6,
+    "segundos_busqueda": 16.250739812850952,
+    "n_semillas": 30,
+    "n_parametros": 52993,
+    "segundos_entrenamiento_semillas": 110.75579452514648,
+    "segundos_totales_busqueda_y_semillas": 127.00653433799744,
+    "test_por_semilla": {
+      "mae": {
+        "media": 0.1929332735903931,
+        "desv_est": 0.0004573146189067131,
+        "mejor": 0.1918163373764927,
+        "peor": 0.1939906213230824
+      },
+      "rmse": {
+        "media": 0.228305451663041,
+        "desv_est": 0.0005784342265103384,
+        "mejor": 0.22696739804793548,
+        "peor": 0.22964225861381343
+      }
+    },
+    "test_ensamble_semillas": {
+      "mae": 0.19249935329311257,
+      "rmse": 0.2275403652195084
+    }
+  },
+  "referencia_media_constante_test": {
+    "mae": 0.19493855183688813,
+    "rmse": 0.23083089802007875
+  }
+}

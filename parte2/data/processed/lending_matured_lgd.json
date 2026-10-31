@@ -1,0 +1,89 @@
+{
+  "version": 2,
+  "mode": "matured",
+  "rows": 78302,
+  "columns": [
+    "id",
+    "issue_d",
+    "loan_status",
+    "target",
+    "split",
+    "loan_amnt",
+    "int_rate",
+    "installment",
+    "annual_inc",
+    "dti",
+    "delinq_2yrs",
+    "inq_last_6mths",
+    "open_acc",
+    "pub_rec",
+    "revol_bal",
+    "revol_util",
+    "total_acc",
+    "term_m",
+    "emp_len",
+    "grade",
+    "sub_grade",
+    "home_ownership",
+    "verification_status",
+    "purpose",
+    "funded_amnt",
+    "total_rec_prncp",
+    "recoveries",
+    "collection_recovery_fee",
+    "issue_dt",
+    "default",
+    "EAD_obs",
+    "rec_net",
+    "lgd_ok",
+    "LGD_raw",
+    "LGD"
+  ],
+  "source": "C:\\Users\\Juan Pablo\\Documentos\\GitHub\\Algoritmos-BioInspirados-2\\data\\raw\\loan.csv",
+  "source_size_bytes": 441771600,
+  "source_modified_ns": 1792952969823033200,
+  "part1_report": {
+    "modo": "matured",
+    "snapshot": "2016-01-01",
+    "val_start": "2012-07-01",
+    "test_start": "2012-10-01",
+    "filas_originales": 887379,
+    "columnas_originales": 74,
+    "filas_con_desenlace": 268530,
+    "filas_muestra": 78331,
+    "plazos": [
+      36,
+      60
+    ],
+    "limpieza": {
+      "filas_entrada": 78331,
+      "filas_sin_buro_eliminadas": 29,
+      "filas_salida": 78302
+    },
+    "particiones": [
+      {
+        "particion": "train",
+        "n": 49844,
+        "tasa_malos": 0.1343190755,
+        "desde": "2007-06-01T00:00:00.000",
+        "hasta": "2012-06-01T00:00:00.000"
+      },
+      {
+        "particion": "val",
+        "n": 13322,
+        "tasa_malos": 0.1421708452,
+        "desde": "2012-07-01T00:00:00.000",
+        "hasta": "2012-09-01T00:00:00.000"
+      },
+      {
+        "particion": "test",
+        "n": 15136,
+        "tasa_malos": 0.1308139535,
+        "desde": "2012-10-01T00:00:00.000",
+        "hasta": "2012-12-01T00:00:00.000"
+      }
+    ],
+    "columnas_guardadas": 61
+  },
+  "compression": "zstd"
+}

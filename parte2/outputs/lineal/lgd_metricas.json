@@ -1,0 +1,41 @@
+{
+  "modo": "matured",
+  "ejecucion": {
+    "modo": "completo",
+    "modelo": "lineal",
+    "max_filas_por_particion": null,
+    "semilla": 42,
+    "fit_intercept": false,
+    "positive": true,
+    "epocas_maximas": null,
+    "semillas_mlp": null,
+    "batch_size": null,
+    "paciencia_early_stopping": null,
+    "configuracion_mlp": null
+  },
+  "modelo": "lineal",
+  "n_por_particion": {
+    "train": 46472,
+    "val": 13322,
+    "test": 15136
+  },
+  "n_test_con_lgd_observada": 1890,
+  "baseline_media_test": {
+    "mae": 0.1945350486853666,
+    "rmse": 0.22989518121730265
+  },
+  "artefactos_modelo": [
+    "models/lgd_preprocessor.joblib",
+    "models/lgd_linear.joblib"
+  ],
+  "lineal": {
+    "test": {
+      "mae": 0.19337100450745,
+      "rmse": 0.22901286944173346
+    },
+    "parametros": 77,
+    "segundos_entrenamiento": 0.02136373519897461,
+    "fit_intercept": false,
+    "positive": true
+  }
+}
