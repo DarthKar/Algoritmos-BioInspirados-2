@@ -1,0 +1,8 @@
+title: ¿Me prestas? | Riesgo de crédito
+description: Análisis académico de probabilidad de incumplimiento y pérdida crediticia.
+markdown: kramdown
+permalink: pretty
+baseurl: /Algoritmos-BioInspirados-2
+url: https://darthkar.github.io
+exclude:
+  - README.md

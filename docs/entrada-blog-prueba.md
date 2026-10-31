@@ -1,3 +1,10 @@
+---
+layout: default
+title: ¿Puede una red neuronal anticipar el riesgo de un crédito?
+description: Comparación de regresión logística y MLP para analizar el riesgo de crédito.
+permalink: /entrada-blog-prueba/
+---
+
 # ¿Puede una red neuronal anticipar el riesgo de un crédito?
 
 > **Entrada de prueba.** Borrador de divulgación basado en los resultados
@@ -90,7 +97,7 @@ aumentó **4,01 puntos porcentuales** en la logística y **5,78 puntos** en el
 MLP. Este es un contraste del modelo sobre datos históricos, no una conclusión
 causal sobre una persona.
 
-![Importancia de variables según SHAP](../parte1/salidas/figuras/pd_mlp_shap.png)
+![Importancia de variables según SHAP]({{ '/assets/pd_mlp_shap.png' | relative_url }})
 
 ## De la probabilidad a la severidad de la pérdida
 
@@ -118,7 +125,7 @@ los castigados, mientras que la LGD observada solo se calcula para estados
 censuradas. Por eso el proxy no equivale a una pérdida esperada estándar ni
 está validado contra pérdidas realizadas.
 
-![Distribución de LGD observada y predicha](../parte2/outputs/lgd_distribuciones.png)
+![Distribución de LGD observada y predicha]({{ '/assets/lgd_distribuciones.png' | relative_url }})
 
 ## Qué nos llevamos
 
@@ -136,6 +143,6 @@ adicional, revisión de sesgos y controles de uso.
 
 ### Fuentes del proyecto
 
-- [Resumen de resultados PD](../parte1/salidas/resultados/pd_resumen.md)
-- [Conclusiones del análisis PD](../parte1/documentos/eda_y_conclusiones.md)
-- [README del proyecto](../README.md)
+- [Resumen de resultados PD](https://github.com/DarthKar/Algoritmos-BioInspirados-2/blob/main/parte1/salidas/resultados/pd_resumen.md)
+- [Conclusiones del análisis PD](https://github.com/DarthKar/Algoritmos-BioInspirados-2/blob/main/parte1/documentos/eda_y_conclusiones.md)
+- [README del proyecto](https://github.com/DarthKar/Algoritmos-BioInspirados-2/blob/main/README.md)
